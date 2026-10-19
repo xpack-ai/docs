@@ -1,0 +1,43 @@
+---
+title: "API 参考"
+sidebarTitle: "API 参考"
+description: "一个密钥，一个统一调用前缀（https://api.xroute.ai），畅享全部 API。浏览 XRoute 路由的每一个模型与数据端点。"
+---
+
+XRoute 在统一调用前缀 **`https://api.xroute.ai`** 下，为 60+ 大语言模型、媒体生成模型以及 100+ 实时数据 API 提供统一的 HTTP 端点。
+
+## 调用前缀（Base URL）
+
+所有 API 请求均使用统一的域名前缀 `https://api.xroute.ai`：
+
+| 调用模式 / 服务 | 调用前缀 / 端点 |
+| :--- | :--- |
+| **OpenAI 兼容调用** | `https://api.xroute.ai/v1` |
+| **Anthropic 兼容调用** | `https://api.xroute.ai/v1/messages` |
+| **原生格式调用（如 Gemini 原生）** | `https://api.xroute.ai/v1beta` |
+| **实时数据与账户 API** | `https://api.xroute.ai/apis/v1` |
+| **MCP 服务器** | `https://mcp.xroute.ai/mcp` |
+
+## 核心端点
+
+<CardGroup cols={2}>
+  <Card title="额度余额" icon="wallet" href="/zh/api-reference/credits-balance">
+    查询您的剩余预付 Credits 及密钥消费限额（`GET https://api.xroute.ai/apis/v1/account/balance`）。
+  </Card>
+
+  <Card title="账户用量" icon="chart-bar" href="/zh/api-reference/account-usage">
+    查询历史调用总量及已结算的美元消费（`GET https://api.xroute.ai/apis/v1/account/usage`）。
+  </Card>
+
+  <Card title="对话补全（Chat Completions）" icon="comments" href="/zh/api-reference/chat-completions">
+    支持通过 OpenAI 的调用、Anthropic 的调用、原生格式的调用访问 60+ 前沿模型。
+  </Card>
+
+  <Card title="模型列表" icon="list" href="/zh/api-reference/models-list">
+    获取实时模型 ID、上下文窗口长度与 Token 定价（`GET https://api.xroute.ai/v1/models`）。
+  </Card>
+</CardGroup>
+
+## 结算调用费用
+
+每个付费响应均包含 `x-xroute-cost-usd` 响应头，用于报告从您的 Credits 余额中扣除的精确美元金额。

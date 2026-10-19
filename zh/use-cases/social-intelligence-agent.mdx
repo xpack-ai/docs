@@ -1,0 +1,23 @@
+---
+title: "使用 XRoute 构建社交情报智能体"
+sidebarTitle: "社交情报智能体"
+description: "跨 X 和 YouTube 追踪产品发布、开发者舆情与创作者讨论。"
+---
+
+## 面临的问题
+
+跨 X（Twitter）和 YouTube 追踪社区对产品发布的实时反应，通常需要维护脆弱的爬虫或签署昂贵的企业级数据流合同。
+
+## 提示词示例
+
+```text
+Analyze public developer discussion around "Seedance 2.5" over the last 14 days:
+1. Search recent X posts and top-engaged threads via XRoute Twitter APIs.
+2. Pull top YouTube review videos and engagement counts.
+3. Summarize top praised features and common questions.
+```
+
+## 使用的 API 与模型
+
+- **数据 API：** Twitter 搜索与用户信息（`/apis/v1/twitter/user-info`）、YouTube 搜索（`/apis/v1/youtube/serp`）
+- **模型：** `google/gemini-2.5-pro`

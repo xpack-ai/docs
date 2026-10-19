@@ -1,0 +1,51 @@
+---
+title: "認証"
+sidebarTitle: "認証"
+description: "MCP 向け OAuth、Bearer API キー、保管方法、およびローテーションについて解説します。"
+---
+
+XRoute は、AI エージェント向けのブラウザ OAuth と、アプリケーションサーバーやスクリプト向けの Bearer API キーという 2 つの主要な認証方法をサポートしています。
+
+## MCP および CLI 向け OAuth
+
+MCP クライアント（`https://mcp.xroute.ai/mcp`）を接続する場合や、CLI で `xroute login` を実行する場合、XRoute は PKCE を備えた OAuth 2.0 を使用します。
+
+1. クライアントがブラウザのサインインフローを開始します。
+2. XRoute コンソールでセッションと任意の利用上限を承認します。
+3. 短命トークンが発行され、クライアントによって自動的に更新されます。静的な API キーがディスクに書き込まれることはありません。
+
+## API キー
+
+サーバーサイド SDK、`curl`、および CI パイプラインでは、`Authorization` ヘッダーで XRoute API キーを渡します。
+
+```http
+Authorization: Bearer xr_live_...
+```
+
+### キーの設定
+
+各 API キーは XRoute コンソールで個別に設定できます。
+
+- **利用上限（Spending limit）:** キーごとの最大 USD 予算（日次、月次、または累計）を設定します。
+- **レート制限（Rate limit）:** キーごとにカスタムの RPM/TPM 上限を設定します。
+- **モデル許可リスト（Model allowlist）:** キーの利用を特定のモデルファミリーやデータ API カテゴリに制限します。
+
+### ローテーションと失効
+
+ゼロダウンタイムでローテーションを行うため、本番環境で使用中のキーを失効させる前に新しい代替キーを作成してください。失効したキーは即座に `401 Unauthorized` で失敗します。
+
+## キーの保管
+
+- キーは環境変数（`XROUTE_API_KEY`）またはシークレットマネージャーに保管してください。
+- ソースファイル、クライアントサイドの JavaScript バンドル、公開リポジトリにキーをハードコードしないでください。
+
+## 関連情報
+
+<CardGroup cols={2}>
+  <Card title="課金とクレジット" icon="credit-card" href="/ja/guides/pricing">
+    利用上限と呼び出し前の見積もりを設定します。
+  </Card>
+  <Card title="セキュリティとプライバシー" icon="lock" href="/ja/guides/security">
+    XRoute がプロンプトと認証情報をどのように保護するかを学びます。
+  </Card>
+</CardGroup>

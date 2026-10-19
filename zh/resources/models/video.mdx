@@ -1,0 +1,158 @@
+---
+title: "视频生成模型 (原生异步任务)"
+sidebarTitle: "视频模型"
+description: "通过异步任务创建与状态轮询机制，调用 Byteplus Seedance 与阿里 WAN 电影级视频生成模型。"
+---
+
+XRoute 聚合了全球主流前沿视频大模型，支持高动态画面生成、电影级运镜以及高分辨率物理运动模拟。
+
+<Warning>
+**仅支持原生异步任务格式**：由于视频生成消耗的算力与渲染耗时较长（通常在 30 秒至 120 秒之间），视频模型**必须采用供应商原生异步工作流**：
+1. **创建任务**：发送 POST 请求提交生成提示词与参数，接口立即返回 `task_id`（状态通常为 `QUEUED` 或 `RUNNING`）。
+2. **轮询状态**：客户端定期发送 GET 请求查询任务进度，待状态变为 `SUCCEEDED` 时提取生成的最终视频 URL。
+</Warning>
+
+---
+
+## 支持的视频模型列表
+
+| 供应商 | 模型标识 (Model ID) | 输出性能 | 任务创建端点 | 任务查询端点 |
+| :--- | :--- | :--- | :--- | :--- |
+| **Byteplus** | `Byteplus/seedance-1-5-pro-251215` | 最高 1080p，60fps 电影级质感 | `POST https://api.xroute.ai/Byteplus/contents/generations/tasks` | `GET https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}` |
+| **WAN** | `WAN/wan3.0-video-prime` | 复杂运动时序一致性，720p/1080p | `POST https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis` | `GET https://api.xroute.ai/WAN/tasks/{task_id}` |
+
+---
+
+## 1. Byteplus Seedance 异步工作流
+
+Seedance 模型在镜头复杂运动、物理交互真实度上表现卓越。
+
+### 第一步：提交视频生成任务
+
+- **接口端点**：`POST https://api.xroute.ai/Byteplus/contents/generations/tasks`
+- **请求头**：`Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance-1-5-pro-251215",
+    "content": [
+      {
+        "type": "text",
+        "text": "FPV 无人机在日落时分穿越赛博朋克峡谷，电影级光影，镜头平滑翻转"
+      }
+    ]
+  }'
+```
+
+```json 响应结果 (Response)
+{
+  "id": "cgt-20261019-897321",
+  "status": "QUEUED",
+  "created_at": 1792412800
+}
+```
+</CodeGroup>
+
+### 第二步：轮询任务状态
+
+- **接口端点**：`GET https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}`
+
+```bash cURL
+curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/cgt-20261019-897321" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+```json 渲染完成响应 (SUCCEEDED)
+{
+  "id": "cgt-20261019-897321",
+  "status": "SUCCEEDED",
+  "content": {
+    "video_url": "https://storage.xroute.ai/artifacts/videos/cgt-20261019-897321.mp4",
+    "duration": 5.0,
+    "resolution": "1920x1080"
+  }
+}
+```
+
+### 完整 Python 轮询脚本
+
+```python Python (Byteplus Ark SDK)
+import time
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+# 1. 提交任务
+task = client.content_generation.tasks.create(
+    model="Byteplus/seedance-1-5-pro-251215",
+    content=[
+        {
+            "type": "text",
+            "text": "FPV 无人机在日落时分穿越赛博朋克峡谷，电影级光影",
+        }
+    ],
+)
+task_id = task.id
+print(f"任务已成功提交，ID: {task_id}")
+
+# 2. 轮询直到完成
+while True:
+    status_response = client.content_generation.tasks.get(task_id=task_id)
+    current_status = status_response.status
+    print(f"当前渲染状态: {current_status}")
+
+    if current_status == "SUCCEEDED":
+        print(f"视频生成成功，下载地址: {status_response.content.video_url}")
+        break
+    elif current_status in ["FAILED", "CANCELLED"]:
+        print("任务生成失败:", status_response.error)
+        break
+
+    time.sleep(5)
+```
+
+---
+
+## 2. 阿里 WAN 视频合成原生端点 (DashScope 协议)
+
+WAN 模型采用阿里灵积（DashScope）异步任务标准。
+
+### 第一步：提交视频合成任务
+
+- **接口端点**：`POST https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis`
+- **请求头**：
+  - `Authorization: Bearer $XROUTE_API_KEY`
+  - `X-DashScope-Async: enable`
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "X-DashScope-Async: enable" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "wan3.0-video-prime",
+    "input": {
+      "prompt": "星空银河之下樱花延时盛开的奇幻景象"
+    },
+    "parameters": {
+      "size": "1280*720",
+      "duration": 5
+    }
+  }'
+```
+
+### 第二步：查询 WAN 任务状态
+
+- **接口端点**：`GET https://api.xroute.ai/WAN/tasks/{task_id}`
+
+```bash cURL
+curl -X GET "https://api.xroute.ai/WAN/tasks/wan-task-789012" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```

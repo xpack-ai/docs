@@ -1,0 +1,22 @@
+---
+title: "在 ChatGPT 中使用 XRoute"
+sidebarTitle: "ChatGPT"
+description: "通过 MCP 或 Custom GPT Actions 将 XRoute 连接到 ChatGPT。"
+---
+
+在 ChatGPT 中使用 XRoute 查询实时搜索、金融和社交数据 API，或调用专用外部模型。
+
+## 1. 连接 MCP 服务器
+
+在 ChatGPT 桌面端或网页端（**Settings -> Connectors -> Add MCP Server**）中配置：
+
+- **Server URL:** `https://mcp.xroute.ai/mcp`
+- **Authentication:** OAuth 2.0（浏览器登录）
+
+## 2. 控制审批策略
+
+允许免费发现工具（`account`、`list_categories`、`search`、`get_details`、`batch_quote`）无需确认直接运行，并在批准 `execute` 前审查费用报价。
+
+## 3. Custom GPT Actions（OpenAPI）
+
+如果您正在构建 Custom GPT，请导入 XRoute OpenAPI 规范（`https://api.xroute.ai/openapi.json`），并将 Action Authentication 设置为 **Bearer**，填入您的 `XROUTE_API_KEY`。

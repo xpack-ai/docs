@@ -1,0 +1,86 @@
+---
+title: "Models Overview & Catalog"
+sidebarTitle: "Overview"
+description: "Explore 60+ AI models aggregated on XRoute across Text, Image, and Video modalities with unified and native routing protocols."
+---
+
+Welcome to the **XRoute Model Catalog**. XRoute routes requests across global frontier models with unified billing, sub-50ms routing overhead, and vendor fallback.
+
+To help you find the right model quickly and integrate seamlessly, our catalog is organized by **output modality** and **protocol architecture**:
+
+<CardGroup cols={3}>
+  <Card title="Text Models (LLMs)" icon="message" href="/resources/models/text">
+    Chat & reasoning models. Supports **OpenAI Unified**, **Anthropic Unified**, and **Provider Native** formats.
+  </Card>
+  <Card title="Image Models" icon="image" href="/resources/models/image">
+    Text-to-image & image editing. **Native provider format only** (OpenAI, Google, Byteplus, Qwen).
+  </Card>
+  <Card title="Video Models" icon="video" href="/resources/models/video">
+    Text-to-video & image-to-video. **Native async task format only** (Byteplus, WAN DashScope).
+  </Card>
+</CardGroup>
+
+---
+
+## Modality & Protocol Support Matrix
+
+| Output Modality | Supported Calling Protocols | Primary Endpoints | Best Use Cases |
+| :--- | :--- | :--- | :--- |
+| **Text Generation** | • OpenAI Unified (`/v1/chat/completions`)<br />• Anthropic Unified (`/v1/messages`)<br />• Native Direct (`/{Provider}/...`) | `https://api.xroute.ai/v1/chat/completions`<br />`https://api.xroute.ai/v1/messages`<br />`https://api.xroute.ai/{Provider}/...` | Chatbots, coding agents, structured extraction, automated reasoning |
+| **Image Generation** | • **Native Provider Only** | `https://api.xroute.ai/{Provider}/images/generations`<br />`https://api.xroute.ai/Google/image/...` | Graphic design, product mockups, game assets, marketing visuals |
+| **Video Generation** | • **Native Async Tasks Only** (Create & Poll) | Create: `https://api.xroute.ai/{Provider}/.../tasks`<br />Query: `https://api.xroute.ai/{Provider}/.../tasks/{id}` | Short video ads, character animation, film pre-visualization |
+
+---
+
+## Featured Models by Modality
+
+<Tabs>
+  <Tab title="Text (LLMs)">
+    | Provider | Model Identifier | Context Window | Supported Protocols | Strengths |
+    | :--- | :--- | :--- | :--- | :--- |
+    | **OpenAI** | `OpenAI/gpt-5.6-sol` | 200K | OpenAI / Anthropic / Native | Frontier enterprise reasoning, deep coding |
+    | **Anthropic** | `Anthropic/claude-fable-5` | 200K | OpenAI / Anthropic / Native | Long-context understanding, high steerability |
+    | **Google** | `Google/gemini-3.1-pro-preview` | 1M | OpenAI / Anthropic / Native | Massive context analysis, multimodal input |
+    | **Byteplus** | `Byteplus/seed-2-0-code-preview-260328` | 128K | OpenAI / Anthropic / Native | Optimized code generation, low-latency agent tasks |
+    | **Deepseek** | `Deepseek/deepseek-v4-flash` | 64K | OpenAI / Anthropic / Native | High-throughput chat, cost-effective scaling |
+    | **GLM** | `GLM/glm-5` | 128K | OpenAI / Anthropic / Native | Bilingual reasoning, knowledge retrieval |
+
+    👉 [View complete Text Models guide and code samples](/resources/models/text)
+  </Tab>
+
+  <Tab title="Image">
+    | Provider | Model Identifier | Capability | Native Endpoint |
+    | :--- | :--- | :--- | :--- |
+    | **OpenAI** | `OpenAI/gpt-image-2.5-flare` | Text-to-Image | `POST https://api.xroute.ai/OpenAI/images/generations` |
+    | **OpenAI** | `OpenAI/gpt-image-2` | Image Edit & Inpaint | `POST https://api.xroute.ai/OpenAI/images/edits` |
+    | **Google** | `Google/gemini-3.1-flash-image` | Multimodal Image Gen | `POST https://api.xroute.ai/Google/image/models/{id}:generateContent` |
+    | **Byteplus** | `Byteplus/seedream-5-0-260128` | High-Res Visual Synthesis | `POST https://api.xroute.ai/Byteplus/images/generations` |
+    | **Qwen** | `Qwen/qwen-image-3.0-pro` | Multi-resolution Image Gen | `POST https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation` |
+
+    👉 [View complete Image Models guide and native samples](/resources/models/image)
+  </Tab>
+
+  <Tab title="Video">
+    | Provider | Model Identifier | Resolution & Specs | Task Lifecycle |
+    | :--- | :--- | :--- | :--- |
+    | **Byteplus** | `Byteplus/seedance-1-5-pro-251215` | Up to 1080p, 60fps cinematic | Create: `POST .../contents/generations/tasks`<br />Poll: `GET .../contents/generations/tasks/{task_id}` |
+    | **WAN** | `WAN/wan3.0-video-prime` | High dynamic coherence, 720p/1080p | Create: `POST .../video-generation/video-synthesis`<br />Poll: `GET .../tasks/{task_id}` |
+
+    👉 [View complete Video Models guide and async polling script](/resources/models/video)
+  </Tab>
+</Tabs>
+
+---
+
+## Unified Authorization & Routing
+
+Regardless of which model or modality you choose, all requests through XRoute use your **universal API key**:
+
+```bash
+# Export your unified API key
+export XROUTE_API_KEY="xr_live_your_key_here"
+```
+
+- Universal Gateway Base URL: `https://api.xroute.ai`
+- Consolidated Billing: One credit pool covers all vendors.
+- Live Real-Time Catalog: Visit [xroute.ai/en/model](https://xroute.ai/en/model) for real-time model pricing and latency statistics.

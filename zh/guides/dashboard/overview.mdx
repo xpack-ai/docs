@@ -1,0 +1,36 @@
+---
+title: "XRoute 控制台"
+sidebarTitle: "控制台"
+description: "XRoute 控制台概览：账户余额、30 天调用趋势、API 密钥、模型演练场与单次请求用量日志。"
+---
+
+XRoute 控制台为您提供模型调用、数据 API 消费和网关策略的实时可视性。
+
+## 仪表盘（Dashboard）
+
+主仪表盘展示以下内容：
+
+- **渠道余额（Channel Balance）：** 您的实时预付费积分余额与充值记录。
+- **调用统计（Call Statistics）：** 全局模型与 API 调用次数、Token 吞吐量及错误率。
+- **模型调用趋势（Model Invocation Trend）：** 追踪过去 30 天内各模型每日请求量与消费金额的交互式图表。
+
+## 演练场（Playground）
+
+在编写代码之前，直接在浏览器中测试 60+ 款文本、推理、视频与音频模型中的任意一款：
+
+- 并排对比 `deepseek/deepseek-r1`、`anthropic/claude-sonnet-4` 和 `Byteplus/dreamina-seedance-2-5` 等模型的输出结果与延迟。
+- 一键导出可直接运行的 `curl`、Python 或 TypeScript 代码片段。
+
+## 用量与日志（Usage and Logs）
+
+查看逐条请求日志，包括时间戳、模型 ID、提示词/补全 Token 数、延迟以及结算的美元费用。
+
+### 使用 API 密钥查询用量
+
+您也可以通过编程方式获取用量汇总：
+
+```bash
+# Positive Unix seconds in UTC; this example selects the last 24 hours.
+curl "https://api.xroute.ai/apis/v1/account/usage?start_time=1760745600&end_time=1760832000" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```

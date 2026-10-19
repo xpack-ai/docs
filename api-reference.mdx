@@ -1,0 +1,43 @@
+---
+title: "API Reference"
+sidebarTitle: "API Reference"
+description: "One key, one base URL (https://api.xroute.ai), every API. Browse every model and data endpoint XRoute routes to."
+---
+
+XRoute provides unified HTTP endpoints under the base prefix **`https://api.xroute.ai`** for 60+ LLMs, media generators, and 100+ real-time data APIs.
+
+## Base URLs
+
+All API requests share the unified origin `https://api.xroute.ai`:
+
+| Mode / Service | Base URL / Endpoint Prefix |
+| :--- | :--- |
+| **OpenAI-compatible Gateway** | `https://api.xroute.ai/v1` |
+| **Anthropic-compatible Gateway** | `https://api.xroute.ai/v1/messages` |
+| **Native Format Gateway (e.g., Gemini)** | `https://api.xroute.ai/v1beta` |
+| **Real-time Data & Account APIs** | `https://api.xroute.ai/apis/v1` |
+| **MCP Server** | `https://mcp.xroute.ai/mcp` |
+
+## Essentials
+
+<CardGroup cols={2}>
+  <Card title="Credit Balance" icon="wallet" href="/api-reference/credits-balance">
+    Check your remaining prepaid Credits and key spending limits (`GET https://api.xroute.ai/apis/v1/account/balance`).
+  </Card>
+
+  <Card title="Account Usage" icon="chart-bar" href="/api-reference/account-usage">
+    Query historical invocation totals and settled USD spend (`GET https://api.xroute.ai/apis/v1/account/usage`).
+  </Card>
+
+  <Card title="Chat Completions" icon="comments" href="/api-reference/chat-completions">
+    Call 60+ frontier models via OpenAI format, Anthropic format, or provider-native format under `https://api.xroute.ai`.
+  </Card>
+
+  <Card title="List Models" icon="list" href="/api-reference/models-list">
+    Fetch live model IDs, context windows, and token pricing (`GET https://api.xroute.ai/v1/models`).
+  </Card>
+</CardGroup>
+
+## Settled call cost
+
+Every paid response includes the `x-xroute-cost-usd` header reporting the exact USD amount deducted from your Credits balance.

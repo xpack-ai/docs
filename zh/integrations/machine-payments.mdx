@@ -1,0 +1,19 @@
+---
+title: "面向 AI 智能体的机器支付（MPP）"
+sidebarTitle: "机器支付"
+description: "无需 API 密钥，通过 HTTP 402 按请求为精选只读数据端点付费。"
+---
+
+机器支付协议（Machine Payments Protocol，MPP）允许自主智能体直接通过 HTTP `402 Payment Required` 为精选的只读 XRoute 数据 API 请求付费，无需预先注册账户或存储 API 密钥。
+
+## 付费请求工作原理
+
+1. **初始请求：** 您的智能体在不携带 `Authorization` 请求头的情况下调用受支持的数据端点。
+2. **402 报价：** XRoute 返回 `HTTP 402 Payment Required` 以及一个包含精确美元微支付价格与结算指令的 MPP 支付报价响应头。
+3. **结算与重试：** 您的智能体钱包对支付凭证进行签名，并携带 `X-Payment-Proof` 请求头重试该请求。
+4. **履约响应：** XRoute 验证结算完成后，立即返回实时数据载荷。
+
+## 智能体安全准则
+
+- 在签署支付凭证前，务必核对 `402` 报价金额是否符合您任务的单次调用最高预算。
+- 在运行高频工作流时，建议优先使用标准预付 Credits（`Authorization: Bearer $XROUTE_API_KEY`）或 MCP OAuth。

@@ -1,0 +1,51 @@
+---
+title: "身份认证"
+sidebarTitle: "身份认证"
+description: "适用于 MCP 的 OAuth、Bearer API 密钥、安全存储与密钥轮换。"
+---
+
+XRoute 支持两种主要的身份认证方式：面向 AI 智能体的浏览器 OAuth，以及面向应用服务器和脚本的 Bearer API 密钥。
+
+## 面向 MCP 与 CLI 的 OAuth
+
+在连接 MCP 客户端（`https://mcp.xroute.ai/mcp`）或在 CLI 中运行 `xroute login` 时，XRoute 使用带有 PKCE 的 OAuth 2.0：
+
+1. 您的客户端发起浏览器登录流程。
+2. 您在 XRoute 控制台中批准该会话及可选的消费上限。
+3. 客户端会自动获取并刷新短期令牌——不会向磁盘写入任何静态 API 密钥。
+
+## API 密钥
+
+对于服务端 SDK、`curl` 及 CI 流水线，请在 `Authorization` 请求头中传入您的 XRoute API 密钥：
+
+```http
+Authorization: Bearer xr_live_...
+```
+
+### 密钥设置
+
+每个 API 密钥都可以在 XRoute 控制台中独立配置：
+
+- **消费限额：** 为每个密钥设置最高美元预算（每日、每月或总计）。
+- **速率限制：** 为每个密钥配置自定义 RPM/TPM 上限。
+- **模型白名单：** 将密钥限制为仅可访问特定模型家族或数据 API 分类。
+
+### 轮换与吊销
+
+在吊销正在使用的生产环境密钥之前，请先创建替换密钥，以确保零停机轮换。已吊销的密钥会立即失效并返回 `401 Unauthorized`。
+
+## 存储密钥
+
+- 将密钥存储在环境变量（`XROUTE_API_KEY`）或密钥管理器中。
+- 切勿将密钥硬编码在源代码文件、客户端 JavaScript 打包产物或公开代码仓库中。
+
+## 相关内容
+
+<CardGroup cols={2}>
+  <Card title="计费与积分" icon="credit-card" href="/zh/guides/pricing">
+    配置消费上限与调用前询价。
+  </Card>
+  <Card title="安全与隐私" icon="lock" href="/zh/guides/security">
+    了解 XRoute 如何保护您的提示词与凭据。
+  </Card>
+</CardGroup>

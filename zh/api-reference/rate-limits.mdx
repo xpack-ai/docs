@@ -1,0 +1,51 @@
+---
+title: "速率限制"
+sidebarTitle: "速率限制"
+description: "了解 XRoute 如何管理速率限制、429 响应头及多提供商负载均衡。"
+---
+
+XRoute 汇聚了 50+ 家活跃上游提供商的容量，以最大化吞吐量并尽可能减少 `429 Too Many Requests` 错误。
+
+## 429 错误的来源
+
+`429` 响应通常出现在以下两种情况之一：
+
+1. **自定义密钥限额：** 您的 API 密钥达到了在控制台中配置的自定义 RPM（每分钟请求数）或 TPM（每分钟 Token 数）上限。
+2. **全局模型并发限制：** 专用模型（例如视频生成模型）达到了您账户等级的并发任务上限。
+
+## 速率限制响应头
+
+每个响应均包含标准的速率限制响应头：
+
+| 响应头 | 说明 |
+| :--- | :--- |
+| `x-ratelimit-limit-requests` | 当前时间窗口内允许的最大请求数。 |
+| `x-ratelimit-remaining-requests` | 当前时间窗口内剩余的请求数。 |
+| `x-ratelimit-reset-requests` | 距离请求窗口重置的秒数。 |
+| `retry-after` | 收到 `429` 后重试前需等待的秒数。 |
+
+## 处理 429 响应
+
+### 示例：遇到 429 时重试
+
+```python
+import time
+from openai import OpenAI, RateLimitError
+
+client = OpenAI(base_url="https://api.xroute.ai/v1")
+
+for attempt in range(4):
+    try:
+        response = client.chat.completions.create(
+            model="deepseek/deepseek-r1",
+            messages=[{"role": "user", "content": "Hello!"}],
+        )
+        break
+    except RateLimitError as e:
+        wait = 2 ** attempt
+        time.sleep(wait)
+```
+
+## 需要更高配额？
+
+企业账户可通过 [support@xroute.ai](mailto:support@xroute.ai) 申请专属集群配额与自定义并发池。

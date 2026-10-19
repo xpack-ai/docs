@@ -1,0 +1,158 @@
+---
+title: "Video Models (Native Async Tasks)"
+sidebarTitle: "Video Models"
+description: "Generate cinematic AI videos using asynchronous task creation and status polling via Byteplus Seedance and WAN on XRoute."
+---
+
+XRoute connects developers to leading generative video models for high-definition video synthesis, character motion, and visual storytelling.
+
+<Warning>
+**Native Asynchronous Task Only**: Video generation takes extended compute time (typically 30s–120s). Video models **strictly use vendor-native asynchronous task protocols**:
+1. **Submit Task**: POST request returning an initial `task_id` with `status: "PENDING"` or `"RUNNING"`.
+2. **Poll Status**: Periodic GET requests until `status: "SUCCEEDED"` with generated video download URLs.
+</Warning>
+
+---
+
+## Supported Video Models
+
+| Provider | Model Identifier | Output Capability | Task Submission Endpoint | Task Polling Endpoint |
+| :--- | :--- | :--- | :--- | :--- |
+| **Byteplus** | `Byteplus/seedance-1-5-pro-251215` | Up to 1080p, 60fps cinematic rendering | `POST https://api.xroute.ai/Byteplus/contents/generations/tasks` | `GET https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}` |
+| **WAN** | `WAN/wan3.0-video-prime` | High dynamic consistency, 720p/1080p video | `POST https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis` | `GET https://api.xroute.ai/WAN/tasks/{task_id}` |
+
+---
+
+## 1. Byteplus Seedance Workflow
+
+Seedance produces cinematic camera dynamics and physics-grounded scene animation.
+
+### Step 1: Submit Video Generation Task
+
+- **Endpoint**: `POST https://api.xroute.ai/Byteplus/contents/generations/tasks`
+- **Header**: `Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance-1-5-pro-251215",
+    "content": [
+      {
+        "type": "text",
+        "text": "FPV drone speeding through a neon-lit futuristic canyon at sunset, cinematic lighting, ultra-smooth camera roll"
+      }
+    ]
+  }'
+```
+
+```json Response
+{
+  "id": "cgt-20261019-897321",
+  "status": "QUEUED",
+  "created_at": 1792412800
+}
+```
+</CodeGroup>
+
+### Step 2: Poll Task Status
+
+- **Endpoint**: `GET https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}`
+
+```bash cURL
+curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/cgt-20261019-897321" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+```json Response (Completed)
+{
+  "id": "cgt-20261019-897321",
+  "status": "SUCCEEDED",
+  "content": {
+    "video_url": "https://storage.xroute.ai/artifacts/videos/cgt-20261019-897321.mp4",
+    "duration": 5.0,
+    "resolution": "1920x1080"
+  }
+}
+```
+
+### Complete Python Polling Script
+
+```python Python (Byteplus Ark SDK)
+import time
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+# 1. Create task
+task = client.content_generation.tasks.create(
+    model="Byteplus/seedance-1-5-pro-251215",
+    content=[
+        {
+            "type": "text",
+            "text": "FPV drone speeding through a neon-lit futuristic canyon at sunset",
+        }
+    ],
+)
+task_id = task.id
+print(f"Submitted task: {task_id}")
+
+# 2. Poll until completed
+while True:
+    status_response = client.content_generation.tasks.get(task_id=task_id)
+    current_status = status_response.status
+    print(f"Current status: {current_status}")
+
+    if current_status == "SUCCEEDED":
+        print(f"Video URL: {status_response.content.video_url}")
+        break
+    elif current_status in ["FAILED", "CANCELLED"]:
+        print("Task failed:", status_response.error)
+        break
+
+    time.sleep(5)
+```
+
+---
+
+## 2. WAN Video Synthesis Native (DashScope Protocol)
+
+WAN models use Alibaba DashScope's asynchronous synthesis standard.
+
+### Step 1: Submit Synthesis Task
+
+- **Endpoint**: `POST https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis`
+- **Header**:
+  - `Authorization: Bearer $XROUTE_API_KEY`
+  - `X-DashScope-Async: enable`
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "X-DashScope-Async: enable" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "wan3.0-video-prime",
+    "input": {
+      "prompt": "Time-lapse of blooming cherry blossoms under starry nebula night sky"
+    },
+    "parameters": {
+      "size": "1280*720",
+      "duration": 5
+    }
+  }'
+```
+
+### Step 2: Poll WAN Task
+
+- **Endpoint**: `GET https://api.xroute.ai/WAN/tasks/{task_id}`
+
+```bash cURL
+curl -X GET "https://api.xroute.ai/WAN/tasks/wan-task-789012" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```

@@ -1,0 +1,23 @@
+---
+title: "Build a Sales Research Agent with XRoute"
+sidebarTitle: "Sales Research Agent"
+description: "Enrich target accounts with web traffic, SEO footprint, and executive signals in one agent workflow."
+---
+
+## The problem
+
+Outbound sales and GTM teams spend hours manually checking a prospect's traffic growth, tech stack, and recent company news before drafting outreach.
+
+## Prompt
+
+```text
+Prepare an account intelligence card for acme.com:
+1. Pull SimilarWeb traffic estimates and top referral channels via XRoute.
+2. Fetch recent executive announcements and product launches from Web & X search.
+3. Draft a tailored 3-bullet value proposition.
+```
+
+## APIs and Models used
+
+- **Data APIs:** SimilarWeb Analytics (`/apis/v1/similarweb/similar-sites`), Web Search, Twitter User Info
+- **Model:** `openai/gpt-4.1`

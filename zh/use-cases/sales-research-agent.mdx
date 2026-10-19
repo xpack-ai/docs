@@ -1,0 +1,23 @@
+---
+title: "使用 XRoute 构建销售调研智能体"
+sidebarTitle: "销售调研智能体"
+description: "在一个智能体工作流中，使用网站流量、SEO 表现和高管动态丰富目标客户画像。"
+---
+
+## 面临的问题
+
+外呼销售和 GTM 团队在起草触达邮件之前，往往需要花费数小时手动查询潜在客户的流量增长、技术栈和近期公司动态。
+
+## 提示词示例
+
+```text
+Prepare an account intelligence card for acme.com:
+1. Pull SimilarWeb traffic estimates and top referral channels via XRoute.
+2. Fetch recent executive announcements and product launches from Web & X search.
+3. Draft a tailored 3-bullet value proposition.
+```
+
+## 使用的 API 与模型
+
+- **数据 API：** SimilarWeb 流量分析（`/apis/v1/similarweb/similar-sites`）、网页搜索、Twitter 用户信息
+- **模型：** `openai/gpt-4.1`

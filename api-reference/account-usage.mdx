@@ -1,0 +1,31 @@
+---
+title: "Account Usage"
+sidebarTitle: "Account Usage"
+description: "Query aggregated token usage, call counts, and settled spend across a time window."
+---
+
+## Request contract
+
+`GET https://api.xroute.ai/apis/v1/account/usage`
+
+| Query Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `start_time` | `integer` | Yes | Start Unix timestamp in UTC seconds. |
+| `end_time` | `integer` | Yes | End Unix timestamp in UTC seconds. |
+| `model` | `string` | No | Optional filter by model ID (for example `deepseek/deepseek-r1`). |
+
+```bash
+curl "https://api.xroute.ai/apis/v1/account/usage?start_time=1760745600&end_time=1760832000" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+## Response
+
+```json
+{
+  "total_requests": 1240,
+  "input_tokens": 3420100,
+  "output_tokens": 812400,
+  "total_cost_usd": 4.18
+}
+```

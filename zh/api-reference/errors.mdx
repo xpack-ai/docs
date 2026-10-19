@@ -1,0 +1,49 @@
+---
+title: "错误码"
+sidebarTitle: "错误码"
+description: "集成 API 的错误格式、六大诊断分类与安全重试指南。"
+---
+
+XRoute 在所有模型与数据 API 端点中均返回标准的 HTTP 状态码和结构化的 JSON 错误负载。
+
+## 响应格式取决于端点类型
+
+- **OpenAI 兼容端点（`/v1/*`）：** 返回标准的 `{ "error": { "message", "type", "code" } }` 封装格式。
+- **数据 API 端点（`/apis/v1/*`）：** 返回 `{ "code", "message", "category", "request_id", "retryable" }`。
+
+## 六大诊断分类
+
+| HTTP 状态码 | 分类 | 是否可重试？ | 建议操作 |
+| :--- | :--- | :--- | :--- |
+| `400` | `invalid_parameters` | 否 | 使用 `get_details` 检查并修复请求体或参数类型。 |
+| `401` | `authentication_error` | 否 | 验证 `Authorization: Bearer $XROUTE_API_KEY` 或重新执行 OAuth 登录。 |
+| `402` | `insufficient_credits` | 否 | 在控制台中充值积分、提高密钥消费上限，或完成 MPP 付款。 |
+| `404` | `not_found` | 否 | 通过 `GET /v1/models` 检查模型 ID，或通过 `search` 检查端点路径。 |
+| `429` | `rate_limit_exceeded` | 是 | 根据 `Retry-After` 响应头进行退避等待后再重试。 |
+| `500` / `503` | `upstream_unavailable` | 是 | XRoute 会跨集群自动故障转移；如果所有上游均已饱和，请使用指数退避进行重试。 |
+
+## 网关错误示例
+
+### 身份认证：API 密钥错误
+
+```json
+{
+  "error": {
+    "message": "Invalid or revoked API key provided.",
+    "type": "authentication_error",
+    "code": "invalid_api_key"
+  }
+}
+```
+
+### 参数错误：原生请求
+
+```json
+{
+  "code": 400,
+  "category": "invalid_parameters",
+  "message": "Missing required field: 'query'",
+  "request_id": "req_9f82a10c4b",
+  "retryable": false
+}
+```

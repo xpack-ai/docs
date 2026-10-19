@@ -1,0 +1,45 @@
+---
+title: "Billing & Credits"
+sidebarTitle: "Billing & Credits"
+description: "How XRoute bills usage: one prepaid balance, per-token model pricing, fixed or metered data-API pricing, free quotes, and spend caps."
+---
+
+XRoute uses a unified prepaid Credits balance across all 60+ LLMs, video/audio generators, and 100+ real-time data APIs.
+
+## Credits and top-ups
+
+- **1 Credit = $1.00 USD.**
+- Top up your balance in the XRoute Console via credit card, Alipay, WeChat Pay, or crypto.
+- Credits apply universally across text models, reasoning models, video generation (such as Seedance 2.5), audio synthesis, and data APIs.
+
+## Models
+
+- **Text & reasoning models:** Billed per 1M input tokens and 1M output tokens. Leveraging partnerships with 50+ upstream providers, XRoute delivers rates below official direct connections.
+- **Video & audio models:** Billed per generated second, resolution tier, or request unit.
+
+## Data APIs
+
+- **Fixed per-call pricing:** Most search, financial, and social lookup endpoints charge a fixed USD amount per successful call.
+- **Metered pricing:** Bulk extraction or multi-record endpoints charge per returned item, with a predictable base fee.
+
+## Cost estimates, quotes, and charges
+
+Discovery and quoting are always **free**:
+
+- `GET /v1/models`
+- MCP operations: `account`, `list_categories`, `search`, `get_details`, `batch_quote`
+- CLI commands: `xroute account`, `xroute search`, `xroute details`, `xroute quote --json`
+
+## Quote, review, then execute
+
+Before running paid calls in an agent workflow, request a quote:
+
+```bash
+xroute quote search/web --json
+```
+
+If the quote returns `"auto_execute_eligible": true`, the call falls within your pre-approved threshold and can run immediately. Otherwise, the agent presents the planned calls, unit prices, and total USD budget for your approval.
+
+## Budgeting an agent workflow
+
+Combine **per-key spending limits** in the Console with **pre-call quotes** (`batch_quote`) so autonomous loops never exceed your intended budget.

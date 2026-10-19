@@ -1,0 +1,75 @@
+---
+title: "XRoute へようこそ"
+sidebarTitle: "ようこそ"
+description: "1 つの API キーですべての LLM、画像モデル、動画モデルにアクセスし、従量課金で利用できます。"
+---
+
+XRoute は、AI エージェントと開発者がテキスト・画像・動画の各モデルを検索、呼び出し、決済するための単一のゲートウェイを提供します。
+
+ベンダーごとに個別のアカウントやサブスクリプションを管理する代わりに、1 つの API キーで以下にアクセスできます。
+
+- **主要な LLM とマルチモーダルモデル:** OpenAI 形式、Anthropic 形式、またはネイティブ形式を通じて、OpenAI、Anthropic、Gemini、Grok、DeepSeek、Byteplus Ark、Qwen、Kimi、GLM、MiniMax などを呼び出せます。
+- **画像・動画生成モデル:** OpenAI DALL-E、火山方舟 Seedream、Google Imagen、Seedance 動画、および阿里 WAN 動画生成モデルをネイティブ呼び出しできます。
+- **従量課金:** すべての呼び出しは単一のプリペイド残高から引き落とされ、キーごとの利用上限設定や透明性の高いトークン・使用量コスト計算をサポートします。
+
+## AI エージェント向け
+
+XRoute をツールとしてエージェントに接続します。サインインはブラウザの OAuth 経由で行われるため、API キーをコピーする必要はありません。
+
+<CardGroup cols={2}>
+  <Card title="MCP で接続" icon="plug" href="/ja/agent-quickstart">
+    推奨。Claude Code、Codex、Cursor、または任意の MCP クライアントに `https://mcp.xroute.ai/mcp` を追加します。
+  </Card>
+
+  <Card title="Agent Skill をインストール（近日公開 / Coming Soon）" icon="wand-magic-sparkles" href="/ja/get-started/agent-skill">
+    近日公開（Coming Soon）。コーディングエージェントに XRoute の利用手順を組み込みます。
+  </Card>
+
+  <Card title="CLI を使用" icon="terminal" href="/ja/get-started/cli">
+    ターミナル、スクリプト、CI 環境からツールの検索、見積もり、呼び出しを行います。
+  </Card>
+
+  <Card title="連携ガイド" icon="puzzle-piece" href="/ja/guides/tutorials/use-xroute-in-claude">
+    Claude Code、Codex、Cursor、OpenClaw、ChatGPT などのセットアップガイドです。
+  </Card>
+</CardGroup>
+
+## 開発者向け
+
+標準 SDK または直接の HTTP 呼び出しを使用して、XRoute をコードに統合します。
+
+<CardGroup cols={2}>
+  <Card title="API キーと最初の呼び出し" icon="key" href="/ja/guides/getting-started-with-xroute">
+    キーを作成し、curl で最初のリクエストを送信します。
+  </Card>
+
+  <Card title="OpenAI / Anthropic SDK" icon="arrows-rotate" href="/ja/get-started/sdk-compatibility">
+    既存の SDK をそのまま維持し、ベース URL と API キーを切り替えるだけで利用できます。
+  </Card>
+
+  <Card title="API リファレンス" icon="code" href="/ja/api-reference">
+    すべてのモデルおよびデータエンドポイントをインタラクティブな例で確認できます。
+  </Card>
+
+  <Card title="仕組み" icon="diagram-project" href="/ja/how-it-works">
+    認証、エンドポイント、課金がどのように連携するかを解説します。
+  </Card>
+</CardGroup>
+
+## 利用可能なリソース
+
+<CardGroup cols={3}>
+  <Card title="モデル" icon="microchip" href="https://xroute.ai/en/model">
+    GPT、Claude、Gemini、Grok、DeepSeek、Seedance、Qwen、Kimi などを 1 つのエンドポイントで利用できます。
+  </Card>
+
+  <Card title="SDK の互換性" icon="arrows-rotate" href="/ja/get-started/sdk-compatibility">
+    OpenAI、Anthropic、Google GenAI、Byteplus 公式 SDK をそのまま利用可能です。
+  </Card>
+
+  <Card title="Agent Skills（近日公開 / Coming Soon）" icon="wand-magic-sparkles" href="/ja/agent-skills">
+    近日公開（Coming Soon）。コーディングエージェント向けのすぐに使えるタスク指示セットです。
+  </Card>
+</CardGroup>
+
+ライブカタログ: モデルは [xroute.ai/en/model](https://xroute.ai/en/model)、データ API は [xroute.ai](https://xroute.ai) をご覧ください。

@@ -1,0 +1,66 @@
+---
+title: "将您的智能体连接至 XRoute"
+sidebarTitle: "通过 MCP 连接"
+description: "添加 https://mcp.xroute.ai/mcp，通过 OAuth 登录，并使用免费的 account 操作完成验证。"
+---
+
+通过模型上下文协议（MCP）将 XRoute 连接到您的 AI 编程智能体。登录流程在浏览器中通过 OAuth 完成，无需复制或粘贴任何 API 密钥。
+
+## 智能体配置说明
+
+### MCP（默认方式）
+
+将远程 MCP 服务器地址 `https://mcp.xroute.ai/mcp` 添加到您的客户端：
+
+<CodeGroup>
+
+```bash Claude Code
+claude mcp add --transport http xroute https://mcp.xroute.ai/mcp
+```
+
+```bash Codex
+codex mcp add xroute --url https://mcp.xroute.ai/mcp
+```
+
+```json Cursor (.cursor/mcp.json)
+{
+  "mcpServers": {
+    "xroute": {
+      "url": "https://mcp.xroute.ai/mcp"
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+添加完成后，您的客户端会打开浏览器窗口以登录 XRoute 并授权该连接。
+
+### CLI（仅在无法运行 MCP 时使用）
+
+如果您的运行环境不支持远程 MCP 服务器，请改用安装 XRoute CLI：
+
+```bash
+npm install -g @xroute/cli
+xroute login
+```
+
+有关完整的命令参考与 CI 配置，请参阅[使用 CLI](/zh/get-started/cli)。
+
+### 完成验证
+
+在您的智能体中运行免费的 `account` 检查工具来验证连接状态：
+
+1. 向智能体提问：*“检查我的 XRoute 账户余额和可用的工具分类。”*
+2. 确认 `account` 和 `list_categories` 操作以零费用返回您当前的可用积分余额。
+
+## 提供的 MCP 工具
+
+| 工具 | 费用 | 说明 |
+| :--- | :--- | :--- |
+| `account` | 免费 | 查看预付费积分余额与密钥消费限额。 |
+| `list_categories` | 免费 | 列出所有可用的大语言模型与实时数据 API 分类。 |
+| `search` | 免费 | 按能力、关键词或提供商搜索端点。 |
+| `get_details` | 免费 | 查看指定端点的请求参数、Schema 与定价详情。 |
+| `batch_quote` | 免费 | 在执行一次或多次调用前计算精确的费用报价。 |
+| `execute` | 付费 | 调用目标模型或数据端点并返回结构化输出。 |

@@ -1,0 +1,19 @@
+---
+title: "Machine Payments (MPP) for AI Agents"
+sidebarTitle: "Machine Payments"
+description: "Pay for selected read-only data endpoints per request over HTTP 402 without an API key."
+---
+
+Machine Payments Protocol (MPP) lets autonomous agents pay for selected read-only XRoute data API requests directly over HTTP `402 Payment Required`, without pre-registering an account or storing an API key.
+
+## How a paid request works
+
+1. **Initial request:** Your agent calls a supported data endpoint without an `Authorization` header.
+2. **402 Offer:** XRoute responds with `HTTP 402 Payment Required` and an MPP payment offer header containing the exact USD micro-price and settlement instructions.
+3. **Settlement & Retry:** Your agent's wallet signs the payment proof and retries the request with the `X-Payment-Proof` header.
+4. **Fulfillment:** XRoute verifies settlement and returns the live data payload immediately.
+
+## Safety rules for agents
+
+- Always verify the `402` offer amount against your task's maximum per-call budget before signing a payment proof.
+- Prefer standard prepaid Credits (`Authorization: Bearer $XROUTE_API_KEY`) or MCP OAuth when running high-frequency workflows.

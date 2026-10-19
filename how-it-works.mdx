@@ -1,0 +1,71 @@
+---
+title: "How XRoute Works"
+sidebarTitle: "How It Works"
+description: "Learn how authentication, unified endpoints, and pay-per-use billing work together in one request path."
+---
+
+XRoute sits between your application or AI agent and 60+ global model providers and 100+ real-time data APIs. You authenticate once, call a standard endpoint, and pay per request from a single prepaid balance.
+
+## 1. Authenticate
+
+Choose the authentication flow that matches how you connect:
+
+- **OAuth for MCP & CLI (recommended for agents):** Connect your coding agent to `https://mcp.xroute.ai/mcp` and sign in through your browser. No API key needs to be copied into config files.
+- **Bearer API Key (for applications & SDKs):** Generate an API key in the XRoute Console and pass it in the `Authorization: Bearer $XROUTE_API_KEY` header.
+- **Machine Payments (MPP):** Selected read-only data endpoints support HTTP 402 machine payments without requiring an account or API key.
+
+## 2. Call an endpoint
+
+All requests go through XRoute's high-availability edge gateway:
+
+| Capability | Base URL | Protocol Compatibility |
+| :--- | :--- | :--- |
+| Chat & Reasoning LLMs | `https://api.xroute.ai/v1` | OpenAI `/v1/chat/completions`, Anthropic `/v1/messages` |
+| Gemini Native | `https://api.xroute.ai/v1beta` | Google `generateContent` |
+| Video & Audio Generation | `https://api.xroute.ai/v1` | Seedance 2.5, Kling, Flux, Audio TTS |
+| Real-time Data APIs | `https://api.xroute.ai/apis/v1` | REST JSON endpoints & MCP tool calls |
+
+```bash
+curl https://api.xroute.ai/v1/chat/completions \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek/deepseek-r1",
+    "messages": [
+      {"role": "user", "content": "Explain how edge routing reduces TTFT."}
+    ]
+  }'
+```
+
+## 3. Pay per use
+
+Every call draws from your unified Credits balance:
+
+- **Models:** Billed per input and output token at transparent, vendor-beating rates.
+- **Data APIs:** Billed per request or per returned record.
+- **Free quotes:** Query `/v1/models` or run MCP `batch_quote` / CLI `xroute quote --json` at zero cost before executing paid calls.
+
+## What XRoute handles vs. what you own
+
+| Layer | Handled by XRoute | Owned by You |
+| :--- | :--- | :--- |
+| **Provider accounts** | Contracts, rate-limit pools, and multi-cluster failover | One XRoute account and API key |
+| **Routing & failover** | Automatic regional edge routing and 7x24 failover | Model selection and prompt logic |
+| **Spend control** | Per-key limits, pre-call cost quotes, and usage logs | Task budget approvals in your agent |
+
+## When to use XRoute
+
+- **Building AI agents:** Give Claude Code, Cursor, Codex, or custom agents instant access to search, finance, social data, and 60+ LLMs.
+- **Production LLM apps:** Eliminate single-vendor downtime with multi-cluster automatic failover and low-latency edge routing.
+- **Multi-modal workflows:** Combine text reasoning (`deepseek/deepseek-r1`, `anthropic/claude-sonnet-4`) with video generation (`Byteplus/dreamina-seedance-2-5`) under one billing balance.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Connect via MCP" icon="plug" href="/agent-quickstart">
+    Connect your coding agent in under a minute using browser OAuth.
+  </Card>
+  <Card title="API Key & First Call" icon="key" href="/guides/getting-started-with-xroute">
+    Create an API key and make your first HTTP request.
+  </Card>
+</CardGroup>

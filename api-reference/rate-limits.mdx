@@ -1,0 +1,51 @@
+---
+title: "Rate Limits"
+sidebarTitle: "Rate Limits"
+description: "Understand how XRoute manages rate limits, 429 headers, and multi-provider load balancing."
+---
+
+XRoute pools capacity across 50+ active upstream providers to maximize throughput and minimize `429 Too Many Requests` errors.
+
+## Where a 429 comes from
+
+A `429` response occurs in one of two cases:
+
+1. **Custom key limit:** Your API key reached the custom RPM (requests per minute) or TPM (tokens per minute) ceiling configured in the Console.
+2. **Global model concurrency limit:** A specialized model (such as video generation) reached your account tier's concurrent task cap.
+
+## Rate limit headers
+
+Every response includes standard rate-limit headers:
+
+| Header | Description |
+| :--- | :--- |
+| `x-ratelimit-limit-requests` | Maximum requests allowed in the current window. |
+| `x-ratelimit-remaining-requests` | Remaining requests in the current window. |
+| `x-ratelimit-reset-requests` | Seconds until the request window resets. |
+| `retry-after` | Seconds to wait before retrying after a `429`. |
+
+## Handling 429 responses
+
+### Example: retry on 429
+
+```python
+import time
+from openai import OpenAI, RateLimitError
+
+client = OpenAI(base_url="https://api.xroute.ai/v1")
+
+for attempt in range(4):
+    try:
+        response = client.chat.completions.create(
+            model="deepseek/deepseek-r1",
+            messages=[{"role": "user", "content": "Hello!"}],
+        )
+        break
+    except RateLimitError as e:
+        wait = 2 ** attempt
+        time.sleep(wait)
+```
+
+## Need more capacity?
+
+Enterprise accounts can request dedicated cluster quotas and custom concurrency pools via [support@xroute.ai](mailto:support@xroute.ai).

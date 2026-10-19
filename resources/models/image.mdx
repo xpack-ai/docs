@@ -1,0 +1,146 @@
+---
+title: "Image Models (Native Protocols)"
+sidebarTitle: "Image Models"
+description: "Generate and edit images using vendor-native endpoints on XRoute for OpenAI, Google GenAI, Byteplus Ark, and Qwen."
+---
+
+XRoute connects you directly to leading computer vision and diffusion models for text-to-image synthesis, visual design, and image modification.
+
+<Warning>
+**Native Format Only**: Image models **do not** support unified Chat Completions endpoints (`/v1/chat/completions`). You must use the **provider-native endpoints** corresponding to each vendor (`https://api.xroute.ai/{Provider}/...`).
+</Warning>
+
+---
+
+## Supported Image Models
+
+| Provider | Model Identifier | Task Type | Native Protocol Endpoint | Supported Dimensions |
+| :--- | :--- | :--- | :--- | :--- |
+| **OpenAI** | `OpenAI/gpt-image-2.5-flare` | Text-to-Image | `POST https://api.xroute.ai/OpenAI/images/generations` | `1024x1024`, `1024x1792`, `1792x1024` |
+| **OpenAI** | `OpenAI/gpt-image-2` | Image Editing & Inpainting | `POST https://api.xroute.ai/OpenAI/images/edits` | `1024x1024` |
+| **Google** | `Google/gemini-3.1-flash-image` | Multimodal Image Gen | `POST https://api.xroute.ai/Google/image/models/{id}:generateContent` | Dynamic |
+| **Byteplus** | `Byteplus/seedream-5-0-260128` | High-Resolution Synthesis | `POST https://api.xroute.ai/Byteplus/images/generations` | `1024x1024`, `512x512` |
+| **Qwen** | `Qwen/qwen-image-3.0-pro` | Multimodal Visual Gen | `POST https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation` | `1024*1024`, `720*1280` |
+
+---
+
+## 1. OpenAI Native Images API
+
+Use standard OpenAI image generation requests by pointing your base URL to `https://api.xroute.ai/OpenAI`.
+
+### Text-to-Image Generation
+
+- **Endpoint**: `POST https://api.xroute.ai/OpenAI/images/generations`
+- **Header**: `Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-image-2.5-flare",
+    "prompt": "An isometric 3D render of an ultra-modern floating cloud datacenter, glowing glass aesthetic, 8k octane render",
+    "size": "1024x1024",
+    "quality": "standard",
+    "n": 1
+  }'
+```
+
+```python Python (OpenAI SDK)
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.xroute.ai/OpenAI",
+    api_key="your_xroute_api_key",
+)
+
+result = client.images.generate(
+    model="gpt-image-2.5-flare",
+    prompt="An isometric 3D render of an ultra-modern floating cloud datacenter, glowing glass aesthetic, 8k octane render",
+    size="1024x1024",
+    n=1,
+)
+
+print(result.data[0].url)
+```
+</CodeGroup>
+
+### Image Editing & Inpainting
+
+- **Endpoint**: `POST https://api.xroute.ai/OpenAI/images/edits`
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/OpenAI/images/edits" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -F image="@original.png" \
+  -F mask="@mask.png" \
+  -F model="gpt-image-2" \
+  -F prompt="Add a futuristic holographic HUD interface displaying server metrics"
+```
+
+---
+
+## 2. Byteplus Seedream Native
+
+Byteplus offers ultra-fast image generation models optimized for high visual fidelity.
+
+- **Endpoint**: `POST https://api.xroute.ai/Byteplus/images/generations`
+- **Header**: `Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Byteplus/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedream-5-0-260128",
+    "prompt": "Cyberpunk cityscape under rainy neon lights, reflections on wet pavement, cinematic depth of field",
+    "size": "1024x1024",
+    "response_format": "url"
+  }'
+```
+
+```python Python (Byteplus Ark SDK)
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+response = client.images.generate(
+    model="seedream-5-0-260128",
+    prompt="Cyberpunk cityscape under rainy neon lights, reflections on wet pavement, cinematic depth of field",
+    size="1024x1024",
+)
+
+print(response.data[0].url)
+```
+</CodeGroup>
+
+---
+
+## 3. Google Gemini Native Image Generation
+
+Target Google's image models by enabling `IMAGE` response modalities over Google GenAI.
+
+- **Endpoint**: `POST https://api.xroute.ai/Google/image/models/gemini-3.1-flash-image:generateContent`
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/Google/image/models/gemini-3.1-flash-image:generateContent" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {"text": "Create an architectural sketch of a carbon-neutral solar tower in the desert"}
+        ]
+      }
+    ],
+    "generationConfig": {
+      "responseModalities": ["IMAGE"]
+    }
+  }'
+```

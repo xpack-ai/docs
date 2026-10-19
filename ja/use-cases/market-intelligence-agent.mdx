@@ -1,0 +1,23 @@
+---
+title: "XRoute でマーケットインテリジェンスエージェントを構築する"
+sidebarTitle: "マーケットインテリジェンスエージェント"
+description: "リアルタイムの株価、暗号資産フィード、予測市場のオッズを組み合わせて、自動化された市場レポートを作成します。"
+---
+
+## 課題
+
+金融・市場アナリストは、4 つの異なるデータサブスクリプションをつなぎ合わせることなく、リアルタイムの株価、SEC 提出書類、暗号資産の流動性、予測市場の確率を 1 か所で把握する必要があります。
+
+## プロンプト
+
+```text
+Generate a pre-market intelligence brief for NVDA and BTC:
+1. Fetch latest price action and 7-day volume via XRoute Financial & CoinGecko APIs.
+2. Check Polymarket macro event probabilities for the upcoming FOMC decision.
+3. Synthesize key risk factors using anthropic/claude-sonnet-4.
+```
+
+## 使用する API とモデル
+
+- **データ API:** Financial Prices (`/apis/v1/financial/prices`)、CoinGecko Markets、Polymarket Events (`/apis/v1/prediction-market/polymarket-events`)
+- **モデル:** `anthropic/claude-sonnet-4`

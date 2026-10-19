@@ -1,0 +1,38 @@
+---
+title: "Use XRoute in Codex"
+sidebarTitle: "Codex"
+description: "Connect OpenAI Codex CLI to XRoute via MCP and optionally run Codex on XRoute models."
+---
+
+Give the Codex CLI access to XRoute's 100+ data APIs and 60+ models.
+
+## Prerequisites
+
+- Node.js 18+ and the Codex CLI installed.
+- An [XRoute](https://xroute.ai) account.
+
+## 1. Install Codex
+
+```bash
+npm install -g @openai/codex
+```
+
+## 2. Add the XRoute MCP server
+
+```bash
+codex mcp add xroute --url https://mcp.xroute.ai/mcp
+```
+
+## 3. Verify
+
+Launch `codex` and ask it to run the free `account` operation to confirm your balance.
+
+## Optional: run Codex on XRoute models
+
+You can also route Codex's core model completions through XRoute:
+
+```bash
+export OPENAI_BASE_URL="https://api.xroute.ai/v1"
+export OPENAI_API_KEY="$XROUTE_API_KEY"
+codex --model openai/gpt-4.1
+```

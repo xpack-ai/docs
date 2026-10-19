@@ -1,0 +1,51 @@
+---
+title: "レート制限"
+sidebarTitle: "レート制限"
+description: "XRoute におけるレート制限の管理、429 ヘッダー、およびマルチプロバイダー負荷分散の仕組みについて解説します。"
+---
+
+XRoute は 50 社以上のアクティブなアップストリームプロバイダー間で容量をプールし、スループットを最大化して `429 Too Many Requests` エラーを最小限に抑えます。
+
+## 429 が発生する原因
+
+`429` レスポンスは次の 2 つのケースのいずれかで発生します。
+
+1. **カスタムキー制限:** API キーが、コンソールで設定されたカスタムの RPM（1 分あたりのリクエスト数）または TPM（1 分あたりのトークン数）の上限に達した場合。
+2. **グローバルモデルの同時実行制限:** 特定のモデル（動画生成など）が、アカウントティアの同時実行タスク上限に達した場合。
+
+## レート制限ヘッダー
+
+すべてのレスポンスには標準のレート制限ヘッダーが含まれます。
+
+| ヘッダー | 説明 |
+| :--- | :--- |
+| `x-ratelimit-limit-requests` | 現在のウィンドウで許可される最大リクエスト数。 |
+| `x-ratelimit-remaining-requests` | 現在のウィンドウで残っているリクエスト数。 |
+| `x-ratelimit-reset-requests` | リクエストウィンドウがリセットされるまでの秒数。 |
+| `retry-after` | `429` の後にリトライするまで待機すべき秒数。 |
+
+## 429 レスポンスの処理
+
+### 例: 429 発生時のリトライ
+
+```python
+import time
+from openai import OpenAI, RateLimitError
+
+client = OpenAI(base_url="https://api.xroute.ai/v1")
+
+for attempt in range(4):
+    try:
+        response = client.chat.completions.create(
+            model="deepseek/deepseek-r1",
+            messages=[{"role": "user", "content": "Hello!"}],
+        )
+        break
+    except RateLimitError as e:
+        wait = 2 ** attempt
+        time.sleep(wait)
+```
+
+## さらに大きな容量が必要な場合
+
+エンタープライズアカウントでは、[support@xroute.ai](mailto:support@xroute.ai) から専用クラスタークォータやカスタム同時実行プールをリクエストできます。

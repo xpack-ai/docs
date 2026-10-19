@@ -1,0 +1,478 @@
+---
+title: モデルとマルチモーダル対応
+description: XRoute がサポートするプロバイダー別モデル一覧、出力タイプ（テキスト・画像・動画）ごとの呼び出しルールと実装コード例。
+---
+
+XRoute ゲートウェイは、世界トップクラスの AI モデルにシームレスに接続します。プラットフォームは主に **テキスト (Text)**、**画像 (Image)**、**動画 (Video)** の 3 つの出力タイプをサポートしています。
+
+出力タイプに応じて、厳格なプロトコル呼び出しルールが適用されます：
+- **テキストモデル（Text）**：**OpenAI 統一フォーマット**、**Anthropic 統一フォーマット**、および **プロバイダーネイティブフォーマット** の 3 通りをサポート。
+- **画像モデル（Image）**：**プロバイダーネイティブフォーマットのみ**（OpenAI Images API、Google Image generateContent、Byteplus Images、Qwen Multimodal API 等）。
+- **動画モデル（Video）**：**プロバイダーネイティブ非同期タスク形式のみ**（タスク発行 + 完了までのポーリング、Byteplus 生成タスクや WAN DashScope 非同期タスク）。
+
+<Tip>
+ナビゲーション右上の「Models」または [XRoute モデルハブ (xroute.ai/model)](https://xroute.ai/en/model) から、最新のモデル一覧と料金体系をご確認いただけます。
+</Tip>
+
+### モダリティ別クイックナビゲーション（SEO & リファレンス）
+
+<CardGroup cols={3}>
+  <Card title="テキストモデル" icon="message-lines" href="/ja/resources/models/text">
+    OpenAI / Anthropic / ネイティブ形式
+  </Card>
+  <Card title="画像モデル" icon="image" href="/ja/resources/models/image">
+    ネイティブ画像生成エンドポイント
+  </Card>
+  <Card title="動画モデル" icon="film" href="/ja/resources/models/video">
+    ネイティブ非同期タスク投入・ポーリング
+  </Card>
+</CardGroup>
+
+---
+
+## 主要モデル一覧
+
+| プロバイダー | モデル識別子 (Model ID) | 出力タイプ | 対応フォーマット | 推奨ユースケース |
+| :--- | :--- | :--- | :--- | :--- |
+| **OpenAI** | `OpenAI/gpt-5.6-sol` | テキスト | OpenAI / Anthropic / 原生 | フラグシップ推論、高度なコーディング、システム連携 |
+| **OpenAI-Pro** | `OpenAI-Pro/gpt-6-astra` | テキスト | OpenAI / Anthropic / 原生 | エンタープライズ向け高スループット・高並列タスク |
+| **Anthropic** | `Anthropic/claude-fable-5` | テキスト | OpenAI / Anthropic / 原生 | 長文コンテキスト解析、深い文章創作、論理的推論 |
+| **Google** | `Google/gemini-3.1-pro-preview` | テキスト | OpenAI / Anthropic / 原生 | マルチモーダルコンテキスト理解と高度な課題解決 |
+| **Byteplus** | `Byteplus/seed-2-0-code-preview-260328` | テキスト | OpenAI / Anthropic / 原生 | 高速コード補完・プログラミング支援 |
+| **Deepseek** | `Deepseek/deepseek-v4-flash` | テキスト | OpenAI / Anthropic / 原生 | 超低遅延・高コストパフォーマンスの汎用対話 |
+| **GLM** | `GLM/glm-5.1` | テキスト | OpenAI / Anthropic / 原生 | 多言語理解とエンタープライズ推論 |
+| **MoonshootAI-Pro** | `MoonshootAI-Pro/kimi-k3` | テキスト | OpenAI / Anthropic / 原生 | 超長文ドキュメント精読と学術リサーチ |
+| **OpenAI** | `OpenAI/gpt-image-2.5-flare` | 画像 | **ネイティブ形式のみ** | 高精度プロンプト画像生成・クリエイティブ制作 |
+| **Google** | `Google/gemini-3.1-flash-image` | 画像 | **ネイティブ形式のみ** | コンセプトアート作成・迅速なビジュアルプロトタイピング |
+| **Byteplus** | `Byteplus/seedream-5-0-260128` | 画像 | **ネイティブ形式のみ** | 商用クオリティの写実的画像レンダリング |
+| **Qwen** | `Qwen/qwen-image-3.0-pro` | 画像 | **ネイティブ形式のみ** | マルチモーダルアート生成・クリエイティブ合成 |
+| **Byteplus** | `Byteplus/seedance-1-5-pro-251215` | 動画 | **非同期ネイティブのみ** | 映画品質のカメラワーク・シネマティック動画生成 |
+| **WAN** | `WAN/wan3.0-video-prime` | 動画 | **非同期ネイティブのみ** | 超リアル・高解像度動画生成 |
+
+---
+
+## テキスト出力モデルの呼び出し例
+
+テキストモデルは OpenAI 互換エンドポイント、Anthropic 互換エンドポイント、およびプロバイダーネイティブエンドポイントのいずれからも呼び出せます。
+
+<Tabs>
+  <Tab title="1. OpenAI 統一フォーマット">
+    エンドポイントは `https://api.xroute.ai/v1/chat/completions` です：
+
+    <CodeGroup>
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "OpenAI/gpt-5.6-sol",
+        "messages": [
+          {"role": "user", "content": "9.9 と 9.11 はどちらが大きいですか？簡潔に説明してください。"}
+        ],
+        "temperature": 0.7
+      }'
+    ```
+
+    ```python Python
+    from openai import OpenAI
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.chat.completions.create(
+        model="OpenAI/gpt-5.6-sol",
+        messages=[{"role": "user", "content": "9.9 と 9.11 はどちらが大きいですか？"}],
+    )
+    print(response.choices[0].message.content)
+    ```
+
+    ```typescript TypeScript
+    import OpenAI from 'openai';
+
+    const client = new OpenAI({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const completion = await client.chat.completions.create({
+      model: 'OpenAI/gpt-5.6-sol',
+      messages: [{ role: 'user', content: '9.9 と 9.11 はどちらが大きいですか？' }],
+    });
+    console.log(completion.choices[0].message.content);
+    ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="2. Anthropic 統一フォーマット">
+    エンドポイントは `https://api.xroute.ai/v1/messages`（ヘッダーに `x-api-key` と `anthropic-version: 2023-06-01`）です：
+
+    <CodeGroup>
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/v1/messages" \
+      -H "x-api-key: $XROUTE_API_KEY" \
+      -H "anthropic-version: 2023-06-01" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "Anthropic/claude-fable-5",
+        "max_tokens": 1024,
+        "messages": [
+          {"role": "user", "content": "量子コンピューティングを3文で解説してください。"}
+        ]
+      }'
+    ```
+
+    ```python Python
+    from anthropic import Anthropic
+
+    client = Anthropic(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    message = client.messages.create(
+        model="Anthropic/claude-fable-5",
+        max_tokens=1024,
+        messages=[{"role": "user", "content": "量子コンピューティングを3文で解説してください。"}],
+    )
+    print(message.content[0].text)
+    ```
+
+    ```typescript TypeScript
+    import Anthropic from '@anthropic-ai/sdk';
+
+    const client = new Anthropic({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const message = await client.messages.create({
+      model: 'Anthropic/claude-fable-5',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: '量子コンピューティングを3文で解説してください。' }],
+    });
+    console.log(message.content[0].text);
+    ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="3. プロバイダーネイティブ形式">
+    プロバイダー固有のエンドポイント（Google Gemini `generateContent`、Byteplus Ark、Deepseek/GLM DashScope）に直接接続します：
+
+    <CodeGroup>
+    ```bash Google Gemini ネイティブ
+    curl -X POST "https://api.xroute.ai/Google/models/gemini-3.1-pro-preview:generateContent" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -d '{
+        "contents": [
+          {
+            "parts": [
+              { "text": "量子もつれについて説明してください" }
+            ]
+          }
+        ]
+      }'
+    ```
+
+    ```python Byteplus Ark ネイティブ
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    completion = client.chat.completions.create(
+        model="Byteplus/seed-2-0-code-preview-260328",
+        messages=[{"role": "user", "content": "クイックソートのコードを書いてください。"}],
+    )
+    print(completion.choices[0].message.content)
+    ```
+
+    ```bash Deepseek / GLM ネイティブ
+    curl -X POST "https://api.xroute.ai/Deepseek/services/aigc/text-generation/generation" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "deepseek-v4-flash",
+        "input": {
+          "messages": [
+            {"role": "user", "content": "こんにちは！自己紹介をお願いします。"}
+          ]
+        },
+        "parameters": {
+          "result_format": "message"
+        }
+      }'
+    ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+---
+
+## 画像出力モデルの呼び出し例
+
+<Warning>
+**画像モデルは各プロバイダーのネイティブ形式のみをサポートします。** OpenAI/Anthropic のテキスト補完エンドポイントから画像モデルを呼び出すことはできません。
+</Warning>
+
+### 1. OpenAI 画像生成 & 編集
+
+エンドポイント：`POST https://api.xroute.ai/OpenAI/images/generations` および `POST https://api.xroute.ai/OpenAI/images/edits`。
+
+<CodeGroup>
+```bash 画像生成 cURL
+curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-image-2.5-flare",
+    "prompt": "サイバーパンク調の雨の東京の夜景、ネオンサインの反射、高解像度 8k",
+    "n": 1,
+    "size": "1024x1024"
+  }'
+```
+
+```python Python (OpenAI SDK)
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.xroute.ai/OpenAI",
+    api_key="your_xroute_api_key",
+)
+
+response = client.images.generate(
+    model="OpenAI/gpt-image-2.5-flare",
+    prompt="サイバーパンク調の雨の東京の夜景、ネオンサインの反射、高解像度 8k",
+    size="1024x1024",
+    quality="standard",
+    n=1,
+)
+print(response.data[0].url)
+```
+
+```typescript TypeScript (OpenAI SDK)
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  baseURL: 'https://api.xroute.ai/OpenAI',
+  apiKey: process.env.XROUTE_API_KEY,
+});
+
+const image = await client.images.generate({
+  model: 'OpenAI/gpt-image-2.5-flare',
+  prompt: 'サイバーパンク調の雨の東京の夜景、ネオンサインの反射、高解像度 8k',
+  size: '1024x1024',
+  n: 1,
+});
+console.log(image.data[0].url);
+```
+</CodeGroup>
+
+### 2. Google ネイティブ画像生成
+
+エンドポイント：`POST https://api.xroute.ai/Google/image/models/{model_id}:generateContent`（`responseModalities: ["IMAGE"]` を指定）。
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Google/image/models/gemini-3.1-flash-image:generateContent" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {"text": "A futuristic architectural pavilion surrounded by serene mist and pine trees"}
+        ]
+      }
+    ],
+    "generationConfig": {
+      "responseModalities": ["IMAGE"]
+    }
+  }'
+```
+
+```python Python (google-genai SDK)
+from google import genai
+
+client = genai.Client(
+    api_key="your_xroute_api_key",
+    http_options={"base_url": "https://api.xroute.ai/Google"},
+)
+
+response = client.models.generate_content(
+    model="gemini-3.1-flash-image",
+    contents="A futuristic architectural pavilion surrounded by serene mist and pine trees",
+    config={"response_modalities": ["IMAGE"]},
+)
+for part in response.candidates[0].content.parts:
+    if part.inline_data:
+        print("Received base64 image data")
+```
+</CodeGroup>
+
+### 3. Byteplus 画像生成
+
+エンドポイント：`POST https://api.xroute.ai/Byteplus/images/generations`：
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Byteplus/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedream-5-0-260128",
+    "prompt": "雪山の中のあたたかな木の小屋、窓から漏れる暖炉の光、映画品質",
+    "size": "1024x1024"
+  }'
+```
+
+```python Python (Ark SDK)
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+images_response = client.images.generate(
+    model="Byteplus/seedream-5-0-260128",
+    prompt="雪山の中のあたたかな木の小屋、窓から漏れる暖炉の光、映画品質",
+    size="1024x1024",
+)
+print(images_response.data[0].url)
+```
+</CodeGroup>
+
+### 4. Qwen マルチモーダル画像生成
+
+DashScope ネイティブエンドポイント：`POST https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation`：
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen-image-3.0-pro",
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {"text": "水墨画風の山水画、静かな湖と小さな木造舟"}
+          ]
+        }
+      ]
+    },
+    "parameters": {
+      "size": "1024*1024"
+    }
+  }'
+```
+
+---
+
+## 動画出力モデルの呼び出し例
+
+<Info>
+**動画モデルはネイティブ非同期 2 段階モデルを採用しています**：最初に生成タスクを発行して `task_id` を取得し、次にポーリングで状態を確認して動画ダウンロード URL を取得します。
+</Info>
+
+### 1. Byteplus 動画生成タスク
+
+- タスク発行：`POST https://api.xroute.ai/Byteplus/contents/generations/tasks`
+- 状態照会：`GET https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}`
+
+<CodeGroup>
+```bash 1. タスク発行
+curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance-1-5-pro-251215",
+    "content": [
+      {
+        "type": "text",
+        "text": "青い海へ向かってゆっくりズームするドローン視点、波間から飛び跳ねるイルカ、4k"
+      }
+    ]
+  }'
+# レスポンス例：{"id": "cgt-2026xxxx-xxxx"}
+```
+
+```bash 2. 状態照会
+curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/cgt-2026xxxx-xxxx" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+```python Python (Ark SDK 非同期動画生成)
+import time
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+# 1. タスク発行
+create_result = client.content_generation.tasks.create(
+    model="Byteplus/seedance-1-5-pro-251215",
+    content=[{
+        "type": "text",
+        "text": "青い海へ向かってゆっくりズームするドローン視点、波間から飛び跳ねるイルカ、4k"
+    }],
+)
+task_id = create_result.id
+print(f"Task created: {task_id}")
+
+# 2. 状態ポーリング
+while True:
+    task = client.content_generation.tasks.get(task_id=task_id)
+    if task.status == "succeeded":
+        print(f"Video URL: {task.content.video_url}")
+        break
+    elif task.status in ["failed", "cancelled"]:
+        print(f"Task failed: {task.status}")
+        break
+    print("Generating video, waiting 5 seconds...")
+    time.sleep(5)
+```
+</CodeGroup>
+
+### 2. WAN 動画生成タスク
+
+- タスク発行：`POST https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis`（`X-DashScope-Async: enable` ヘッダー付き）
+- 状態照会：`GET https://api.xroute.ai/WAN/tasks/{task_id}`
+
+<CodeGroup>
+```bash 1. タスク発行
+curl -X POST "https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "X-DashScope-Async: enable" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "wan3.0-video-prime",
+    "input": {
+      "prompt": "秋の紅葉の芝生を駆け回る可愛いゴールデンレトリバーの子犬、映画品質のライティング"
+    },
+    "parameters": {
+      "size": "1280*720"
+    }
+  }'
+# レスポンス例：{"output": {"task_id": "task-wan-xxxx", "task_status": "PENDING"}}
+```
+
+```bash 2. 状態照会
+curl -X GET "https://api.xroute.ai/WAN/tasks/task-wan-xxxx" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+</CodeGroup>
+
+---
+
+## インテリジェントルーティングとフェイルオーバー
+
+XRoute は同等グレードのモデル間での自動リトライとフォールバックをサポートしています。上位プロバイダー側でレート制限 (429) や一時的な障害が発生した場合でも、ルーティング設定に従ってスムーズに代替モデルへ切り替え、サービスの可用性を維持します。

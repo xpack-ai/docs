@@ -1,0 +1,66 @@
+---
+title: "Connect your agent to XRoute"
+sidebarTitle: "Connect via MCP"
+description: "Add https://mcp.xroute.ai/mcp, sign in with OAuth, and verify with the free account operation."
+---
+
+Connect XRoute to your AI coding agent via the Model Context Protocol (MCP). Sign-in happens in your browser via OAuth, so you never have to copy or paste an API key.
+
+## Agent instructions
+
+### MCP (default)
+
+Add the remote MCP server URL `https://mcp.xroute.ai/mcp` to your client:
+
+<CodeGroup>
+
+```bash Claude Code
+claude mcp add --transport http xroute https://mcp.xroute.ai/mcp
+```
+
+```bash Codex
+codex mcp add xroute --url https://mcp.xroute.ai/mcp
+```
+
+```json Cursor (.cursor/mcp.json)
+{
+  "mcpServers": {
+    "xroute": {
+      "url": "https://mcp.xroute.ai/mcp"
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+Once added, your client opens a browser window to sign in to XRoute and authorize the connection.
+
+### CLI (only when MCP cannot run here)
+
+If your runtime environment does not support remote MCP servers, install the XRoute CLI instead:
+
+```bash
+npm install -g @xroute/cli
+xroute login
+```
+
+See [Use the CLI](/get-started/cli) for full command reference and CI setup.
+
+### Finish
+
+Verify your connection by running the free `account` check tool in your agent:
+
+1. Ask your agent: *"Check my XRoute account balance and available tool categories."*
+2. Confirm that the `account` and `list_categories` operations return your active credit balance at zero cost.
+
+## Exposed MCP tools
+
+| Tool | Cost | Description |
+| :--- | :--- | :--- |
+| `account` | Free | Check your prepaid credit balance and key spending limits. |
+| `list_categories` | Free | List all available LLM and real-time data API categories. |
+| `search` | Free | Search endpoints by capability, keyword, or provider. |
+| `get_details` | Free | Inspect request parameters, schema, and pricing for an endpoint. |
+| `batch_quote` | Free | Calculate an exact cost quote before running one or more calls. |
+| `execute` | Paid | Call the target model or data endpoint and return structured output. |

@@ -1,0 +1,39 @@
+---
+title: "Security & Data Privacy"
+sidebarTitle: "Security & Privacy"
+description: "How XRoute handles your requests: zero prompt retention, encrypted transport, upstream boundaries, and agent safety controls."
+---
+
+XRoute is built on an enterprise-grade AI gateway architecture designed for strict data privacy and predictable agent governance.
+
+## Data processing
+
+XRoute acts as a high-speed routing and settlement layer. Your requests are authenticated, routed to the healthiest upstream cluster, and returned directly to your client.
+
+## Prompt and output retention
+
+- **Zero training on your data:** XRoute never uses your prompts, completions, or data API payloads to train models.
+- **No content logging by default:** Prompt bodies and model responses are not persisted in XRoute databases unless you explicitly enable debug tracing in your Console workspace.
+
+## Operational metadata
+
+To support billing, rate limiting, and audit logs, XRoute records minimal request metadata:
+
+- Timestamp and request ID
+- API key ID and organization ID
+- Target model or endpoint ID
+- Token counts (input/output) and settled USD cost
+- HTTP status code and latency
+
+## Authentication and transport
+
+- All traffic requires **TLS 1.2+** (`https://api.xroute.ai` and `https://mcp.xroute.ai`).
+- API keys are stored as salted cryptographic hashes.
+
+## Agent safety controls
+
+When granting autonomous agents access to XRoute:
+
+1. Use **OAuth MCP sign-in** instead of sharing raw API keys in plaintext files.
+2. Set a **per-key spending cap** in the Console.
+3. Require user confirmation before executing write actions or calls above your auto-execute quote threshold.

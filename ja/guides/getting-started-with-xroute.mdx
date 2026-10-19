@@ -1,0 +1,129 @@
+---
+title: "API キーを取得して最初の呼び出しを行う"
+sidebarTitle: "API キーと最初の呼び出し"
+description: "XRoute API キーを作成し、curl で最初のテキスト、画像、または動画生成リクエストを送信します。"
+---
+
+以下のステップに従って XRoute API キーを作成し、最先端の LLM およびマルチモーダル生成 API を呼び出して、利用状況を確認します。
+
+## 1. アカウントとキーを作成する
+
+1. [xroute.ai](https://xroute.ai) にサインインし、共通の Credits をチャージします。
+2. **Personal -> Keys** を開き、**Create API Key** をクリックします。
+3. （任意）キーごとの USD 利用上限とレート制限を設定します。
+4. シェル環境にキーをエクスポートします：
+
+```bash
+export XROUTE_API_KEY="xr_live_your_key_here"
+```
+
+<Warning>
+`$XROUTE_API_KEY` を公開 Git リポジトリにコミットしたり、信頼できないログに出力したりしないでください。
+</Warning>
+
+---
+
+## 2. 最初のモデル呼び出しを実行する
+
+XRoute はテキスト、画像、動画などの多様な生成タイプをサポートしています。出力タイプに応じて適切なエンドポイントとプロトコルを選択してください：
+
+<Note>
+- **テキスト出力モデル（Text）**: **OpenAI 統合形式**、**Anthropic 統合形式**、および**プロバイダーネイティブ形式**をサポートします。
+- **画像出力モデル（Image）**: **プロバイダーネイティブ形式のみ**をサポートします（例: OpenAI Images API または Byteplus Images API）。
+- **動画出力モデル（Video）**: **ネイティブ非同期タスク形式のみ**をサポートします（タスクを送信して生成し、ステータスをポーリング）。
+</Note>
+
+### A. テキスト生成（OpenAI 統合形式）
+
+`https://api.xroute.ai/v1/chat/completions` にリクエストを送信します：
+
+```bash
+curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "OpenAI/gpt-5.6-sol",
+    "messages": [
+      {"role": "system", "content": "You are a concise technical assistant."},
+      {"role": "user", "content": "Explain low-latency edge routing in 3 bullet points."}
+    ]
+  }'
+```
+
+### B. テキスト生成（Anthropic 統合形式）
+
+`https://api.xroute.ai/v1/messages` にリクエストを送信します：
+
+```bash
+curl -X POST "https://api.xroute.ai/v1/messages" \
+  -H "x-api-key: $XROUTE_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Anthropic/claude-fable-5",
+    "max_tokens": 1024,
+    "messages": [
+      {"role": "user", "content": "What makes a reliable API gateway?"}
+    ]
+  }'
+```
+
+### C. 画像生成（ネイティブ形式）
+
+画像生成は Chat Completions エンドポイントを使用しません。プロバイダー専用のネイティブ画像インターフェース（例: OpenAI 形式）を直接呼び出します：
+
+```bash
+curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-image-2.5-flare",
+    "prompt": "An ultra-modern data center glowing in cyberpunk neon lights, 8k resolution",
+    "size": "1024x1024"
+  }'
+```
+
+### D. 動画生成（ネイティブ非同期タスク）
+
+動画生成は非同期ワークフローを採用しています：まず生成タスクを送信し、タスク ID でステータスをポーリングします（例: Byteplus）：
+
+```bash
+# 1. 動画生成タスクを送信
+curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance-1-5-pro-251215",
+    "content": [
+      {"type": "text", "text": "A drone flying through a sunset canyon, cinematic lighting"}
+    ]
+  }'
+
+# 2. 返却された task id で進捗と結果を照会
+# curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}" \
+#   -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+---
+
+## 3. 利用金額を確認する
+
+残りのクレジット残高はいつでも確認できます（無料呼び出し）：
+
+```bash
+curl https://api.xroute.ai/apis/v1/account/balance \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+---
+
+## 次のステップ
+
+<CardGroup cols={2}>
+  <Card title="モデルとマルチモーダル呼び出しガイド" icon="microchip" href="/ja/guides/models">
+    テキスト、画像、動画の全モデル一覧とプロバイダー呼び出しテンプレートを参照します。
+  </Card>
+  <Card title="SDK の互換性" icon="arrows-rotate" href="/ja/get-started/sdk-compatibility">
+    OpenAI、Anthropic、Google GenAI、Byteplus SDK の設定方法を確認します。
+  </Card>
+</CardGroup>

@@ -1,0 +1,71 @@
+---
+title: "XRoute 工作原理"
+sidebarTitle: "工作原理"
+description: "了解身份认证、统一接口与按量计费如何在同一请求链路中协同工作。"
+---
+
+XRoute 位于你的应用程序或 AI Agent 与全球 60+ 模型供应商及 100+ 实时数据 API 之间。你只需完成一次认证，调用标准端点，即可从统一的预充值余额中按次结算。
+
+## 1. 身份认证 (Authenticate)
+
+根据你的接入方式选择对应的认证流程：
+
+- **MCP 与 CLI 的 OAuth 认证（推荐 Agent 使用）：** 将你的编程 Agent 连接到 `https://mcp.xroute.ai/mcp` 并通过浏览器登录授权，无需向配置文件中手动复制 API Key。
+- **Bearer API Key（面向应用程序与 SDK）：** 在 XRoute 控制台生成 API Key，并在请求头中传入 `Authorization: Bearer $XROUTE_API_KEY`。
+- **机器支付（MPP）：** 部分只读数据端点支持 HTTP 402 机器微支付，无需预先注册账号或配置 API Key。
+
+## 2. 调用端点 (Call an endpoint)
+
+所有请求均通过 XRoute 高可用边缘网关进行智能路由：
+
+| 能力类别 | Base URL | 协议兼容性 |
+| :--- | :--- | :--- |
+| 文本与推理大模型 | `https://api.xroute.ai/v1` | OpenAI `/v1/chat/completions`、Anthropic `/v1/messages` |
+| Gemini 原生接口 | `https://api.xroute.ai/v1beta` | Google `generateContent` |
+| 视频与语音生成 | `https://api.xroute.ai/v1` | Seedance 2.5、Kling、Flux、语音合成 TTS |
+| 实时数据 API | `https://api.xroute.ai/apis/v1` | REST JSON 接口 & MCP 工具调用 |
+
+```bash
+curl https://api.xroute.ai/v1/chat/completions \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek/deepseek-r1",
+    "messages": [
+      {"role": "user", "content": "请解释区域边缘路由如何降低首 Token 延迟（TTFT）。"}
+    ]
+  }'
+```
+
+## 3. 按量计费 (Pay per use)
+
+每次调用都会从你统一的 Credits 余额中扣除费用：
+
+- **AI 模型：** 按输入和输出 Token 数量透明计费，价格优于官方直连。
+- **数据 API：** 按请求次数或返回记录条数计费。
+- **免费报价：** 在执行付费调用前，可通过 `/v1/models`、MCP `batch_quote` 或 CLI `xroute quote --json` 零成本查询准确报价。
+
+## XRoute 托管能力与你的控制权
+
+| 层级 | XRoute 负责 | 你负责 |
+| :--- | :--- | :--- |
+| **供应商账号管理** | 多供应商合同、限流池与多集群容灾切换 | 一个 XRoute 账号与 API Key |
+| **路由与故障切换** | 区域边缘路由与 7×24 小时自动故障切换 | 模型选择与业务逻辑 |
+| **费用控制** | 单 Key 消费限额、调用前免费报价与用量日志 | Agent 任务预算审批 |
+
+## 适用场景
+
+- **构建 AI Agent：** 让 Claude Code、Cursor、Codex 或自定义 Agent 即刻获得网页搜索、金融、社媒数据以及 60+ 大模型能力。
+- **生产级大模型应用：** 借助多集群灾备与边缘低延迟路由，消除单一模型供应商宕机风险。
+- **多模态工作流：** 在同一个计费账户下组合深度推理模型（`deepseek/deepseek-r1`、`anthropic/claude-sonnet-4`）与高清视频生成模型（`Byteplus/dreamina-seedance-2-5`）。
+
+## 下一步
+
+<CardGroup cols={2}>
+  <Card title="通过 MCP 接入" icon="plug" href="/zh/agent-quickstart">
+    使用浏览器 OAuth 在一分钟内连接你的编程 Agent。
+  </Card>
+  <Card title="获取 API Key 与首次调用" icon="key" href="/zh/guides/getting-started-with-xroute">
+    创建 API Key 并发起你的第一个 HTTP 请求。
+  </Card>
+</CardGroup>

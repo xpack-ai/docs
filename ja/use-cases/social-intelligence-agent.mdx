@@ -1,0 +1,23 @@
+---
+title: "XRoute でソーシャルインテリジェンスエージェントを構築する"
+sidebarTitle: "ソーシャルインテリジェンスエージェント"
+description: "X や YouTube 全体で、製品リリース、開発者のセンチメント、クリエイターの議論を追跡します。"
+---
+
+## 課題
+
+X（旧 Twitter）や YouTube 全体で製品リリースに対するコミュニティのリアルタイムの反応を追跡するには、壊れやすいスクレイパーや高額なエンタープライズ向けデータ契約が必要になります。
+
+## プロンプト
+
+```text
+Analyze public developer discussion around "Seedance 2.5" over the last 14 days:
+1. Search recent X posts and top-engaged threads via XRoute Twitter APIs.
+2. Pull top YouTube review videos and engagement counts.
+3. Summarize top praised features and common questions.
+```
+
+## 使用する API とモデル
+
+- **データ API:** Twitter Search & User Info (`/apis/v1/twitter/user-info`)、YouTube Search (`/apis/v1/youtube/serp`)
+- **モデル:** `google/gemini-2.5-pro`

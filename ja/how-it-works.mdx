@@ -1,0 +1,71 @@
+---
+title: "XRoute の仕組み"
+sidebarTitle: "仕組み"
+description: "1 つのリクエスト経路で認証、統合エンドポイント、従量課金がどのように連携するかを解説します。"
+---
+
+XRoute は、アプリケーションや AI エージェントと、60 社以上のグローバルモデルプロバイダーおよび 100 以上のリアルタイムデータ API の間に位置します。一度認証すれば、標準エンドポイントを呼び出し、単一のプリペイド残高からリクエストごとに決済できます。
+
+## 1. 認証する
+
+接続方法に合った認証フローを選択します。
+
+- **MCP および CLI 向け OAuth（エージェントに推奨）:** コーディングエージェントを `https://mcp.xroute.ai/mcp` に接続し、ブラウザからサインインします。設定ファイルに API キーをコピーする必要はありません。
+- **Bearer API キー（アプリケーションおよび SDK 向け）:** XRoute コンソールで API キーを発行し、`Authorization: Bearer $XROUTE_API_KEY` ヘッダーで渡します。
+- **マシン決済（MPP）:** 一部の読み取り専用データエンドポイントは、アカウントや API キーを必要としない HTTP 402 マシン決済をサポートしています。
+
+## 2. エンドポイントを呼び出す
+
+すべてのリクエストは XRoute の高可用性エッジゲートウェイを経由します。
+
+| 機能 | ベース URL | プロトコル互換性 |
+| :--- | :--- | :--- |
+| チャットおよび推論 LLM | `https://api.xroute.ai/v1` | OpenAI `/v1/chat/completions`、Anthropic `/v1/messages` |
+| Gemini ネイティブ | `https://api.xroute.ai/v1beta` | Google `generateContent` |
+| 動画および音声生成 | `https://api.xroute.ai/v1` | Seedance 2.5、Kling、Flux、Audio TTS |
+| リアルタイムデータ API | `https://api.xroute.ai/apis/v1` | REST JSON エンドポイントおよび MCP ツール呼び出し |
+
+```bash
+curl https://api.xroute.ai/v1/chat/completions \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek/deepseek-r1",
+    "messages": [
+      {"role": "user", "content": "Explain how edge routing reduces TTFT."}
+    ]
+  }'
+```
+
+## 3. 従量課金で支払う
+
+すべての呼び出しは共通の Credits 残高から引き落とされます。
+
+- **モデル:** 入力トークンと出力トークンごとに、公式直結を下回る透明性の高いレートで課金されます。
+- **データ API:** リクエストごと、または返却されたレコードごとに課金されます。
+- **無料見積もり:** 有料呼び出しを実行する前に、`/v1/models` のクエリや MCP の `batch_quote`、CLI の `xroute quote --json` を無料で実行できます。
+
+## XRoute が担う領域とユーザーが管理する領域
+
+| レイヤー | XRoute が担当 | ユーザーが管理 |
+| :--- | :--- | :--- |
+| **プロバイダーアカウント** | 契約、レート制限プール、マルチクラスターフェイルオーバー | 1 つの XRoute アカウントと API キー |
+| **ルーティングとフェイルオーバー** | リージョン別自動エッジルーティングと 24 時間 365 日のフェイルオーバー | モデル選択とプロンプトロジック |
+| **支出管理** | キーごとの上限設定、呼び出し前のコスト見積もり、利用ログ | エージェント内のタスク予算承認 |
+
+## XRoute の主なユースケース
+
+- **AI エージェントの構築:** Claude Code、Cursor、Codex、またはカスタムエージェントから、検索、金融、ソーシャルデータ、60 以上の LLM へ即座にアクセスできます。
+- **本番環境の LLM アプリケーション:** マルチクラスター自動フェイルオーバーと低遅延エッジルーティングにより、単一ベンダーのダウンタイムを排除します。
+- **マルチモーダルワークフロー:** テキスト推論（`deepseek/deepseek-r1`、`anthropic/claude-sonnet-4`）と動画生成（`Byteplus/dreamina-seedance-2-5`）を単一の課金残高で組み合わせることができます。
+
+## 次のステップ
+
+<CardGroup cols={2}>
+  <Card title="MCP で接続" icon="plug" href="/ja/agent-quickstart">
+    ブラウザ OAuth を使用して、1 分以内にコーディングエージェントを接続します。
+  </Card>
+  <Card title="API キーと最初の呼び出し" icon="key" href="/ja/guides/getting-started-with-xroute">
+    API キーを作成し、最初の HTTP リクエストを送信します。
+  </Card>
+</CardGroup>

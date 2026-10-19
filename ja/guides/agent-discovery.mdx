@@ -1,0 +1,28 @@
+---
+title: "エージェントディスカバリ – 自律型エージェントが XRoute を発見・利用できるようにする"
+sidebarTitle: "エージェントディスカバリ"
+description: "自律型エージェントのディスカバリのための A2A Agent Card、OpenAPI、llms.txt、および MCP エントリポイント。"
+---
+
+XRoute は機械可読なディスカバリマニフェストを公開しているため、自律型エージェントは人間の介入なしに機能、スキーマ、料金を確認できます。
+
+## ディスカバリエンドポイント
+
+| アーティファクト | URL | 用途 |
+| :--- | :--- | :--- |
+| **A2A Agent Card** | `https://xroute.ai/.well-known/agent-card.json` | Agent-to-Agent の機能およびスキルマニフェスト |
+| **MCP エンドポイント** | `https://mcp.xroute.ai/mcp` | Model Context Protocol のツール検索と実行 |
+| **OpenAPI 仕様** | `https://api.xroute.ai/openapi.json` | 呼び出しごとの料金が明記された完全な REST コントラクト |
+| **LLMs インデックス** | `https://xroute.ai/docs/llms.txt` | LLM 向けに最適化された Markdown ドキュメントインデックス |
+
+## A2A Agent Card
+
+### Agent Card の取得
+
+```bash
+curl https://xroute.ai/.well-known/agent-card.json
+```
+
+### Agent Card の構造
+
+Agent Card には、XRoute の認証スキーム（`OAuth2`、`Bearer`、`MPP`）、サポートされているモダリティ（`text`、`image`、`video`、`audio`、`json`）、およびライブエンドポイントにマッピングされたスキルオブジェクトが宣言されています。

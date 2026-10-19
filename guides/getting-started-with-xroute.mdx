@@ -1,0 +1,129 @@
+---
+title: "Get an API Key and Make Your First Call"
+sidebarTitle: "API Key & First Call"
+description: "Create an XRoute API key and make your first text, image, or video generation request with curl."
+---
+
+Follow these steps to create your XRoute API key, call frontier LLMs and multimodal generation APIs, and verify your usage.
+
+## 1. Create an account and a key
+
+1. Sign in at [xroute.ai](https://xroute.ai) and top up universal Credits.
+2. Open **Personal -> Keys** and click **Create API Key**.
+3. (Optional) Configure a per-key USD spending limit and rate limit.
+4. Export the key in your shell environment:
+
+```bash
+export XROUTE_API_KEY="xr_live_your_key_here"
+```
+
+<Warning>
+Never commit `$XROUTE_API_KEY` to public Git repositories or print it in untrusted logs.
+</Warning>
+
+---
+
+## 2. Make your first model call
+
+XRoute supports multiple generation modalities including text, images, and videos. Choose the correct endpoint based on output modality:
+
+<Note>
+- **Text Models**: Support **OpenAI Unified**, **Anthropic Unified**, and **Provider Native** formats.
+- **Image Models**: **Provider Native format only** (e.g. OpenAI Images API or Byteplus Images API).
+- **Video Models**: **Provider Native asynchronous task format only** (submit generation task and poll status).
+</Note>
+
+### A. Text Generation (OpenAI Unified Format)
+
+Send an OpenAI-compatible request to `https://api.xroute.ai/v1/chat/completions`:
+
+```bash
+curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "OpenAI/gpt-5.6-sol",
+    "messages": [
+      {"role": "system", "content": "You are a concise technical assistant."},
+      {"role": "user", "content": "Explain low-latency edge routing in 3 bullet points."}
+    ]
+  }'
+```
+
+### B. Text Generation (Anthropic Unified Format)
+
+Send an Anthropic Messages request to `https://api.xroute.ai/v1/messages`:
+
+```bash
+curl -X POST "https://api.xroute.ai/v1/messages" \
+  -H "x-api-key: $XROUTE_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Anthropic/claude-fable-5",
+    "max_tokens": 1024,
+    "messages": [
+      {"role": "user", "content": "What makes a reliable API gateway?"}
+    ]
+  }'
+```
+
+### C. Image Generation (Native Format)
+
+Image models do not use Chat Completions endpoints. Call provider native image endpoints directly:
+
+```bash
+curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-image-2.5-flare",
+    "prompt": "An ultra-modern data center glowing in cyberpunk neon lights, 8k resolution",
+    "size": "1024x1024"
+  }'
+```
+
+### D. Video Generation (Native Async Task Format)
+
+Video generation uses an asynchronous workflow: submit task creation first, then poll status:
+
+```bash
+# 1. Submit video generation task
+curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance-1-5-pro-251215",
+    "content": [
+      {"type": "text", "text": "A drone flying through a sunset canyon, cinematic lighting"}
+    ]
+  }'
+
+# 2. Query task status with task_id
+# curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}" \
+#   -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+---
+
+## 3. Check what you spent
+
+Check your remaining credit balance at any time (free call):
+
+```bash
+curl https://api.xroute.ai/apis/v1/account/balance \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+---
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Models & Multimodal Guide" icon="microchip" href="/guides/models">
+    Browse all text, image, and video models with vendor invoke templates.
+  </Card>
+  <Card title="SDK Compatibility" icon="arrows-rotate" href="/get-started/sdk-compatibility">
+    Learn how to initialize OpenAI, Anthropic, Google GenAI, and Byteplus SDKs.
+  </Card>
+</CardGroup>

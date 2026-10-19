@@ -1,0 +1,28 @@
+---
+title: "智能体发现 – 让自主智能体自动发现并使用 XRoute"
+sidebarTitle: "智能体发现"
+description: "面向自主智能体发现的 A2A Agent Card、OpenAPI、llms.txt 与 MCP 入口。"
+---
+
+XRoute 发布了机器可读的发现清单（Discovery Manifests），使自主智能体无需人工干预即可检查能力、Schema 与价格。
+
+## 发现端点
+
+| 产物 | URL | 用途 |
+| :--- | :--- | :--- |
+| **A2A Agent Card** | `https://xroute.ai/.well-known/agent-card.json` | 智能体间（Agent-to-Agent）能力与技能清单 |
+| **MCP 端点** | `https://mcp.xroute.ai/mcp` | Model Context Protocol 工具发现与执行 |
+| **OpenAPI 规范** | `https://api.xroute.ai/openapi.json` | 包含单次调用声明价格的完整 REST 契约 |
+| **LLMs 索引** | `https://xroute.ai/docs/llms.txt` | 针对大语言模型优化的 Markdown 文档索引 |
+
+## A2A Agent Card
+
+### 获取 Agent Card
+
+```bash
+curl https://xroute.ai/.well-known/agent-card.json
+```
+
+### Agent Card 结构
+
+Agent Card 声明了 XRoute 的认证方案（`OAuth2`、`Bearer` 和 `MPP`）、支持的模态（`text`、`image`、`video`、`audio`、`json`）以及映射到实时端点的技能对象（skill objects）。

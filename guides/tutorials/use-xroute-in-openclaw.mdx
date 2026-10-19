@@ -1,0 +1,37 @@
+---
+title: "Use XRoute in OpenClaw"
+sidebarTitle: "OpenClaw"
+description: "Configure XRoute as an MCP tool server and LLM provider in OpenClaw."
+---
+
+OpenClaw agents can use XRoute both as their MCP tool gateway and as their primary multi-model LLM router.
+
+## 1. Connect XRoute capabilities
+
+### Step 1: Add the server
+
+Add `https://mcp.xroute.ai/mcp` to your OpenClaw MCP configuration.
+
+### Step 2: Sign in
+
+Complete the browser OAuth flow when prompted by OpenClaw.
+
+### Step 3: Verify and reload
+
+Run the free `account` check to verify your Credits balance.
+
+## 2. Optional: use XRoute as the LLM provider
+
+### Step 1: Get your XRoute API key
+
+Generate a key in the [XRoute Console](https://xroute.ai).
+
+### Step 2: Set your API key
+
+```yaml
+provider:
+  name: openai-compatible
+  base_url: https://api.xroute.ai/v1
+  api_key: ${XROUTE_API_KEY}
+  default_model: anthropic/claude-sonnet-4
+```

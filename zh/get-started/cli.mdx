@@ -1,0 +1,49 @@
+---
+title: "使用 XRoute CLI"
+sidebarTitle: "使用 CLI"
+description: "在终端、脚本与 CI 环境中搜索、询价并调用模型与数据 API。"
+---
+
+当您的智能体或脚本运行在无法使用远程 MCP 连接的终端或 CI 环境中时，请使用 XRoute CLI。
+
+## 安装与登录
+
+```bash
+npm install -g @xroute/cli
+xroute login
+```
+
+对于无界面（headless）CI/CD 流水线，请设置 `XROUTE_API_KEY` 环境变量，而无需运行 `xroute login`：
+
+```bash
+export XROUTE_API_KEY="xr_live_..."
+```
+
+## 命令列表
+
+| 命令 | 费用 | 说明 |
+| :--- | :--- | :--- |
+| `xroute account` | 免费 | 显示当前积分（Credits）余额与密钥消费上限。 |
+| `xroute search <query>` | 免费 | 按关键词搜索模型与数据端点。 |
+| `xroute details <endpoint_id>` | 免费 | 显示输入 Schema、定价及请求负载示例。 |
+| `xroute quote <endpoint_id> --json` | 免费 | 在执行前计算精确的调用费用。 |
+| `xroute call <endpoint_id> -d '{...}'` | 付费 | 执行模型或数据 API 调用。 |
+
+## CLI 智能体准则
+
+1. **免费发现：** 在调用前运行 `xroute search` 和 `xroute details` 以确认参数名称。
+2. **先询价再调用：** 运行 `xroute quote --json` 并检查 `auto_execute_eligible`。
+3. **切勿用付费调用进行探测：** 请勿仅为了测试连通性而调用付费端点——请改用 `xroute account`。
+
+## 直接 HTTP 回退方案
+
+当既未安装 MCP 也未安装 CLI 时，可使用 `curl` 通过 HTTPS 直接调用 XRoute。
+
+### 付费 API 需先获得批准
+
+在自主智能体发起直接付费 HTTP 调用之前，需向用户说明目标端点、单价和预计总花费并等待确认，除非已启用预先批准的任务预算。
+
+```bash
+curl https://api.xroute.ai/v1/models \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```

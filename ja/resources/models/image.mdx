@@ -1,0 +1,146 @@
+---
+title: "画像生成モデル (ネイティブ形式)"
+sidebarTitle: "画像モデル"
+description: "プロバイダーネイティブプロトコルを通じて、OpenAI、Google GenAI、Byteplus Ark、Qwen の画像生成および編集インターフェースを呼び出します。"
+---
+
+XRoute は、高品質なテキストからの画像生成（Text-to-Image）、インペイント、画像編集に対応した主要な拡散モデルおよびビジョンモデルをサポートしています。
+
+<Warning>
+**プロバイダーネイティブ形式のみ**: 画像生成モデルは、一般的な対話補完エンドポイント（`/v1/chat/completions`）を**サポートしていません**。呼び出しには、各プロバイダー専用のネイティブエンドポイント（`https://api.xroute.ai/{Provider}/...`）を使用する必要があります。
+</Warning>
+
+---
+
+## サポートされている画像モデル一覧
+
+| プロバイダー | モデル識別子 (Model ID) | 機能タイプ | ネイティブエンドポイント | 推奨解像度 |
+| :--- | :--- | :--- | :--- | :--- |
+| **OpenAI** | `OpenAI/gpt-image-2.5-flare` | 高解像度画像生成 | `POST https://api.xroute.ai/OpenAI/images/generations` | `1024x1024`, `1024x1792`, `1792x1024` |
+| **OpenAI** | `OpenAI/gpt-image-2` | 画像編集・インペイント | `POST https://api.xroute.ai/OpenAI/images/edits` | `1024x1024` |
+| **Google** | `Google/gemini-3.1-flash-image` | マルチモーダル画像出力 | `POST https://api.xroute.ai/Google/image/models/{id}:generateContent` | 動的適応 |
+| **Byteplus** | `Byteplus/seedream-5-0-260128` | 高忠実度ビジュアル生成 | `POST https://api.xroute.ai/Byteplus/images/generations` | `1024x1024`, `512x512` |
+| **Qwen** | `Qwen/qwen-image-3.0-pro` | 複数解像度対応 | `POST https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation` | `1024*1024`, `720*1280` |
+
+---
+
+## 1. OpenAI ネイティブ Images API 呼び出し
+
+クライアントの `base_url` を `https://api.xroute.ai/OpenAI` に設定することで、OpenAI Images API 構文をそのまま再利用できます。
+
+### 画像生成 (Text-to-Image)
+
+- **エンドポイント**: `POST https://api.xroute.ai/OpenAI/images/generations`
+- **リクエストヘッダー**: `Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-image-2.5-flare",
+    "prompt": "Cyberpunk floating data center in neon glow, 8k octane render",
+    "size": "1024x1024",
+    "quality": "standard",
+    "n": 1
+  }'
+```
+
+```python Python (OpenAI SDK)
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.xroute.ai/OpenAI",
+    api_key="your_xroute_api_key",
+)
+
+result = client.images.generate(
+    model="gpt-image-2.5-flare",
+    prompt="Cyberpunk floating data center in neon glow, 8k octane render",
+    size="1024x1024",
+    n=1,
+)
+
+print(result.data[0].url)
+```
+</CodeGroup>
+
+### 画像編集とインペイント (Inpainting)
+
+- **エンドポイント**: `POST https://api.xroute.ai/OpenAI/images/edits`
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/OpenAI/images/edits" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -F image="@original.png" \
+  -F mask="@mask.png" \
+  -F model="gpt-image-2" \
+  -F prompt="Add a futuristic holographic dashboard in the center"
+```
+
+---
+
+## 2. Byteplus Seedream ネイティブ画像生成
+
+Byteplus Ark は高速な推論と高品質なレンダリングを提供します。
+
+- **エンドポイント**: `POST https://api.xroute.ai/Byteplus/images/generations`
+- **リクエストヘッダー**: `Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Byteplus/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedream-5-0-260128",
+    "prompt": "Cyberpunk cityscape under rainy neon lights, cinematic depth of field",
+    "size": "1024x1024",
+    "response_format": "url"
+  }'
+```
+
+```python Python (Byteplus Ark SDK)
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+response = client.images.generate(
+    model="seedream-5-0-260128",
+    prompt="Cyberpunk cityscape under rainy neon lights, cinematic depth of field",
+    size="1024x1024",
+)
+
+print(response.data[0].url)
+```
+</CodeGroup>
+
+---
+
+## 3. Google Gemini ネイティブ画像生成
+
+`responseModalities: ["IMAGE"]` を指定して Google GenAI の画像生成を実行します。
+
+- **エンドポイント**: `POST https://api.xroute.ai/Google/image/models/gemini-3.1-flash-image:generateContent`
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/Google/image/models/gemini-3.1-flash-image:generateContent" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {"text": "Architectural sketch of a solar tower in desert, modern minimalist"}
+        ]
+      }
+    ],
+    "generationConfig": {
+      "responseModalities": ["IMAGE"]
+    }
+  }'
+```

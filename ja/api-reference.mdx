@@ -1,0 +1,43 @@
+---
+title: "API リファレンス"
+sidebarTitle: "API リファレンス"
+description: "1 つのキー、1 つの統合プレフィックス（https://api.xroute.ai）で、すべての API にアクセス。XRoute がルーティングするすべてのモデルとデータエンドポイントを一覧できます。"
+---
+
+XRoute は、統合された呼び出しプレフィックス **`https://api.xroute.ai`** の下で、60 以上の LLM、メディア生成モデル、および 100 以上のリアルタイムデータ API に対して統合 HTTP エンドポイントを提供します。
+
+## ベース URL（呼び出しプレフィックス）
+
+すべての API リクエストは共通のプレフィックス `https://api.xroute.ai` を使用します：
+
+| 呼び出しモード / サービス | ベース URL / エンドポイント |
+| :--- | :--- |
+| **OpenAI 互換呼び出し** | `https://api.xroute.ai/v1` |
+| **Anthropic 互換呼び出し** | `https://api.xroute.ai/v1/messages` |
+| **ネイティブ形式呼び出し（Gemini ネイティブなど）** | `https://api.xroute.ai/v1beta` |
+| **リアルタイムデータ・アカウント API** | `https://api.xroute.ai/apis/v1` |
+| **MCP サーバー** | `https://mcp.xroute.ai/mcp` |
+
+## 基本エンドポイント
+
+<CardGroup cols={2}>
+  <Card title="クレジット残高" icon="wallet" href="/ja/api-reference/credits-balance">
+    プリペイドクレジットの残高とキーの利用上限を確認します（`GET https://api.xroute.ai/apis/v1/account/balance`）。
+  </Card>
+
+  <Card title="アカウント利用状況" icon="chart-bar" href="/ja/api-reference/account-usage">
+    過去の呼び出し回数と確定した USD 利用額を照会します（`GET https://api.xroute.ai/apis/v1/account/usage`）。
+  </Card>
+
+  <Card title="チャット補完（Chat Completions）" icon="comments" href="/ja/api-reference/chat-completions">
+    OpenAI 呼び出し、Anthropic 呼び出し、ネイティブ形式呼び出しの 3 つのモードで 60 以上の最先端モデルを呼び出します。
+  </Card>
+
+  <Card title="モデル一覧" icon="list" href="/ja/api-reference/models-list">
+    利用可能なモデル ID、コンテキストウィンドウ、トークン料金を取得します（`GET https://api.xroute.ai/v1/models`）。
+  </Card>
+</CardGroup>
+
+## 確定した呼び出しコスト
+
+すべての有料レスポンスには、クレジット残高から差し引かれた正確な USD 金額を示す `x-xroute-cost-usd` ヘッダーが含まれます。

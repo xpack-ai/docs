@@ -1,0 +1,85 @@
+---
+title: "モデルカタログと選定ガイド"
+sidebarTitle: "モデル概要"
+description: "テキスト・画像・動画の 3 大モダリティを網羅した 60 以上の AI モデルカタログ。統合プロトコルとネイティブルーティングをサポート。"
+---
+
+**XRoute モデルカタログ（Model Catalog）**へようこそ。XRoute は、世界の最先端モデルに対して統合クレジット課金、50ms 未満の超低遅延ルーティング、およびベンダーフェイルオーバーを提供します。
+
+開発者が目的のモデルを**素早く見つけ**、スムーズに実装できるよう、また**SEO（検索エンジン最適化）**にも配慮し、本カタログは**出力モダリティ**と**プロトコル構造**ごとに整理されています：
+
+<CardGroup cols={3}>
+  <Card title="テキストモデル (Text)" icon="message" href="/ja/resources/models/text">
+    対話・推論モデル。**OpenAI 統合形式**、**Anthropic 統合形式**、**ネイティブ形式**をサポート。
+  </Card>
+  <Card title="画像モデル (Image)" icon="image" href="/ja/resources/models/image">
+    画像生成と編集。**プロバイダーネイティブ形式のみ**（OpenAI、Google、Byteplus、Qwen）。
+  </Card>
+  <Card title="動画モデル (Video)" icon="video" href="/ja/resources/models/video">
+    動画生成。**ネイティブ非同期タスク形式のみ**（Byteplus Ark、WAN DashScope）。
+  </Card>
+</CardGroup>
+
+---
+
+## モダリティとプロトコル対応マトリクス
+
+| 出力モダリティ | サポートする呼び出し形式 | コアエンドポイント | 主なユースケース |
+| :--- | :--- | :--- | :--- |
+| **テキスト生成 (Text)** | • OpenAI 統合形式 (`/v1/chat/completions`)<br />• Anthropic 統合形式 (`/v1/messages`)<br />• ネイティブ形式 (`/{Provider}/...`) | `https://api.xroute.ai/v1/chat/completions`<br />`https://api.xroute.ai/v1/messages`<br />`https://api.xroute.ai/{Provider}/...` | チャットボット、コーディングエージェント、構造化抽出、論理推論 |
+| **画像生成 (Image)** | • **プロバイダーネイティブ形式のみ** | `https://api.xroute.ai/{Provider}/images/generations`<br />`https://api.xroute.ai/Google/image/...` | 広告ビジュアル、UI モックアップ、ゲームアセット、デザイン |
+| **動画生成 (Video)** | • **ネイティブ非同期タスクのみ**（作成とポーリング） | 作成: `https://api.xroute.ai/{Provider}/.../tasks`<br />照会: `https://api.xroute.ai/{Provider}/.../tasks/{id}` | 短尺動画広告、キャラクターモーション、映像プリビズ |
+
+---
+
+## モダリティ別主要モデル一覧
+
+<Tabs>
+  <Tab title="テキスト (Text)">
+    | プロバイダー | モデル識別子 (Model ID) | コンテキスト長 | 対応プロトコル | 特徴 |
+    | :--- | :--- | :--- | :--- | :--- |
+    | **OpenAI** | `OpenAI/gpt-5.6-sol` | 200K | OpenAI / Anthropic / ネイティブ | 最高峰の汎用推論、高度なコーディング、構造化出力 |
+    | **Anthropic** | `Anthropic/claude-fable-5` | 200K | Anthropic / OpenAI / ネイティブ | 自然な文章生成、長文理解、高い指示忠実度 |
+    | **Google** | `Google/gemini-3.1-pro-preview` | 1M | OpenAI / Anthropic / ネイティブ | 100万トークンの超長文対応、マルチモーダル推論 |
+    | **Byteplus** | `Byteplus/seed-2-0-code-preview-260328` | 128K | OpenAI / Anthropic / ネイティブ | 高スループットなプログラミング向け、エージェント用途 |
+    | **Deepseek** | `Deepseek/deepseek-v4-flash` | 64K | OpenAI / Anthropic / ネイティブ | 圧倒的なコストパフォーマンス、高速レスポンス |
+    | **GLM** | `GLM/glm-5` | 128K | OpenAI / Anthropic / ネイティブ | 知識検索・バイリンガル推論に特化 |
+
+    👉 [テキストモデルの専用ガイドと呼び出しコードを見る](/ja/resources/models/text)
+  </Tab>
+
+  <Tab title="画像 (Image)">
+    | プロバイダー | モデル識別子 (Model ID) | 機能タイプ | ネイティブエンドポイント |
+    | :--- | :--- | :--- | :--- |
+    | **OpenAI** | `OpenAI/gpt-image-2.5-flare` | 高解像度画像生成 | `POST https://api.xroute.ai/OpenAI/images/generations` |
+    | **OpenAI** | `OpenAI/gpt-image-2` | 画像編集・インペイント | `POST https://api.xroute.ai/OpenAI/images/edits` |
+    | **Google** | `Google/gemini-3.1-flash-image` | マルチモーダル画像生成 | `POST https://api.xroute.ai/Google/image/models/{id}:generateContent` |
+    | **Byteplus** | `Byteplus/seedream-5-0-260128` | 高忠実度ビジュアルレンダリング | `POST https://api.xroute.ai/Byteplus/images/generations` |
+    | **Qwen** | `Qwen/qwen-image-3.0-pro` | 複数解像度対応画像生成 | `POST https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation` |
+
+    👉 [画像モデルの専用ガイドとネイティブパラメータを見る](/ja/resources/models/image)
+  </Tab>
+
+  <Tab title="動画 (Video)">
+    | プロバイダー | モデル識別子 (Model ID) | 解像度・フレームレート | タスクライフサイクル |
+    | :--- | :--- | :--- | :--- |
+    | **Byteplus** | `Byteplus/seedance-1-5-pro-251215` | 最大 1080p, 60fps 映画級カメラワーク | 作成: `POST .../contents/generations/tasks`<br />照会: `GET .../contents/generations/tasks/{task_id}` |
+    | **WAN** | `WAN/wan3.0-video-prime` | 滑らかな動的一貫性、720p/1080p | 作成: `POST .../video-generation/video-synthesis`<br />照会: `GET .../tasks/{task_id}` |
+
+    👉 [動画モデルの専用ガイドと非同期ポーリングコードを見る](/ja/resources/models/video)
+  </Tab>
+</Tabs>
+
+---
+
+## 統合認証とルーティング
+
+すべてのモデルとモダリティのリクエストは、XRoute の**共通 API キー**を使用します：
+
+```bash
+export XROUTE_API_KEY="xr_live_your_key_here"
+```
+
+- ゲートウェイベース URL: `https://api.xroute.ai`
+- 共通クレジット: 1 つの残高ですべてのベンダーモデルを利用可能。
+- リアルタイムカタログ: 最新の料金とレイテンシは [xroute.ai/en/model](https://xroute.ai/en/model) をご覧ください。

@@ -1,0 +1,48 @@
+---
+title: "在 Claude 中使用 XRoute"
+sidebarTitle: "Claude"
+description: "通过 MCP 服务器地址与浏览器登录将 XRoute 添加为 Claude 的自定义连接器，同样适用于 Claude Code。"
+---
+
+使用官方 MCP 服务器地址将 Claude Desktop 或 Claude Code 连接到 XRoute。
+
+## 前提条件
+
+- 一个拥有可用额度（Credits）的 [XRoute](https://xroute.ai) 活跃账户。
+- 已安装 Claude Desktop 或 Claude Code CLI。
+
+## 1. 添加连接器
+
+在 Claude Desktop 中，依次打开 **Settings -> Integrations -> Add Custom Connector** 并输入：
+
+```text
+https://mcp.xroute.ai/mcp
+```
+
+## 2. 通过浏览器登录
+
+点击 **Connect** 并在浏览器中完成 OAuth 登录流程，无需手动复制 API 密钥。
+
+## 3. 设置工具权限
+
+允许 `account`、`list_categories`、`search`、`get_details` 和 `batch_quote` 自动运行（这五项均为免费工具），并将 `execute` 保持为 **Ask**（询问），或将其控制在您偏好的自动批准预算范围内。
+
+## 4. 使用 XRoute 能力
+
+让 Claude 通过 XRoute 执行多源网页搜索、查询金融市场数据或调用专用模型。
+
+## Claude Code
+
+对于 Claude Code CLI，请运行以下命令注册 MCP 服务器：
+
+```bash
+claude mcp add --transport http xroute https://mcp.xroute.ai/mcp
+```
+
+## 快速参考
+
+| 配置项 | 值 |
+| :--- | :--- |
+| MCP 服务器地址 | `https://mcp.xroute.ai/mcp` |
+| 认证方式 | 浏览器 OAuth 2.0 |
+| 免费验证工具 | `account` |

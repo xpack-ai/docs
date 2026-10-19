@@ -1,0 +1,23 @@
+---
+title: "使用 XRoute 构建市场情报智能体"
+sidebarTitle: "市场情报智能体"
+description: "将实时股票价格、加密货币行情与预测市场赔率整合为自动化市场简报。"
+---
+
+## 面临的问题
+
+金融与市场分析师需要在一处同时获取实时股票价格、SEC 监管文件、加密货币流动性以及预测市场概率，而不必手动拼凑四个独立的数据订阅服务。
+
+## 提示词示例
+
+```text
+Generate a pre-market intelligence brief for NVDA and BTC:
+1. Fetch latest price action and 7-day volume via XRoute Financial & CoinGecko APIs.
+2. Check Polymarket macro event probabilities for the upcoming FOMC decision.
+3. Synthesize key risk factors using anthropic/claude-sonnet-4.
+```
+
+## 使用的 API 与模型
+
+- **数据 API：** 金融价格（`/apis/v1/financial/prices`）、CoinGecko 市场行情、Polymarket 事件（`/apis/v1/prediction-market/polymarket-events`）
+- **模型：** `anthropic/claude-sonnet-4`

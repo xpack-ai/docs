@@ -1,0 +1,66 @@
+---
+title: "エージェントを XRoute に接続する"
+sidebarTitle: "MCP で接続"
+description: "https://mcp.xroute.ai/mcp を追加し、OAuth でサインインして、無料の account 操作で接続を確認します。"
+---
+
+Model Context Protocol（MCP）を介して、XRoute を AI コーディングエージェントに接続します。サインインはブラウザの OAuth 経由で行われるため、API キーをコピー＆ペーストする必要はありません。
+
+## エージェント向けの設定手順
+
+### MCP（デフォルト）
+
+クライアントにリモート MCP サーバー URL `https://mcp.xroute.ai/mcp` を追加します。
+
+<CodeGroup>
+
+```bash Claude Code
+claude mcp add --transport http xroute https://mcp.xroute.ai/mcp
+```
+
+```bash Codex
+codex mcp add xroute --url https://mcp.xroute.ai/mcp
+```
+
+```json Cursor (.cursor/mcp.json)
+{
+  "mcpServers": {
+    "xroute": {
+      "url": "https://mcp.xroute.ai/mcp"
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+追加すると、クライアントがブラウザウィンドウを開き、XRoute へのサインインと接続の認可を求めます。
+
+### CLI（MCP を実行できない環境向け）
+
+実行環境がリモート MCP サーバーをサポートしていない場合は、代わりに XRoute CLI をインストールします。
+
+```bash
+npm install -g @xroute/cli
+xroute login
+```
+
+完全なコマンドリファレンスと CI のセットアップについては、[CLI を使用](/ja/get-started/cli)を参照してください。
+
+### 接続確認
+
+エージェントで無料の `account` チェックツールを実行し、接続を確認します。
+
+1. エージェントに *「XRoute のアカウント残高と利用可能なツールカテゴリを確認して」* と依頼します。
+2. `account` および `list_categories` 操作が無料で実行され、有効なクレジット残高が返されることを確認します。
+
+## 公開されている MCP ツール
+
+| ツール | コスト | 説明 |
+| :--- | :--- | :--- |
+| `account` | 無料 | プリペイドクレジット残高とキーの利用上限を確認します。 |
+| `list_categories` | 無料 | 利用可能なすべての LLM およびリアルタイムデータ API のカテゴリを一覧表示します。 |
+| `search` | 無料 | 機能、キーワード、またはプロバイダーでエンドポイントを検索します。 |
+| `get_details` | 無料 | エンドポイントのリクエストパラメータ、スキーマ、料金を確認します。 |
+| `batch_quote` | 無料 | 1 つ以上の呼び出しを実行する前に、正確なコスト見積もりを計算します。 |
+| `execute` | 有料 | 対象のモデルまたはデータエンドポイントを呼び出し、構造化された出力を返します。 |

@@ -1,0 +1,238 @@
+---
+title: "チャット補完（Chat Completions）"
+sidebarTitle: "チャット補完"
+description: "https://api.xroute.ai プレフィックスの下で、OpenAI 統合呼び出し、Anthropic 統合呼び出し、プロバイダーネイティブ形式の呼び出しにより 60 以上の LLM にアクセスします。"
+---
+
+XRoute ゲートウェイは、対話およびテキスト生成において以下の 3 つの主要な呼び出しプロトコルをサポートしています：
+1. **OpenAI 統合形式**: `POST https://api.xroute.ai/v1/chat/completions`
+2. **Anthropic 統合形式**: `POST https://api.xroute.ai/v1/messages`
+3. **プロバイダーネイティブ形式**: `POST https://api.xroute.ai/{Provider}/...`（OpenAI、Anthropic、Google、Byteplus、Deepseek、GLM などのネイティブプロトコルをサポート）
+
+<Note>
+- **テキスト出力モデル（Text）**: **3 つの呼び出し形式すべて**（OpenAI / Anthropic / ネイティブ形式）をサポートします。
+- **画像出力モデル（Image）**: **プロバイダーネイティブ形式のみ**をサポートします（例: `https://api.xroute.ai/OpenAI/images/generations`、`https://api.xroute.ai/Byteplus/images/generations`）。
+- **動画出力モデル（Video）**: **ネイティブ非同期タスク形式のみ**をサポートします（例: Byteplus および WAN の非同期タスク作成およびポーリングエンドポイント）。
+</Note>
+
+---
+
+## 1. OpenAI 統合呼び出し
+
+標準の OpenAI 互換リクエストペイロードおよび認証ヘッダーを使用します。すべてのテキスト生成モデルに対応しています。
+
+- **エンドポイント**: `POST https://api.xroute.ai/v1/chat/completions`
+- **認証ヘッダー**: `Authorization: Bearer <XROUTE_API_KEY>`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "OpenAI/gpt-5.6-sol",
+    "messages": [
+      {"role": "system", "content": "You are an enterprise cloud advisor."},
+      {"role": "user", "content": "Explain core benefits of cloud-native architecture."}
+    ],
+    "temperature": 0.7,
+    "stream": false
+  }'
+```
+
+```python Python (OpenAI SDK)
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+response = client.chat.completions.create(
+    model="OpenAI/gpt-5.6-sol",
+    messages=[
+        {"role": "system", "content": "You are an enterprise cloud advisor."},
+        {"role": "user", "content": "Explain core benefits of cloud-native architecture."}
+    ],
+    temperature=0.7,
+)
+
+print(response.choices[0].message.content)
+```
+
+```typescript TypeScript (OpenAI SDK)
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  baseURL: 'https://api.xroute.ai/v1',
+  apiKey: process.env.XROUTE_API_KEY,
+});
+
+const response = await client.chat.completions.create({
+  model: 'OpenAI/gpt-5.6-sol',
+  messages: [{ role: 'user', content: 'Explain core benefits of cloud-native architecture.' }],
+});
+
+console.log(response.choices[0].message.content);
+```
+</CodeGroup>
+
+---
+
+## 2. Anthropic 統合呼び出し
+
+標準の Anthropic Messages プロトコルを使用します。ゲートウェイがリクエストを解釈し、背後にあるモデルプロバイダーに自動ルーティングします。
+
+- **エンドポイント**: `POST https://api.xroute.ai/v1/messages`
+- **認証ヘッダー**: `x-api-key: <XROUTE_API_KEY>`
+- **プロトコルヘッダー**: `anthropic-version: 2023-06-01`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/v1/messages" \
+  -H "x-api-key: $XROUTE_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Anthropic/claude-fable-5",
+    "max_tokens": 1024,
+    "system": "You are a cryptography specialist.",
+    "messages": [
+      {"role": "user", "content": "Explain the fundamental principles of Zero-Knowledge Proofs (ZKP)."}
+    ]
+  }'
+```
+
+```python Python (Anthropic SDK)
+from anthropic import Anthropic
+
+client = Anthropic(
+    base_url="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+message = client.messages.create(
+    model="Anthropic/claude-fable-5",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Explain the fundamental principles of Zero-Knowledge Proofs (ZKP)."}],
+)
+
+print(message.content[0].text)
+```
+
+```typescript TypeScript (Anthropic SDK)
+import Anthropic from '@anthropic-ai/sdk';
+
+const client = new Anthropic({
+  baseURL: 'https://api.xroute.ai/v1',
+  apiKey: process.env.XROUTE_API_KEY,
+});
+
+const message = await client.messages.create({
+  model: 'Anthropic/claude-fable-5',
+  max_tokens: 1024,
+  messages: [{ role: 'user', content: 'Explain the fundamental principles of Zero-Knowledge Proofs (ZKP).' }],
+});
+
+console.log(message.content[0].text);
+```
+</CodeGroup>
+
+---
+
+## 3. プロバイダーネイティブ形式の呼び出し
+
+`{Provider}` ルーティングプレフィックスを通じて、ベンダー独自のネイティブエンドポイントとプロトコルに直接接続します。
+
+### Google Gemini ネイティブ
+
+- **エンドポイント**: `POST https://api.xroute.ai/Google/models/{model_id}:generateContent`
+- **ストリーミング**: `POST https://api.xroute.ai/Google/models/{model_id}:streamGenerateContent?alt=sse`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Google/models/gemini-3.1-pro-preview:generateContent" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {"text": "Briefly contrast classical vs quantum computing."}
+        ]
+      }
+    ]
+  }'
+```
+
+```python Python (google-genai SDK)
+from google import genai
+
+client = genai.Client(
+    api_key="your_xroute_api_key",
+    http_options={"base_url": "https://api.xroute.ai/Google"},
+)
+
+response = client.models.generate_content(
+    model="gemini-3.1-pro-preview",
+    contents="Briefly contrast classical vs quantum computing.",
+)
+print(response.text)
+```
+</CodeGroup>
+
+### Byteplus ネイティブ
+
+- **エンドポイント**: `POST https://api.xroute.ai/Byteplus/chat/completions`
+
+```python Python (Byteplus Ark SDK)
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+completion = client.chat.completions.create(
+    model="Byteplus/seed-2-0-code-preview-260328",
+    messages=[{"role": "user", "content": "Write a binary search implementation in Python."}],
+)
+print(completion.choices[0].message.content)
+```
+
+### Deepseek & GLM ネイティブ（DashScope プロトコル）
+
+- **エンドポイント**: `POST https://api.xroute.ai/{Provider}/services/aigc/text-generation/generation`
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/Deepseek/services/aigc/text-generation/generation" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-v4-flash",
+    "input": {
+      "messages": [
+        {"role": "user", "content": "Hello! Introduce yourself."}
+      ]
+    },
+    "parameters": {
+      "result_format": "message"
+    }
+  }'
+```
+
+---
+
+## 4. マルチモーダル画像・動画エンドポイントリファレンス
+
+画像および動画生成モデルは Chat Completions エンドポイントを使用しません。各プロバイダー専用のネイティブエンドポイントを使用してください：
+
+| モダリティ | プロバイダーおよびモデル例 | プロトコルエンドポイント | 推奨 SDK / メソッド |
+| :--- | :--- | :--- | :--- |
+| **画像生成** | `OpenAI/gpt-image-2.5-flare` | `POST https://api.xroute.ai/OpenAI/images/generations` | OpenAI SDK (`client.images.generate`) |
+| **画像編集** | `OpenAI/gpt-image-2` | `POST https://api.xroute.ai/OpenAI/images/edits` | OpenAI SDK (`client.images.edit`) |
+| **画像生成** | `Google/gemini-3.1-flash-image` | `POST https://api.xroute.ai/Google/image/models/{id}:generateContent` | Google GenAI SDK |
+| **画像生成** | `Byteplus/seedream-5-0-260128` | `POST https://api.xroute.ai/Byteplus/images/generations` | Byteplus Ark SDK (`client.images.generate`) |
+| **画像生成** | `Qwen/qwen-image-3.0-pro` | `POST https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation` | DashScope SDK |
+| **動画生成** | `Byteplus/seedance-1-5-pro-251215` | 作成: `POST https://api.xroute.ai/Byteplus/contents/generations/tasks`<br />照会: `GET https://api.xroute.ai/Byteplus/contents/generations/tasks/{id}` | Byteplus Ark SDK (`content_generation.tasks`) |
+| **動画生成** | `WAN/wan3.0-video-prime` | 作成: `POST https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis`<br />照会: `GET https://api.xroute.ai/WAN/tasks/{id}` | DashScope SDK (`VideoSynthesis`) |

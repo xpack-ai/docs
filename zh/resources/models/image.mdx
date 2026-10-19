@@ -1,0 +1,146 @@
+---
+title: "图片生成模型 (原生格式)"
+sidebarTitle: "图片模型"
+description: "通过供应商原生协议调用 OpenAI、Google GenAI、Byteplus Ark 与 Qwen 图片生成及局部重绘接口。"
+---
+
+XRoute 支持主流计算机视觉与扩散模型（Diffusion Models），用于高质量文生图、图像局部编辑与多模态视觉生成。
+
+<Warning>
+**仅支持供应商原生格式**：图片生成模型**不支持**通用的对话补全接口（`/v1/chat/completions`）。调用时必须使用各供应商专用的原生端点（`https://api.xroute.ai/{Provider}/...`）。
+</Warning>
+
+---
+
+## 支持的图片模型列表
+
+| 供应商 | 模型标识 (Model ID) | 功能类型 | 原生协议端点 | 推荐分辨率/尺寸 |
+| :--- | :--- | :--- | :--- | :--- |
+| **OpenAI** | `OpenAI/gpt-image-2.5-flare` | 高清文生图 | `POST https://api.xroute.ai/OpenAI/images/generations` | `1024x1024`, `1024x1792`, `1792x1024` |
+| **OpenAI** | `OpenAI/gpt-image-2` | 图像局部重绘与编辑 | `POST https://api.xroute.ai/OpenAI/images/edits` | `1024x1024` |
+| **Google** | `Google/gemini-3.1-flash-image` | 多模态图像输出 | `POST https://api.xroute.ai/Google/image/models/{id}:generateContent` | 动态自适应 |
+| **Byteplus** | `Byteplus/seedream-5-0-260128` | 高保真视觉渲染 | `POST https://api.xroute.ai/Byteplus/images/generations` | `1024x1024`, `512x512` |
+| **Qwen** | `Qwen/qwen-image-3.0-pro` | 多分辨率图像生成 | `POST https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation` | `1024*1024`, `720*1280` |
+
+---
+
+## 1. OpenAI 原生 Images API 调用
+
+只需将客户端的 `base_url` 指向 `https://api.xroute.ai/OpenAI`，即可无缝复用 OpenAI Images API 语法。
+
+### 文生图 (Text-to-Image)
+
+- **接口端点**：`POST https://api.xroute.ai/OpenAI/images/generations`
+- **请求头**：`Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-image-2.5-flare",
+    "prompt": "赛博朋克风格的未来数据中心，蓝色与紫色霓虹灯光交织，8k 渲染超写实细节",
+    "size": "1024x1024",
+    "quality": "standard",
+    "n": 1
+  }'
+```
+
+```python Python (OpenAI SDK)
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.xroute.ai/OpenAI",
+    api_key="your_xroute_api_key",
+)
+
+result = client.images.generate(
+    model="gpt-image-2.5-flare",
+    prompt="赛博朋克风格的未来数据中心，蓝色与紫色霓虹灯光交织，8k 渲染超写实细节",
+    size="1024x1024",
+    n=1,
+)
+
+print(result.data[0].url)
+```
+</CodeGroup>
+
+### 图像编辑与局部重绘 (Inpainting)
+
+- **接口端点**：`POST https://api.xroute.ai/OpenAI/images/edits`
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/OpenAI/images/edits" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -F image="@original.png" \
+  -F mask="@mask.png" \
+  -F model="gpt-image-2" \
+  -F prompt="在画面中央增加一个未来科技感的全息监控仪表盘"
+```
+
+---
+
+## 2. Byteplus Seedream 原生图像生成
+
+Byteplus Ark 平台拥有极速推理和高质量视觉渲染能力。
+
+- **接口端点**：`POST https://api.xroute.ai/Byteplus/images/generations`
+- **请求头**：`Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Byteplus/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedream-5-0-260128",
+    "prompt": "雨夜中的赛博朋克城市街道，地面湿润倒影逼真，电影质感景深",
+    "size": "1024x1024",
+    "response_format": "url"
+  }'
+```
+
+```python Python (Byteplus Ark SDK)
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+response = client.images.generate(
+    model="seedream-5-0-260128",
+    prompt="雨夜中的赛博朋克城市街道，地面湿润倒影逼真，电影质感景深",
+    size="1024x1024",
+)
+
+print(response.data[0].url)
+```
+</CodeGroup>
+
+---
+
+## 3. Google Gemini 原生图片生成
+
+通过配置 `responseModalities: ["IMAGE"]`，调用 Google GenAI 图像生成能力。
+
+- **接口端点**：`POST https://api.xroute.ai/Google/image/models/gemini-3.1-flash-image:generateContent`
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/Google/image/models/gemini-3.1-flash-image:generateContent" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {"text": "在沙漠中建造的零碳太阳能高塔建筑草图，现代主义极简风格"}
+        ]
+      }
+    ],
+    "generationConfig": {
+      "responseModalities": ["IMAGE"]
+    }
+  }'
+```

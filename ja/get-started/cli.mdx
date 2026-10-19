@@ -1,0 +1,49 @@
+---
+title: "XRoute CLI を使用する"
+sidebarTitle: "CLI を使用"
+description: "ターミナル、スクリプト、CI 環境からモデルやデータ API の検索、見積もり、呼び出しを行います。"
+---
+
+リモート MCP 接続を利用できないターミナルや CI 環境でエージェントやスクリプトを実行する場合は、XRoute CLI を使用します。
+
+## インストールとサインイン
+
+```bash
+npm install -g @xroute/cli
+xroute login
+```
+
+ヘッドレス CI/CD パイプラインでは、`xroute login` を実行する代わりに環境変数 `XROUTE_API_KEY` を設定します。
+
+```bash
+export XROUTE_API_KEY="xr_live_..."
+```
+
+## コマンド一覧
+
+| コマンド | コスト | 説明 |
+| :--- | :--- | :--- |
+| `xroute account` | 無料 | 現在の Credits 残高とキーの利用上限を表示します。 |
+| `xroute search <query>` | 無料 | キーワードでモデルやデータエンドポイントを検索します。 |
+| `xroute details <endpoint_id>` | 無料 | 入力スキーマ、料金、サンプルペイロードを表示します。 |
+| `xroute quote <endpoint_id> --json` | 無料 | 実行前に正確な呼び出しコストを計算します。 |
+| `xroute call <endpoint_id> -d '{...}'` | 有料 | モデルまたはデータ API の呼び出しを実行します。 |
+
+## CLI 利用時のエージェントルール
+
+1. **無料で検索する:** 呼び出す前に `xroute search` と `xroute details` を実行してパラメータ名を確認します。
+2. **必ず先に見積もりを取る:** `xroute quote --json` を実行し、`auto_execute_eligible` を確認します。
+3. **接続確認に有料呼び出しを使わない:** 疎通確認のためだけに有料エンドポイントを実行せず、代わりに `xroute account` を使用します。
+
+## 直接の HTTP フォールバック
+
+MCP も CLI もインストールされていない場合は、`curl` を使用して HTTPS 経由で直接 XRoute を呼び出します。
+
+### 有料 API の事前承認
+
+自律エージェントから直接有料の HTTP 呼び出しを送信する前に、事前承認済みのタスク予算が有効でない限り、対象エンドポイント、単価、推定合計金額をユーザーに提示して確認を待ちます。
+
+```bash
+curl https://api.xroute.ai/v1/models \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```

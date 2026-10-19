@@ -1,0 +1,34 @@
+---
+title: "Use XRoute in Your Custom Agents"
+sidebarTitle: "Your Custom Agent"
+description: "Point your custom agent's LLM calls at XRoute and attach XRoute tools over MCP or HTTP."
+---
+
+Whether you build agents with the OpenAI Agents SDK, LangGraph, CrewAI, or a custom loop, you can integrate XRoute in two steps.
+
+## 1. Point your agent's LLM calls at XRoute
+
+Use `https://api.xroute.ai/v1` as your base URL so your agent can switch between `deepseek/deepseek-r1`, `anthropic/claude-sonnet-4`, and `openai/gpt-4.1` without changing SDKs:
+
+```python
+import os
+from openai import OpenAI
+
+llm = OpenAI(
+    base_url="https://api.xroute.ai/v1",
+    api_key=os.environ["XROUTE_API_KEY"],
+)
+```
+
+## 2. Give your agent XRoute tools over MCP
+
+Attach `https://mcp.xroute.ai/mcp` using any MCP client library, or pass Bearer authentication headers (`Authorization: Bearer $XROUTE_API_KEY`) for server-to-server MCP connections.
+
+## Quick reference
+
+| Layer | Endpoint |
+| :--- | :--- |
+| LLM Chat & Tool Use | `https://api.xroute.ai/v1/chat/completions` |
+| Anthropic Native | `https://api.xroute.ai/v1/messages` |
+| Data APIs | `https://api.xroute.ai/apis/v1/*` |
+| Remote MCP Server | `https://mcp.xroute.ai/mcp` |

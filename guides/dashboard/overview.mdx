@@ -1,0 +1,36 @@
+---
+title: "XRoute Console"
+sidebarTitle: "Console"
+description: "A tour of the XRoute Console: balance, 30-day invocation trends, API keys, model playground, and per-request usage logs."
+---
+
+The XRoute Console gives you real-time visibility into your model invocations, data API spend, and gateway policies.
+
+## Dashboard
+
+The main dashboard displays:
+
+- **Channel Balance:** Your live prepaid Credits balance and top-up history.
+- **Call Statistics:** Global model and API invocation counts, token volume, and error rates.
+- **Model Invocation Trend:** Interactive charts tracking daily requests and spend across models over the past 30 days.
+
+## Playground
+
+Test any of the 60+ text, reasoning, video, and audio models directly in your browser before writing code:
+
+- Compare side-by-side outputs and latency across models like `deepseek/deepseek-r1`, `anthropic/claude-sonnet-4`, and `Byteplus/dreamina-seedance-2-5`.
+- Export working `curl`, Python, or TypeScript snippets with one click.
+
+## Usage and Logs
+
+Inspect per-request logs including timestamp, model ID, prompt/completion tokens, latency, and settled USD cost.
+
+### Query usage with an API key
+
+You can also fetch usage totals programmatically:
+
+```bash
+# Positive Unix seconds in UTC; this example selects the last 24 hours.
+curl "https://api.xroute.ai/apis/v1/account/usage?start_time=1760745600&end_time=1760832000" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```

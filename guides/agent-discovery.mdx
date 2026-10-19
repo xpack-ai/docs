@@ -1,0 +1,28 @@
+---
+title: "Agent Discovery – Let Autonomous Agents Find and Use XRoute"
+sidebarTitle: "Agent Discovery"
+description: "A2A Agent Card, OpenAPI, llms.txt, and MCP entry points for autonomous agent discovery."
+---
+
+XRoute publishes machine-readable discovery manifests so autonomous agents can inspect capabilities, schemas, and pricing without human intervention.
+
+## Discovery Endpoints
+
+| Artifact | URL | Purpose |
+| :--- | :--- | :--- |
+| **A2A Agent Card** | `https://xroute.ai/.well-known/agent-card.json` | Agent-to-Agent capability and skill manifest |
+| **MCP Endpoint** | `https://mcp.xroute.ai/mcp` | Model Context Protocol tool discovery & execution |
+| **OpenAPI Spec** | `https://api.xroute.ai/openapi.json` | Full REST contract with declared per-call pricing |
+| **LLMs Index** | `https://xroute.ai/docs/llms.txt` | Markdown documentation index optimized for LLMs |
+
+## The A2A Agent Card
+
+### Fetching the Agent Card
+
+```bash
+curl https://xroute.ai/.well-known/agent-card.json
+```
+
+### Agent Card Structure
+
+The Agent Card declares XRoute's authentication schemes (`OAuth2`, `Bearer`, and `MPP`), supported modalities (`text`, `image`, `video`, `audio`, `json`), and skill objects mapped to live endpoints.

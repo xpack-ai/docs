@@ -1,0 +1,33 @@
+---
+title: "在 Cursor 中使用 XRoute"
+sidebarTitle: "Cursor"
+description: "配置 Cursor 使用 XRoute MCP 服务器，并将模型推理请求路由至 XRoute。"
+---
+
+将 Cursor 连接到 XRoute，让您的 IDE 智能体能够调用 100+ 实时数据 API 和 60+ 前沿模型。
+
+## 1. 添加 XRoute MCP 服务器
+
+在您的项目中创建或更新 `.cursor/mcp.json`（或全局配置文件 `~/.cursor/mcp.json`）：
+
+```json
+{
+  "mcpServers": {
+    "xroute": {
+      "url": "https://mcp.xroute.ai/mcp"
+    }
+  }
+}
+```
+
+## 2. 登录
+
+打开 **Cursor Settings -> MCP**，点击 `xroute` 旁边的 **Connect**，并在浏览器中完成 OAuth 登录。
+
+## 可选：在 Cursor 中使用 XRoute 模型
+
+在 **Cursor Settings -> Models** 中：
+
+1. 将 **Override OpenAI Base URL** 设置为 `https://api.xroute.ai/v1`。
+2. 粘贴您的 `XROUTE_API_KEY`。
+3. 添加模型 ID，例如 `deepseek/deepseek-r1` 或 `anthropic/claude-sonnet-4`。

@@ -1,0 +1,129 @@
+---
+title: "获取 API 密钥并发起首次调用"
+sidebarTitle: "API 密钥与首次调用"
+description: "创建 XRoute API 密钥并使用 curl 发起您的首次文本、图片或视频生成请求。"
+---
+
+按照以下步骤创建您的 XRoute API 密钥，调用前沿大语言模型与多模态生成 API，并核对您的用量。
+
+## 1. 创建账户与密钥
+
+1. 登录 [xroute.ai](https://xroute.ai) 并充值通用积分（Credits）。
+2. 打开 **Personal -> Keys**，然后点击 **Create API Key**。
+3. （可选）为每个密钥配置美元消费限额与速率限制。
+4. 在您的终端环境中导出该密钥：
+
+```bash
+export XROUTE_API_KEY="xr_live_your_key_here"
+```
+
+<Warning>
+切勿将 `$XROUTE_API_KEY` 提交到公开 Git 仓库或打印在不受信任的日志中。
+</Warning>
+
+---
+
+## 2. 发起首次模型调用
+
+XRoute 支持文本、图片与视频等多种生成类型。请根据输出类型选择正确的端点与协议：
+
+<Note>
+- **文本模型（Text）**：支持 **OpenAI 统一格式**、**Anthropic 统一格式** 及 **供应商原生格式**。
+- **图片模型（Image）**：**仅支持供应商原生格式**（如 OpenAI Images API 或 Byteplus Images API）。
+- **视频模型（Video）**：**仅支持供应商原生异步任务格式**（提交任务生成并轮询查询状态）。
+</Note>
+
+### A. 文本生成（OpenAI 统一格式）
+
+向 `https://api.xroute.ai/v1/chat/completions` 发送请求：
+
+```bash
+curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "OpenAI/gpt-5.6-sol",
+    "messages": [
+      {"role": "system", "content": "You are a concise technical assistant."},
+      {"role": "user", "content": "Explain low-latency edge routing in 3 bullet points."}
+    ]
+  }'
+```
+
+### B. 文本生成（Anthropic 统一格式）
+
+向 `https://api.xroute.ai/v1/messages` 发送请求：
+
+```bash
+curl -X POST "https://api.xroute.ai/v1/messages" \
+  -H "x-api-key: $XROUTE_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Anthropic/claude-fable-5",
+    "max_tokens": 1024,
+    "messages": [
+      {"role": "user", "content": "What makes a reliable API gateway?"}
+    ]
+  }'
+```
+
+### C. 图片生成（原生格式）
+
+图片生成不支持聊天补全端点，直接调用供应商原生图片接口（例如 OpenAI 格式）：
+
+```bash
+curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-image-2.5-flare",
+    "prompt": "An ultra-modern data center glowing in cyberpunk neon lights, 8k resolution",
+    "size": "1024x1024"
+  }'
+```
+
+### D. 视频生成（原生异步任务）
+
+视频生成采用异步工作流：先提交生成任务，再轮询任务状态（例如 Byteplus）：
+
+```bash
+# 1. 提交视频生成任务
+curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance-1-5-pro-251215",
+    "content": [
+      {"type": "text", "text": "A drone flying through a sunset canyon, cinematic lighting"}
+    ]
+  }'
+
+# 2. 根据返回的 task id 查询结果
+# curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}" \
+#   -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+---
+
+## 3. 查看消费情况
+
+随时查询您的剩余积分余额（免费调用）：
+
+```bash
+curl https://api.xroute.ai/apis/v1/account/balance \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+---
+
+## 后续步骤
+
+<CardGroup cols={2}>
+  <Card title="模型与多模态调用指南" icon="microchip" href="/zh/guides/models">
+    浏览文本、图片、视频全量模型列表及供应商调用模板。
+  </Card>
+  <Card title="SDK 兼容性" icon="arrows-rotate" href="/zh/get-started/sdk-compatibility">
+    了解 OpenAI、Anthropic、Google GenAI 与 Byteplus SDK 的配置方法。
+  </Card>
+</CardGroup>

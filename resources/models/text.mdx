@@ -1,0 +1,237 @@
+---
+title: "Text Models (LLMs)"
+sidebarTitle: "Text Models"
+description: "Call frontier LLMs like GPT-5.6, Claude Fable, Gemini Pro, and DeepSeek via OpenAI unified, Anthropic unified, or provider native endpoints."
+---
+
+Text models on XRoute encompass state-of-the-art Large Language Models (LLMs) and reasoning engines for conversational AI, code generation, summarization, and agent workflows.
+
+All text models support **three flexible invocation formats**:
+1. **OpenAI Unified Format**: `POST https://api.xroute.ai/v1/chat/completions`
+2. **Anthropic Unified Format**: `POST https://api.xroute.ai/v1/messages`
+3. **Provider Native Direct Format**: `POST https://api.xroute.ai/{Provider}/...`
+
+---
+
+## Supported Text Models
+
+| Provider | Model Identifier | Max Context | Recommended Protocol | Primary Features |
+| :--- | :--- | :--- | :--- | :--- |
+| **OpenAI** | `OpenAI/gpt-5.6-sol` | 200K | OpenAI / Anthropic / Native | Frontier general reasoning, deep coding, structured JSON |
+| **Anthropic** | `Anthropic/claude-fable-5` | 200K | Anthropic / OpenAI / Native | Nuanced writing, complex instructions, extended reasoning |
+| **Google** | `Google/gemini-3.1-pro-preview` | 1M | OpenAI / Anthropic / Native | Million-token context window, multimodal reasoning |
+| **Byteplus** | `Byteplus/seed-2-0-code-preview-260328` | 128K | OpenAI / Anthropic / Native | Low-latency programming, high-throughput agent tasks |
+| **Deepseek** | `Deepseek/deepseek-v4-flash` | 64K | OpenAI / Anthropic / Native | Ultra-high performance, economical token rates |
+| **GLM** | `GLM/glm-5` | 128K | OpenAI / Anthropic / Native | Robust bilingual reasoning, knowledge grounding |
+
+---
+
+## 1. OpenAI Unified Invocation
+
+Call any text model using the standard OpenAI Chat Completions schema. Simply set `base_url="https://api.xroute.ai/v1"` and authenticate with your XRoute API key.
+
+- **Endpoint**: `POST https://api.xroute.ai/v1/chat/completions`
+- **Header**: `Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "OpenAI/gpt-5.6-sol",
+    "messages": [
+      {"role": "system", "content": "You are a senior systems engineer."},
+      {"role": "user", "content": "Explain the architectural advantages of distributed AI gateways."}
+    ],
+    "temperature": 0.7,
+    "stream": false
+  }'
+```
+
+```python Python (OpenAI SDK)
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+response = client.chat.completions.create(
+    model="OpenAI/gpt-5.6-sol",
+    messages=[
+        {"role": "system", "content": "You are a senior systems engineer."},
+        {"role": "user", "content": "Explain the architectural advantages of distributed AI gateways."}
+    ],
+    temperature=0.7,
+)
+
+print(response.choices[0].message.content)
+```
+
+```typescript TypeScript (OpenAI SDK)
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  baseURL: 'https://api.xroute.ai/v1',
+  apiKey: process.env.XROUTE_API_KEY,
+});
+
+const response = await client.chat.completions.create({
+  model: 'OpenAI/gpt-5.6-sol',
+  messages: [
+    { role: 'user', content: 'Explain the architectural advantages of distributed AI gateways.' }
+  ],
+});
+
+console.log(response.choices[0].message.content);
+```
+</CodeGroup>
+
+---
+
+## 2. Anthropic Unified Invocation
+
+Route requests across any provider using the Anthropic Messages schema. Compatible with Claude Code and tools built around `/v1/messages`.
+
+- **Endpoint**: `POST https://api.xroute.ai/v1/messages`
+- **Headers**:
+  - `x-api-key: $XROUTE_API_KEY`
+  - `anthropic-version: 2023-06-01`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/v1/messages" \
+  -H "x-api-key: $XROUTE_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Anthropic/claude-fable-5",
+    "max_tokens": 1024,
+    "system": "You are a concise software architect.",
+    "messages": [
+      {"role": "user", "content": "Compare REST and gRPC latency characteristics."}
+    ]
+  }'
+```
+
+```python Python (Anthropic SDK)
+from anthropic import Anthropic
+
+client = Anthropic(
+    base_url="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+message = client.messages.create(
+    model="Anthropic/claude-fable-5",
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": "Compare REST and gRPC latency characteristics."}
+    ],
+)
+
+print(message.content[0].text)
+```
+
+```typescript TypeScript (Anthropic SDK)
+import Anthropic from '@anthropic-ai/sdk';
+
+const client = new Anthropic({
+  baseURL: 'https://api.xroute.ai/v1',
+  apiKey: process.env.XROUTE_API_KEY,
+});
+
+const message = await client.messages.create({
+  model: 'Anthropic/claude-fable-5',
+  max_tokens: 1024,
+  messages: [
+    { role: 'user', content: 'Compare REST and gRPC latency characteristics.' }
+  ],
+});
+
+console.log(message.content[0].text);
+```
+</CodeGroup>
+
+---
+
+## 3. Provider Native Invocation
+
+Directly communicate with vendor-specific APIs and SDKs by targeting the `{Provider}` routing namespace.
+
+<Tabs>
+  <Tab title="Google Gemini Native">
+    **Endpoint**: `POST https://api.xroute.ai/Google/models/{model_id}:generateContent`
+
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/Google/models/gemini-3.1-pro-preview:generateContent" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "contents": [
+          {
+            "parts": [
+              {"text": "Provide an overview of speculative decoding in LLMs."}
+            ]
+          }
+        ]
+      }'
+    ```
+
+    ```python Python (google-genai SDK)
+    from google import genai
+
+    client = genai.Client(
+        api_key="your_xroute_api_key",
+        http_options={"base_url": "https://api.xroute.ai/Google"},
+    )
+
+    response = client.models.generate_content(
+        model="gemini-3.1-pro-preview",
+        contents="Provide an overview of speculative decoding in LLMs.",
+    )
+    print(response.text)
+    ```
+  </Tab>
+
+  <Tab title="Byteplus Ark Native">
+    **Endpoint**: `POST https://api.xroute.ai/Byteplus/chat/completions`
+
+    ```python Python (Byteplus Ark SDK)
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    completion = client.chat.completions.create(
+        model="Byteplus/seed-2-0-code-preview-260328",
+        messages=[{"role": "user", "content": "Implement quicksort in Go."}],
+    )
+    print(completion.choices[0].message.content)
+    ```
+  </Tab>
+
+  <Tab title="Deepseek / GLM Native">
+    **Endpoint**: `POST https://api.xroute.ai/Deepseek/services/aigc/text-generation/generation`
+
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/Deepseek/services/aigc/text-generation/generation" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "deepseek-v4-flash",
+        "input": {
+          "messages": [
+            {"role": "user", "content": "Explain zero-copy networking."}
+          ]
+        },
+        "parameters": {
+          "result_format": "message"
+        }
+      }'
+    ```
+  </Tab>
+</Tabs>

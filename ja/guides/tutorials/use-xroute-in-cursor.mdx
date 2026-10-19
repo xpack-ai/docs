@@ -1,0 +1,33 @@
+---
+title: "Cursor で XRoute を使用する"
+sidebarTitle: "Cursor"
+description: "Cursor で XRoute MCP サーバーを使用し、モデルの補完リクエストを XRoute 経由でルーティングするよう設定します。"
+---
+
+Cursor を XRoute に接続することで、IDE エージェントから 100 以上のリアルタイムデータ API と 60 以上の最先端モデルを呼び出せるようになります。
+
+## 1. XRoute MCP サーバーを追加する
+
+プロジェクト内の `.cursor/mcp.json`（またはグローバル設定の `~/.cursor/mcp.json`）を作成または更新します。
+
+```json
+{
+  "mcpServers": {
+    "xroute": {
+      "url": "https://mcp.xroute.ai/mcp"
+    }
+  }
+}
+```
+
+## 2. サインインする
+
+**Cursor Settings -> MCP** を開き、`xroute` の横にある **Connect** をクリックして、ブラウザでの OAuth サインインを完了します。
+
+## オプション：Cursor で XRoute のモデルを使用する
+
+**Cursor Settings -> Models** で以下を設定します。
+
+1. **Override OpenAI Base URL** に `https://api.xroute.ai/v1` を設定します。
+2. `XROUTE_API_KEY` を貼り付けます。
+3. `deepseek/deepseek-r1` や `anthropic/claude-sonnet-4` などのモデル ID を追加します。

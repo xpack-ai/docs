@@ -1,0 +1,275 @@
+---
+title: SDK 兼容性指南
+description: 了解如何使用官方 OpenAI、Anthropic、Google GenAI、Byteplus Ark SDK 及开源开发框架无缝接入 XRoute。
+---
+
+XRoute 网关不仅提供对 **OpenAI** 和 **Anthropic** 官方客户端库的原生兼容，还支持主流云厂商的原生 SDK（如 **Google GenAI**、**Byteplus Ark**、**DashScope**）及生态框架（**LangChain**、**LlamaIndex**）。
+
+只需修改客户端库的 `base_url`（或 `baseURL`）与 `api_key`，即可将现有应用平滑接入 XRoute。
+
+<Tip>
+**输出格式规则提醒**：
+- **文本模型（Text）**：支持 OpenAI SDK 格式、Anthropic SDK 格式及各供应商原生 SDK 格式。
+- **图片模型（Image）**：**仅支持原生格式**（OpenAI Images 模块、Google GenAI 图像模块、Byteplus Ark 图像模块等）。
+- **视频模型（Video）**：**仅支持原生异步任务 SDK**。
+</Tip>
+
+---
+
+## 1. 文本输出模型 SDK 调用
+
+### OpenAI 官方 SDK
+
+适合调用所有文本输出模型（如 `OpenAI/gpt-5.6-sol`、`OpenAI-Pro/gpt-6-astra`、`Google/gemini-3.1-pro-preview`、`Byteplus/seed-2-0-code-preview-260328` 等）。
+
+<Tabs>
+  <Tab title="Python">
+    ```python
+    from openai import OpenAI
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.chat.completions.create(
+        model="OpenAI/gpt-5.6-sol",
+        messages=[
+            {"role": "system", "content": "你是一位专业的架构师。"},
+            {"role": "user", "content": "请简要解释微服务与单体架构的选型考量。"}
+        ],
+        temperature=0.7,
+    )
+
+    print(response.choices[0].message.content)
+    ```
+  </Tab>
+
+  <Tab title="Node.js / TypeScript">
+    ```typescript
+    import OpenAI from 'openai';
+
+    const openai = new OpenAI({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const completion = await openai.chat.completions.create({
+      model: 'OpenAI/gpt-5.6-sol',
+      messages: [{ role: 'user', content: '请简要解释微服务与单体架构的选型考量。' }],
+    });
+
+    console.log(completion.choices[0].message.content);
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+### Anthropic 官方 SDK
+
+适合以 Anthropic 统一协议调用模型（如 `Anthropic/claude-fable-5`、`Anthropic-Pro/claude-opus-4-6` 等）。
+
+<Tabs>
+  <Tab title="Python">
+    ```python
+    from anthropic import Anthropic
+
+    client = Anthropic(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    message = client.messages.create(
+        model="Anthropic/claude-fable-5",
+        max_tokens=1024,
+        messages=[
+            {"role": "user", "content": "请用一段话总结 Rust 语言的核心内存安全模型。"}
+        ],
+    )
+
+    print(message.content[0].text)
+    ```
+  </Tab>
+
+  <Tab title="TypeScript">
+    ```typescript
+    import Anthropic from '@anthropic-ai/sdk';
+
+    const client = new Anthropic({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const message = await client.messages.create({
+      model: 'Anthropic/claude-fable-5',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: '请用一段话总结 Rust 语言的核心内存安全模型。' }],
+    });
+
+    console.log(message.content[0].text);
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+### 供应商原生 SDK
+
+针对 Byteplus、Google 等提供专有 SDK 的厂商，可配置对应的原生 `base_url`：
+
+<Tabs>
+  <Tab title="Byteplus Ark SDK">
+    ```python
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    completion = client.chat.completions.create(
+        model="Byteplus/seed-2-0-code-preview-260328",
+        messages=[{"role": "user", "content": "实现一个 LRU Cache 类。"}],
+    )
+    print(completion.choices[0].message.content)
+    ```
+  </Tab>
+
+  <Tab title="Google GenAI SDK">
+    ```python
+    from google import genai
+
+    client = genai.Client(
+        api_key="your_xroute_api_key",
+        http_options={"base_url": "https://api.xroute.ai/Google"},
+    )
+
+    response = client.models.generate_content(
+        model="gemini-3.1-pro-preview",
+        contents="请简要介绍量子退火算法的应用领域。",
+    )
+    print(response.text)
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## 2. 图片输出模型 SDK 调用
+
+<Warning>
+**图片模型仅支持原生格式**，请通过对应厂商的原生 SDK 图像接口或对应原生端点发起调用。
+</Warning>
+
+<Tabs>
+  <Tab title="OpenAI SDK (图片生成)">
+    ```python
+    from openai import OpenAI
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/OpenAI",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.images.generate(
+        model="OpenAI/gpt-image-2.5-flare",
+        prompt="未来科技城市上空的悬浮列车，极具视觉冲击力，8k 概念设计",
+        size="1024x1024",
+        n=1,
+    )
+    print("Image URL:", response.data[0].url)
+    ```
+  </Tab>
+
+  <Tab title="Byteplus Ark SDK (图片生成)">
+    ```python
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.images.generate(
+        model="Byteplus/seedream-5-0-260128",
+        prompt="落日余晖洒在雪山湖泊，水面波光粼粼，胶片质感",
+        size="1024x1024",
+    )
+    print("Image URL:", response.data[0].url)
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## 3. 视频输出模型 SDK 调用
+
+视频生成采用**异步任务模式**（提交任务 -> 轮询查询结果）：
+
+```python
+import time
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+# 1. 提交异步任务
+task = client.content_generation.tasks.create(
+    model="Byteplus/seedance-1-5-pro-251215",
+    content=[{
+        "type": "text",
+        "text": "高清航拍穿越云层俯瞰雪山峡谷，晨光照耀，超高清细节"
+    }],
+)
+task_id = task.id
+print(f"Task created: {task_id}")
+
+# 2. 轮询获取视频结果
+while True:
+    status = client.content_generation.tasks.get(task_id=task_id)
+    if status.status == "succeeded":
+        print("Generated Video URL:", status.content.video_url)
+        break
+    elif status.status in ["failed", "cancelled"]:
+        print(f"Task stopped: {status.status}")
+        break
+    time.sleep(5)
+```
+
+---
+
+## 4. 常见开源框架适配
+
+### LangChain
+
+```python
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(
+    model="OpenAI/gpt-5.6-sol",
+    openai_api_base="https://api.xroute.ai/v1",
+    openai_api_key="your_xroute_api_key",
+    temperature=0.7,
+)
+
+response = llm.invoke("用一句话为初创团队写一句座右铭。")
+print(response.content)
+```
+
+### LlamaIndex
+
+```python
+from llama_index.llms.openai import OpenAI
+
+llm = OpenAI(
+    model="OpenAI/gpt-5.6-sol",
+    api_base="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+response = llm.complete("请列出分布式系统常见的3个核心挑战。")
+print(response.text)
+```

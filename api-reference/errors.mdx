@@ -1,0 +1,49 @@
+---
+title: "Error Codes"
+sidebarTitle: "Errors"
+description: "Integration API error formats, six diagnostic categories, and safe retry guidance."
+---
+
+XRoute returns standard HTTP status codes and structured JSON error payloads across all model and data API endpoints.
+
+## Response formats depend on the endpoint
+
+- **OpenAI-compatible endpoints (`/v1/*`):** Return the standard `{ "error": { "message", "type", "code" } }` envelope.
+- **Data API endpoints (`/apis/v1/*`):** Return `{ "code", "message", "category", "request_id", "retryable" }`.
+
+## Six diagnostic categories
+
+| HTTP Status | Category | Retryable? | Recommended Action |
+| :--- | :--- | :--- | :--- |
+| `400` | `invalid_parameters` | No | Fix request body or parameter types using `get_details`. |
+| `401` | `authentication_error` | No | Verify `Authorization: Bearer $XROUTE_API_KEY` or re-run OAuth sign-in. |
+| `402` | `insufficient_credits` | No | Top up Credits in the Console, raise key spend cap, or complete MPP payment. |
+| `404` | `not_found` | No | Check the model ID via `GET /v1/models` or endpoint path via `search`. |
+| `429` | `rate_limit_exceeded` | Yes | Back off using `Retry-After` header before retrying. |
+| `500` / `503` | `upstream_unavailable` | Yes | XRoute automatically fails over across clusters; if all upstreams are saturated, retry with exponential backoff. |
+
+## Observed gateway examples
+
+### Authentication: API key
+
+```json
+{
+  "error": {
+    "message": "Invalid or revoked API key provided.",
+    "type": "authentication_error",
+    "code": "invalid_api_key"
+  }
+}
+```
+
+### Parameters: native request
+
+```json
+{
+  "code": 400,
+  "category": "invalid_parameters",
+  "message": "Missing required field: 'query'",
+  "request_id": "req_9f82a10c4b",
+  "retryable": false
+}
+```

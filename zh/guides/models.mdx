@@ -1,0 +1,478 @@
+---
+title: 模型与多模态支持
+description: 了解 XRoute 支持的模型清单、不同输出类型（文本、图片、视频）的调用规则与各供应商调用示例。
+---
+
+XRoute 网关连接全球顶尖 AI 模型。平台支持三种输出类型：**文本 (Text)**、**图片 (Image)** 和 **视频 (Video)**。
+
+根据模型输出类型，XRoute 遵循严格的协议调用规则：
+- **文本输出模型（Text）**：同时支持 **OpenAI 统一格式**、**Anthropic 统一格式** 和 **供应商原生格式**。
+- **图片输出模型（Image）**：**仅支持供应商原生格式**（如 OpenAI 图片接口、Google 图像生成、Byteplus 图片生成、Qwen 多模态图像接口等）。
+- **视频输出模型（Video）**：**仅支持供应商原生异步任务格式**（提交生成任务 + 轮询查询任务结果，如 Byteplus 任务接口与 WAN DashScope 异步接口）。
+
+<Tip>
+点击右上角导航栏或访问 [XRoute 模型库 (xroute.ai/model)](https://xroute.ai/en/model) 可查看实时模型目录与定价。
+</Tip>
+
+### 按模态分类速查（SEO 聚合与接口直通）
+
+<CardGroup cols={3}>
+  <Card title="文本大模型" icon="message-lines" href="/zh/resources/models/text">
+    OpenAI / Anthropic / 原生多协议直连
+  </Card>
+  <Card title="图片生成模型" icon="image" href="/zh/resources/models/image">
+    OpenAI / 字节 / 谷歌 / 通义原生绘图
+  </Card>
+  <Card title="视频生成模型" icon="film" href="/zh/resources/models/video">
+    Seedance / WAN 原生异步任务提交与轮询
+  </Card>
+</CardGroup>
+
+---
+
+## 常用模型概览
+
+| 供应商 (Provider) | 模型标识 (Model ID) | 输出类型 | 调用支持方式 | 推荐使用场景 |
+| :--- | :--- | :--- | :--- | :--- |
+| **OpenAI** | `OpenAI/gpt-5.6-sol` | 文本 | OpenAI / Anthropic / 原生 | 通用旗舰推理、复杂代码编写与系统编排 |
+| **OpenAI-Pro** | `OpenAI-Pro/gpt-6-astra` | 文本 | OpenAI / Anthropic / 原生 | 高可用企业级高并发任务 |
+| **Anthropic** | `Anthropic/claude-fable-5` | 文本 | OpenAI / Anthropic / 原生 | 深度文本创作、长上下文分析、高智能任务 |
+| **Google** | `Google/gemini-3.1-pro-preview` | 文本 | OpenAI / Anthropic / 原生 | 复杂推理与跨模态文本上下文分析 |
+| **Byteplus** | `Byteplus/seed-2-0-code-preview-260328` | 文本 | OpenAI / Anthropic / 原生 | 极速代码补全与开发助手 |
+| **Deepseek** | `Deepseek/deepseek-v4-flash` | 文本 | OpenAI / Anthropic / 原生 | 极低延迟与超高性价比通用问答 |
+| **GLM** | `GLM/glm-5.1` | 文本 | OpenAI / Anthropic / 原生 | 中文全场景理解与企业级推理 |
+| **MoonshootAI-Pro** | `MoonshootAI-Pro/kimi-k3` | 文本 | OpenAI / Anthropic / 原生 | 超长上下文分析与学术资料精读 |
+| **OpenAI** | `OpenAI/gpt-image-2.5-flare` | 图片 | **仅原生格式** | 高精度自然语言绘图与创意插画设计 |
+| **Google** | `Google/gemini-3.1-flash-image` | 图片 | **仅原生格式** | 高清概念艺术、快速视觉原型创作 |
+| **Byteplus** | `Byteplus/seedream-5-0-260128` | 图片 | **仅原生格式** | 极高质量工业级图像渲染与视觉生成 |
+| **Qwen** | `Qwen/qwen-image-3.0-pro` | 图片 | **仅原生格式** | 创意多模态图像生成与场景合成 |
+| **Byteplus** | `Byteplus/seedance-1-5-pro-251215` | 视频 | **仅原生异步任务** | 影视级运镜文生视频与动态视觉生成 |
+| **WAN** | `WAN/wan3.0-video-prime` | 视频 | **仅原生异步任务** | 超写实高分辨率长镜头视频生成 |
+
+---
+
+## 文本输出模型调用示例
+
+文本模型支持统一的 OpenAI 规范、统一的 Anthropic 规范，以及供应商特定的原生格式。
+
+<Tabs>
+  <Tab title="1. OpenAI 统一格式">
+    网关地址统一为 `https://api.xroute.ai/v1/chat/completions`，支持所有文本类模型：
+
+    <CodeGroup>
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "OpenAI/gpt-5.6-sol",
+        "messages": [
+          {"role": "user", "content": "9.9 和 9.11 谁大？请给出简明解释。"}
+        ],
+        "temperature": 0.7
+      }'
+    ```
+
+    ```python Python
+    from openai import OpenAI
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.chat.completions.create(
+        model="OpenAI/gpt-5.6-sol",
+        messages=[{"role": "user", "content": "9.9 和 9.11 谁大？"}],
+    )
+    print(response.choices[0].message.content)
+    ```
+
+    ```typescript TypeScript
+    import OpenAI from 'openai';
+
+    const client = new OpenAI({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const completion = await client.chat.completions.create({
+      model: 'OpenAI/gpt-5.6-sol',
+      messages: [{ role: 'user', content: '9.9 和 9.11 谁大？' }],
+    });
+    console.log(completion.choices[0].message.content);
+    ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="2. Anthropic 统一格式">
+    网关地址统一为 `https://api.xroute.ai/v1/messages`，使用 `x-api-key` 鉴权与 `anthropic-version: 2023-06-01`：
+
+    <CodeGroup>
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/v1/messages" \
+      -H "x-api-key: $XROUTE_API_KEY" \
+      -H "anthropic-version: 2023-06-01" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "Anthropic/claude-fable-5",
+        "max_tokens": 1024,
+        "messages": [
+          {"role": "user", "content": "请用三句话介绍量化计算。"}
+        ]
+      }'
+    ```
+
+    ```python Python
+    from anthropic import Anthropic
+
+    client = Anthropic(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    message = client.messages.create(
+        model="Anthropic/claude-fable-5",
+        max_tokens=1024,
+        messages=[{"role": "user", "content": "请用三句话介绍量化计算。"}],
+    )
+    print(message.content[0].text)
+    ```
+
+    ```typescript TypeScript
+    import Anthropic from '@anthropic-ai/sdk';
+
+    const client = new Anthropic({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const message = await client.messages.create({
+      model: 'Anthropic/claude-fable-5',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: '请用三句话介绍量化计算。' }],
+    });
+    console.log(message.content[0].text);
+    ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="3. 供应商原生格式">
+    针对各供应商的原生协议（如 Google Gemini 原生 GenerateContent、Byteplus Ark、Deepseek / GLM DashScope 协议等），支持使用原生端点直连：
+
+    <CodeGroup>
+    ```bash Google Gemini (原生端点)
+    curl -X POST "https://api.xroute.ai/Google/models/gemini-3.1-pro-preview:generateContent" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -d '{
+        "contents": [
+          {
+            "parts": [
+              { "text": "介绍一下量子纠缠" }
+            ]
+          }
+        ]
+      }'
+    ```
+
+    ```python Byteplus Ark (原生 SDK)
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    completion = client.chat.completions.create(
+        model="Byteplus/seed-2-0-code-preview-260328",
+        messages=[{"role": "user", "content": "请写一个快速排序算法。"}],
+    )
+    print(completion.choices[0].message.content)
+    ```
+
+    ```bash Deepseek / GLM (DashScope 原生协议)
+    curl -X POST "https://api.xroute.ai/Deepseek/services/aigc/text-generation/generation" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "deepseek-v4-flash",
+        "input": {
+          "messages": [
+            {"role": "user", "content": "你好，请做个自我介绍"}
+          ]
+        },
+        "parameters": {
+          "result_format": "message"
+        }
+      }'
+    ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+---
+
+## 图片输出模型调用示例
+
+<Warning>
+**图片模型仅支持供应商原生格式调用**，不通过 OpenAI/Anthropic 文本端点映射。请使用各供应商的原生图片端点或官方 SDK 图片模块。
+</Warning>
+
+### 1. OpenAI 图像生成与编辑
+
+调用端点为 `POST https://api.xroute.ai/OpenAI/images/generations` 和 `POST https://api.xroute.ai/OpenAI/images/edits`。
+
+<CodeGroup>
+```bash 文生图 cURL
+curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-image-2.5-flare",
+    "prompt": "赛博朋克风格的雨夜东京街头，霓虹灯倒影在水洼中，8k 分辨率",
+    "n": 1,
+    "size": "1024x1024"
+  }'
+```
+
+```python Python (OpenAI SDK)
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.xroute.ai/OpenAI",
+    api_key="your_xroute_api_key",
+)
+
+response = client.images.generate(
+    model="OpenAI/gpt-image-2.5-flare",
+    prompt="赛博朋克风格的雨夜东京街头，霓虹灯倒影在水洼中，8k 分辨率",
+    size="1024x1024",
+    quality="standard",
+    n=1,
+)
+print(response.data[0].url)
+```
+
+```typescript TypeScript (OpenAI SDK)
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  baseURL: 'https://api.xroute.ai/OpenAI',
+  apiKey: process.env.XROUTE_API_KEY,
+});
+
+const image = await client.images.generate({
+  model: 'OpenAI/gpt-image-2.5-flare',
+  prompt: '赛博朋克风格的雨夜东京街头，霓虹灯倒影在水洼中，8k 分辨率',
+  size: '1024x1024',
+  n: 1,
+});
+console.log(image.data[0].url);
+```
+</CodeGroup>
+
+### 2. Google 原生图像生成
+
+Google 原生生图端点为 `POST https://api.xroute.ai/Google/image/models/{model_id}:generateContent`，请求体中指定 `responseModalities: ["IMAGE"]`。
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Google/image/models/gemini-3.1-flash-image:generateContent" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {"text": "A futuristic architectural pavilion surrounded by serene mist and pine trees"}
+        ]
+      }
+    ],
+    "generationConfig": {
+      "responseModalities": ["IMAGE"]
+    }
+  }'
+```
+
+```python Python (google-genai SDK)
+from google import genai
+
+client = genai.Client(
+    api_key="your_xroute_api_key",
+    http_options={"base_url": "https://api.xroute.ai/Google"},
+)
+
+response = client.models.generate_content(
+    model="gemini-3.1-flash-image",
+    contents="A futuristic architectural pavilion surrounded by serene mist and pine trees",
+    config={"response_modalities": ["IMAGE"]},
+)
+for part in response.candidates[0].content.parts:
+    if part.inline_data:
+        print("Received base64 image data")
+```
+</CodeGroup>
+
+### 3. Byteplus 图像生成
+
+使用 Byteplus 原生图像接口 `POST https://api.xroute.ai/Byteplus/images/generations`：
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Byteplus/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedream-5-0-260128",
+    "prompt": "高山雪景中的小木屋，温暖壁炉火光透出窗外，电影质感",
+    "size": "1024x1024"
+  }'
+```
+
+```python Python (Ark SDK)
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+images_response = client.images.generate(
+    model="Byteplus/seedream-5-0-260128",
+    prompt="高山雪景中的小木屋，温暖壁炉火光透出窗外，电影质感",
+    size="1024x1024",
+)
+print(images_response.data[0].url)
+```
+</CodeGroup>
+
+### 4. Qwen 多模态图像生成
+
+使用 DashScope 原生协议端点 `POST https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation`：
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen-image-3.0-pro",
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {"text": "水墨江南画卷，轻舟小桥流水，烟雨蒙蒙"}
+          ]
+        }
+      ]
+    },
+    "parameters": {
+      "size": "1024*1024"
+    }
+  }'
+```
+
+---
+
+## 视频输出模型调用示例
+
+<Info>
+**视频模型使用原生异步两阶段模式**：第一步提交生成任务获取 `task_id`，第二步轮询查询任务状态直至生成完成并获取视频下载地址。
+</Info>
+
+### 1. Byteplus 视频生成任务
+
+- 提交任务：`POST https://api.xroute.ai/Byteplus/contents/generations/tasks`
+- 查询任务：`GET https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}`
+
+<CodeGroup>
+```bash 1. 提交视频任务
+curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance-1-5-pro-251215",
+    "content": [
+      {
+        "type": "text",
+        "text": "镜头从高空缓慢推近蔚蓝的大海，海豚跃出海面，阳光洒在水珠上，4k 超写实"
+      }
+    ]
+  }'
+# 返回示例：{"id": "cgt-2026xxxx-xxxx"}
+```
+
+```bash 2. 查询任务状态
+curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/cgt-2026xxxx-xxxx" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+```python Python (Ark SDK 异步任务)
+import time
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+# 1. 提交任务
+create_result = client.content_generation.tasks.create(
+    model="Byteplus/seedance-1-5-pro-251215",
+    content=[{
+        "type": "text",
+        "text": "镜头从高空缓慢推近蔚蓝的大海，海豚跃出海面，阳光洒在水珠上，4k 超写实"
+    }],
+)
+task_id = create_result.id
+print(f"Task created: {task_id}")
+
+# 2. 轮询状态
+while True:
+    task = client.content_generation.tasks.get(task_id=task_id)
+    if task.status == "succeeded":
+        print(f"Video URL: {task.content.video_url}")
+        break
+    elif task.status in ["failed", "cancelled"]:
+        print(f"Task ended with status: {task.status}")
+        break
+    print("Generating video, waiting 5 seconds...")
+    time.sleep(5)
+```
+</CodeGroup>
+
+### 2. WAN 视频生成任务
+
+- 提交任务：`POST https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis`（带 Header `X-DashScope-Async: enable`）
+- 查询任务：`GET https://api.xroute.ai/WAN/tasks/{task_id}`
+
+<CodeGroup>
+```bash 1. 提交任务
+curl -X POST "https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "X-DashScope-Async: enable" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "wan3.0-video-prime",
+    "input": {
+      "prompt": "一只可爱的金毛幼犬在秋天的枫树林草地上奔跑，落叶飞舞，电影级光影"
+    },
+    "parameters": {
+      "size": "1280*720"
+    }
+  }'
+# 返回示例：{"output": {"task_id": "task-wan-xxxx", "task_status": "PENDING"}}
+```
+
+```bash 2. 查询任务状态
+curl -X GET "https://api.xroute.ai/WAN/tasks/task-wan-xxxx" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+</CodeGroup>
+
+---
+
+## 路由策略与模型回退
+
+在调用时，XRoute 支持智能路由、自动重试与跨模型降级回退策略。如果上游某供应商出现速率超限（429）或暂时波动，系统会根据路由规则无缝切换至同阶备用模型，保障业务高可用。

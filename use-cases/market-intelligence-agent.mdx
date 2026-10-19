@@ -1,0 +1,23 @@
+---
+title: "Build a Market Intelligence Agent with XRoute"
+sidebarTitle: "Market Intelligence Agent"
+description: "Combine real-time equity prices, crypto feeds, and prediction market odds into an automated market brief."
+---
+
+## The problem
+
+Financial and market analysts need live equity prices, SEC filings, crypto liquidity, and prediction market probabilities in one place without stitching together four separate data subscriptions.
+
+## Prompt
+
+```text
+Generate a pre-market intelligence brief for NVDA and BTC:
+1. Fetch latest price action and 7-day volume via XRoute Financial & CoinGecko APIs.
+2. Check Polymarket macro event probabilities for the upcoming FOMC decision.
+3. Synthesize key risk factors using anthropic/claude-sonnet-4.
+```
+
+## APIs and Models used
+
+- **Data APIs:** Financial Prices (`/apis/v1/financial/prices`), CoinGecko Markets, Polymarket Events (`/apis/v1/prediction-market/polymarket-events`)
+- **Model:** `anthropic/claude-sonnet-4`

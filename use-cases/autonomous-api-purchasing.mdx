@@ -1,0 +1,18 @@
+---
+title: "Design an Autonomous API Purchasing Workflow"
+sidebarTitle: "Autonomous API Purchasing"
+description: "Let agents discover endpoints, quote costs, and execute within strict USD budget guardrails."
+---
+
+## The problem
+
+Autonomous agents need to call paid tools dynamically, but unrestricted API access risks unexpected spend.
+
+## Workflow Architecture
+
+1. **Free Discovery:** The agent runs `search` and `get_details` on `https://mcp.xroute.ai/mcp` at zero cost.
+2. **Batch Quote:** The agent calls `batch_quote` with its planned operations and receives exact unit prices and `auto_execute_eligible`.
+3. **Budget Gate:**
+   - If the total cost is under the key's auto-execute limit, the agent proceeds immediately.
+   - Otherwise, the agent pauses and asks the user to approve the exact USD budget.
+4. **Execution & Settlement:** The agent runs `execute` (or settles via HTTP 402 MPP) and logs the settled cost.

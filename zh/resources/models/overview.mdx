@@ -1,0 +1,86 @@
+---
+title: "模型目录与选型指南"
+sidebarTitle: "模型总览"
+description: "浏览 XRoute 汇聚的 60+ 款全球顶尖 AI 模型，涵盖文本、图片、视频三大生成模态，支持统一协议与供应商原生路由。"
+---
+
+欢迎查阅 **XRoute 模型目录（Model Catalog）**。XRoute 为全球主流前沿大模型提供统一积分计费、低于 50ms 的超低路由开销以及高可用供应商容灾。
+
+为了让开发者能够**快速检索**所需模型并顺畅接入，同时提供最佳的 **SEO 结构**，我们将模型库按照**输出模态**与**协议架构**进行了系统化分类：
+
+<CardGroup cols={3}>
+  <Card title="文本大模型 (Text)" icon="message" href="/zh/resources/models/text">
+    对话补全与复杂推理模型。支持 **OpenAI 统一格式**、**Anthropic 统一格式**及**原生格式直连**。
+  </Card>
+  <Card title="图片生成模型 (Image)" icon="image" href="/zh/resources/models/image">
+    文生图与图像编辑。**仅支持供应商原生格式**（OpenAI、Google、Byteplus、Qwen）。
+  </Card>
+  <Card title="视频生成模型 (Video)" icon="video" href="/zh/resources/models/video">
+    文生视频与图生视频。**仅支持供应商原生异步任务格式**（Byteplus Ark、WAN DashScope）。
+  </Card>
+</CardGroup>
+
+---
+
+## 模态与调用协议支持矩阵
+
+| 输出模态 | 支持的调用协议 | 核心接口端点 | 适用场景 |
+| :--- | :--- | :--- | :--- |
+| **文本生成 (Text)** | • OpenAI 统一格式 (`/v1/chat/completions`)<br />• Anthropic 统一格式 (`/v1/messages`)<br />• 原生格式直连 (`/{Provider}/...`) | `https://api.xroute.ai/v1/chat/completions`<br />`https://api.xroute.ai/v1/messages`<br />`https://api.xroute.ai/{Provider}/...` | 智能体对话、代码补全与审查、结构化数据提取、数学逻辑推理 |
+| **图片生成 (Image)** | • **仅支持供应商原生格式** | `https://api.xroute.ai/{Provider}/images/generations`<br />`https://api.xroute.ai/Google/image/...` | 营销海报、插画生成、电商产品图、概念设计 |
+| **视频生成 (Video)** | • **仅支持供应商原生异步任务**（创建任务 + 轮询状态） | 提交: `https://api.xroute.ai/{Provider}/.../tasks`<br />查询: `https://api.xroute.ai/{Provider}/.../tasks/{id}` | 影视分镜、广告创意短片、动态角色渲染 |
+
+---
+
+## 精选模型分类速查
+
+<Tabs>
+  <Tab title="文本模型 (Text)">
+    | 供应商 | 模型标识 (Model ID) | 上下文窗口 | 支持协议 | 优势与特性 |
+    | :--- | :--- | :--- | :--- | :--- |
+    | **OpenAI** | `OpenAI/gpt-5.6-sol` | 200K | OpenAI / Anthropic / 原生 | 旗舰通用推理，顶级编程与结构化输出能力 |
+    | **Anthropic** | `Anthropic/claude-fable-5` | 200K | Anthropic / OpenAI / 原生 | 长文本细腻理解，高指令遵循度 |
+    | **Google** | `Google/gemini-3.1-pro-preview` | 1M | OpenAI / Anthropic / 原生 | 百万级超长上下文，多模态输入理解 |
+    | **Byteplus** | `Byteplus/seed-2-0-code-preview-260328` | 128K | OpenAI / Anthropic / 原生 | 高吞吐低延迟编程模型，适合智能体高频调用 |
+    | **Deepseek** | `Deepseek/deepseek-v4-flash` | 64K | OpenAI / Anthropic / 原生 | 超高性价比，极速生成响应 |
+    | **GLM** | `GLM/glm-5` | 128K | OpenAI / Anthropic / 原生 | 中英双语推理增强，知识检索问答表现优异 |
+
+    👉 [查看文本大模型专属指南与调用代码](/zh/resources/models/text)
+  </Tab>
+
+  <Tab title="图片模型 (Image)">
+    | 供应商 | 模型标识 (Model ID) | 生成能力 | 原生端点 |
+    | :--- | :--- | :--- | :--- |
+    | **OpenAI** | `OpenAI/gpt-image-2.5-flare` | 高清文生图 | `POST https://api.xroute.ai/OpenAI/images/generations` |
+    | **OpenAI** | `OpenAI/gpt-image-2` | 图像编辑与局部重绘 | `POST https://api.xroute.ai/OpenAI/images/edits` |
+    | **Google** | `Google/gemini-3.1-flash-image` | 多模态图像生成 | `POST https://api.xroute.ai/Google/image/models/{id}:generateContent` |
+    | **Byteplus** | `Byteplus/seedream-5-0-260128` | 高保真视觉生成 | `POST https://api.xroute.ai/Byteplus/images/generations` |
+    | **Qwen** | `Qwen/qwen-image-3.0-pro` | 多分辨率图像渲染 | `POST https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation` |
+
+    👉 [查看图片生成模型专属指南与原生参数](/zh/resources/models/image)
+  </Tab>
+
+  <Tab title="视频模型 (Video)">
+    | 供应商 | 模型标识 (Model ID) | 分辨率与动态特性 | 异步任务生命周期 |
+    | :--- | :--- | :--- | :--- |
+    | **Byteplus** | `Byteplus/seedance-1-5-pro-251215` | 最高 1080p, 60fps 电影级镜头运镜 | 创建: `POST .../contents/generations/tasks`<br />轮询: `GET .../contents/generations/tasks/{task_id}` |
+    | **WAN** | `WAN/wan3.0-video-prime` | 画面动态连贯，720p/1080p 视频生成 | 创建: `POST .../video-generation/video-synthesis`<br />轮询: `GET .../tasks/{task_id}` |
+
+    👉 [查看视频生成模型专属指南与异步轮询代码](/zh/resources/models/video)
+  </Tab>
+</Tabs>
+
+---
+
+## 统一认证与路由配置
+
+无论调用哪个供应商或何种生成类型，统一使用您的 **XRoute 通用 API 密钥**：
+
+```bash
+# 在环境中导出密钥
+export XROUTE_API_KEY="xr_live_your_key_here"
+```
+
+- 网关基础地址：`https://api.xroute.ai`
+- 通用积分：一个账户余额即可调用全平台全部模型。
+- 在线实时列表：访问 [xroute.ai/en/model](https://xroute.ai/en/model) 查看最新模型单价与实时延迟数据。

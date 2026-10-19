@@ -1,0 +1,218 @@
+---
+title: "テキストモデル (Text Models)"
+sidebarTitle: "テキストモデル"
+description: "OpenAI 統合形式、Anthropic 統合形式、各プロバイダーネイティブ形式を通じて、GPT-5.6、Claude Fable、Gemini Pro、DeepSeek などを呼び出します。"
+---
+
+XRoute は、世界の主要な大規模言語モデル（LLM）と最先端の推論モデルを集約し、対話エージェント、コード生成、長文要約、論理推論などのワークフローを支援します。
+
+すべてのテキストモデルは以下の **3 つの呼び出し方式** をサポートしています：
+1. **OpenAI 統合形式**: `POST https://api.xroute.ai/v1/chat/completions`
+2. **Anthropic 統合形式**: `POST https://api.xroute.ai/v1/messages`
+3. **プロバイダーネイティブ形式**: `POST https://api.xroute.ai/{Provider}/...`
+
+---
+
+## テキストモデル一覧と仕様
+
+| プロバイダー | モデル識別子 (Model ID) | 最大コンテキスト | 推奨呼び出し形式 | 主なユースケース |
+| :--- | :--- | :--- | :--- | :--- |
+| **OpenAI** | `OpenAI/gpt-5.6-sol` | 200K | OpenAI / Anthropic / ネイティブ | 複雑なシステム推論、高度なコード実装、構造化データ出力 |
+| **Anthropic** | `Anthropic/claude-fable-5` | 200K | Anthropic / OpenAI / ネイティブ | 緻密な文章生成、長文分析、高い指示遵守性 |
+| **Google** | `Google/gemini-3.1-pro-preview` | 1M | OpenAI / Anthropic / ネイティブ | 100万トークン超長文コンテキスト、マルチモーダル分析 |
+| **Byteplus** | `Byteplus/seed-2-0-code-preview-260328` | 128K | OpenAI / Anthropic / ネイティブ | 高速プログラミング向け、高スループットエージェント |
+| **Deepseek** | `Deepseek/deepseek-v4-flash` | 64K | OpenAI / Anthropic / ネイティブ | 卓越したコストパフォーマンス、低遅延応答 |
+| **GLM** | `GLM/glm-5` | 128K | OpenAI / Anthropic / ネイティブ | 知識集約型の論理推論、QA タスク |
+
+---
+
+## 1. OpenAI 統合形式での呼び出し
+
+標準的な OpenAI Chat Completions プロトコルを使用し、任意の SDK やフレームワークから呼び出すことができます。
+
+- **エンドポイント**: `POST https://api.xroute.ai/v1/chat/completions`
+- **認証ヘッダー**: `Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "OpenAI/gpt-5.6-sol",
+    "messages": [
+      {"role": "system", "content": "You are a senior systems architect."},
+      {"role": "user", "content": "Explain the architectural advantages of distributed AI gateways in 3 bullet points."}
+    ],
+    "temperature": 0.7,
+    "stream": false
+  }'
+```
+
+```python Python (OpenAI SDK)
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+response = client.chat.completions.create(
+    model="OpenAI/gpt-5.6-sol",
+    messages=[
+        {"role": "system", "content": "You are a senior systems architect."},
+        {"role": "user", "content": "Explain the architectural advantages of distributed AI gateways in 3 bullet points."}
+    ],
+    temperature=0.7,
+)
+
+print(response.choices[0].message.content)
+```
+
+```typescript TypeScript (OpenAI SDK)
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  baseURL: 'https://api.xroute.ai/v1',
+  apiKey: process.env.XROUTE_API_KEY,
+});
+
+const response = await client.chat.completions.create({
+  model: 'OpenAI/gpt-5.6-sol',
+  messages: [
+    { role: 'user', content: 'Explain the architectural advantages of distributed AI gateways in 3 bullet points.' }
+  ],
+});
+
+console.log(response.choices[0].message.content);
+```
+</CodeGroup>
+
+---
+
+## 2. Anthropic 統合形式での呼び出し
+
+Anthropic の Messages プロトコルを使用してプラットフォーム上の任意のモデルを呼び出します。Claude Code や `/v1/messages` 互換ツールに最適です。
+
+- **エンドポイント**: `POST https://api.xroute.ai/v1/messages`
+- **リクエストヘッダー**:
+  - `x-api-key: $XROUTE_API_KEY`
+  - `anthropic-version: 2023-06-01`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/v1/messages" \
+  -H "x-api-key: $XROUTE_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Anthropic/claude-fable-5",
+    "max_tokens": 1024,
+    "system": "You are a software performance specialist.",
+    "messages": [
+      {"role": "user", "content": "Compare REST and gRPC latency in microservices."}
+    ]
+  }'
+```
+
+```python Python (Anthropic SDK)
+from anthropic import Anthropic
+
+client = Anthropic(
+    base_url="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+message = client.messages.create(
+    model="Anthropic/claude-fable-5",
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": "Compare REST and gRPC latency in microservices."}
+    ],
+)
+
+print(message.content[0].text)
+```
+</CodeGroup>
+
+---
+
+## 3. プロバイダーネイティブ形式での呼び出し
+
+`https://api.xroute.ai/{Provider}` プレフィックスを通じて、ベンダー独自のネイティブエンドポイントを直接利用できます。
+
+<Tabs>
+  <Tab title="Google Gemini ネイティブ">
+    **エンドポイント**: `POST https://api.xroute.ai/Google/models/{model_id}:generateContent`
+
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/Google/models/gemini-3.1-pro-preview:generateContent" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "contents": [
+          {
+            "parts": [
+              {"text": "Explain speculative decoding in LLMs."}
+            ]
+          }
+        ]
+      }'
+    ```
+
+    ```python Python (google-genai SDK)
+    from google import genai
+
+    client = genai.Client(
+        api_key="your_xroute_api_key",
+        http_options={"base_url": "https://api.xroute.ai/Google"},
+    )
+
+    response = client.models.generate_content(
+        model="gemini-3.1-pro-preview",
+        contents="Explain speculative decoding in LLMs.",
+    )
+    print(response.text)
+    ```
+  </Tab>
+
+  <Tab title="Byteplus Ark ネイティブ">
+    **エンドポイント**: `POST https://api.xroute.ai/Byteplus/chat/completions`
+
+    ```python Python (Byteplus Ark SDK)
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    completion = client.chat.completions.create(
+        model="Byteplus/seed-2-0-code-preview-260328",
+        messages=[{"role": "user", "content": "Implement quicksort in Go."}],
+    )
+    print(completion.choices[0].message.content)
+    ```
+  </Tab>
+
+  <Tab title="Deepseek / GLM ネイティブ">
+    **エンドポイント**: `POST https://api.xroute.ai/Deepseek/services/aigc/text-generation/generation`
+
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/Deepseek/services/aigc/text-generation/generation" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "deepseek-v4-flash",
+        "input": {
+          "messages": [
+            {"role": "user", "content": "Explain zero-copy networking."}
+          ]
+        },
+        "parameters": {
+          "result_format": "message"
+        }
+      }'
+    ```
+  </Tab>
+</Tabs>

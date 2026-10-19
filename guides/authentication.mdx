@@ -1,0 +1,51 @@
+---
+title: "Authentication"
+sidebarTitle: "Authentication"
+description: "OAuth for MCP, Bearer API keys, storage, and rotation."
+---
+
+XRoute supports two primary authentication methods: browser OAuth for AI agents and Bearer API keys for application servers and scripts.
+
+## OAuth for MCP and the CLI
+
+When connecting an MCP client (`https://mcp.xroute.ai/mcp`) or running `xroute login` in the CLI, XRoute uses OAuth 2.0 with PKCE:
+
+1. Your client initiates a browser sign-in flow.
+2. You approve the session and optional spending cap in the XRoute Console.
+3. Short-lived tokens are issued and refreshed automatically by the client—no static API key is written to disk.
+
+## API keys
+
+For server-side SDKs, `curl`, and CI pipelines, pass your XRoute API key in the `Authorization` header:
+
+```http
+Authorization: Bearer xr_live_...
+```
+
+### Key settings
+
+Each API key can be configured independently in the XRoute Console:
+
+- **Spending limit:** Set a maximum USD budget per key (daily, monthly, or lifetime).
+- **Rate limit:** Configure custom RPM/TPM ceilings per key.
+- **Model allowlist:** Restrict a key to specific model families or data API categories.
+
+### Rotate and revoke
+
+Create a replacement key before revoking an active production key to ensure zero-downtime rotation. Revoked keys fail immediately with `401 Unauthorized`.
+
+## Storing keys
+
+- Store keys in environment variables (`XROUTE_API_KEY`) or a secrets manager.
+- Never hardcode keys in source files, client-side JavaScript bundles, or public repositories.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Billing & Credits" icon="credit-card" href="/guides/pricing">
+    Configure spending caps and pre-call quotes.
+  </Card>
+  <Card title="Security & Privacy" icon="lock" href="/guides/security">
+    Learn how XRoute protects your prompts and credentials.
+  </Card>
+</CardGroup>

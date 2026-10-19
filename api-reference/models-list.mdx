@@ -1,0 +1,50 @@
+---
+title: "List Models"
+sidebarTitle: "List Models"
+description: "List all currently available models and pricing metadata via GET https://api.xroute.ai/v1/models."
+---
+
+## Endpoint
+
+`GET https://api.xroute.ai/v1/models`
+
+This endpoint is **free** and returns the live catalog of 60+ text, reasoning, image, video, and audio models.
+
+```bash
+curl https://api.xroute.ai/v1/models \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+## Example Response
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "deepseek/deepseek-r1",
+      "object": "model",
+      "owned_by": "deepseek",
+      "context_length": 128000
+    },
+    {
+      "id": "anthropic/claude-sonnet-4-20250514",
+      "object": "model",
+      "owned_by": "anthropic",
+      "context_length": 200000
+    },
+    {
+      "id": "google/gemini-2.5-pro",
+      "object": "model",
+      "owned_by": "google",
+      "context_length": 1000000
+    },
+    {
+      "id": "Byteplus/dreamina-seedance-2-5-260628",
+      "object": "model",
+      "owned_by": "byteplus",
+      "modality": "video"
+    }
+  ]
+}
+```

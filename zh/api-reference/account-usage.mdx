@@ -1,0 +1,31 @@
+---
+title: "账户用量"
+sidebarTitle: "账户用量"
+description: "查询指定时间窗口内的汇总 Token 用量、调用次数及已结算消费金额。"
+---
+
+## 请求契约
+
+`GET https://api.xroute.ai/apis/v1/account/usage`
+
+| 查询参数 | 类型 | 必填 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `start_time` | `integer` | 是 | 起始 Unix 时间戳（UTC 秒）。 |
+| `end_time` | `integer` | 是 | 结束 Unix 时间戳（UTC 秒）。 |
+| `model` | `string` | 否 | 按模型 ID 筛选的可选过滤条件（例如 `deepseek/deepseek-r1`）。 |
+
+```bash
+curl "https://api.xroute.ai/apis/v1/account/usage?start_time=1760745600&end_time=1760832000" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+## 响应
+
+```json
+{
+  "total_requests": 1240,
+  "input_tokens": 3420100,
+  "output_tokens": 812400,
+  "total_cost_usd": 4.18
+}
+```

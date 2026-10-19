@@ -1,0 +1,28 @@
+---
+title: "使用 XRoute 构建研究智能体"
+sidebarTitle: "研究智能体"
+description: "通过 XRoute 为您的智能体赋予实时网页、学术及带引用的搜索能力，并汇总生成有据可查的简报。"
+---
+
+## 面临的问题
+
+当被问及最新发布动态、知识截止日期之后的基准测试或一手学术资料时，大语言模型容易产生幻觉。而分别对接不同的 SERP、学术搜索和内容提取供应商，则需要维护多个 API 密钥和计费账户。
+
+## 提示词示例
+
+```text
+Use XRoute to research whether Example Corp has shipped its v2 API as of today.
+1. Quote the planned search and scholar calls first.
+2. Cross-check official release notes and developer discussions.
+3. Produce a brief with inline citations and timestamps.
+```
+
+## 使用的 API 与模型
+
+- **数据 API：** 网页搜索（`/apis/v1/search/web`）、学术搜索（`/apis/v1/scholar/search`）、Perplexity Sonar（`/apis/v1/perplexity/sonar`）
+- **推理模型：** 通过 `https://api.xroute.ai/v1/chat/completions` 调用 `deepseek/deepseek-r1`
+
+## 安全护栏
+
+- 在执行前通过 `batch_quote` 对所有搜索调用进行询价。
+- 当存在一手官方文档时，拒绝未经证实的单一来源结论。

@@ -1,0 +1,31 @@
+---
+title: "アカウント利用状況"
+sidebarTitle: "アカウント利用状況"
+description: "指定した期間の集計トークン使用量、呼び出し回数、および確定した利用額を照会します。"
+---
+
+## リクエスト仕様
+
+`GET https://api.xroute.ai/apis/v1/account/usage`
+
+| クエリパラメータ | 型 | 必須 | 説明 |
+| :--- | :--- | :--- | :--- |
+| `start_time` | `integer` | はい | 開始日時の Unix タイムスタンプ（UTC 秒）。 |
+| `end_time` | `integer` | はい | 終了日時の Unix タイムスタンプ（UTC 秒）。 |
+| `model` | `string` | いいえ | モデル ID による任意のフィルタ（例: `deepseek/deepseek-r1`）。 |
+
+```bash
+curl "https://api.xroute.ai/apis/v1/account/usage?start_time=1760745600&end_time=1760832000" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+## レスポンス
+
+```json
+{
+  "total_requests": 1240,
+  "input_tokens": 3420100,
+  "output_tokens": 812400,
+  "total_cost_usd": 4.18
+}
+```

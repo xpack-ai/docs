@@ -1,0 +1,237 @@
+---
+title: Chat Completions
+description: Send conversational requests via XRoute with full support for OpenAI unified, Anthropic unified, and provider native invocation formats.
+---
+
+The XRoute gateway supports three primary calling protocols for conversational and text generation:
+1. **OpenAI Unified Format**: `POST https://api.xroute.ai/v1/chat/completions`
+2. **Anthropic Unified Format**: `POST https://api.xroute.ai/v1/messages`
+3. **Provider Native Formats**: `POST https://api.xroute.ai/{Provider}/...` (Supporting native protocols for OpenAI, Anthropic, Google, Byteplus, Deepseek, GLM, etc.)
+
+<Note>
+- **Text Models**: Support all **3 calling formats** (OpenAI / Anthropic / Native).
+- **Image Models**: **Native format only** (e.g. `https://api.xroute.ai/OpenAI/images/generations`, `https://api.xroute.ai/Byteplus/images/generations`).
+- **Video Models**: **Native asynchronous task format only** (e.g. Byteplus and WAN task creation and polling endpoints).
+</Note>
+
+---
+
+## 1. OpenAI Unified Invocation
+
+Standard OpenAI-compatible request payloads and authorization headers. Compatible with all text generation models.
+
+- **Endpoint**: `POST https://api.xroute.ai/v1/chat/completions`
+- **Auth Header**: `Authorization: Bearer <XROUTE_API_KEY>`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "OpenAI/gpt-5.6-sol",
+    "messages": [
+      {"role": "system", "content": "You are an enterprise cloud advisor."},
+      {"role": "user", "content": "Explain core benefits of cloud-native architecture."}
+    ],
+    "temperature": 0.7,
+    "stream": false
+  }'
+```
+
+```python Python (OpenAI SDK)
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+response = client.chat.completions.create(
+    model="OpenAI/gpt-5.6-sol",
+    messages=[
+        {"role": "system", "content": "You are an enterprise cloud advisor."},
+        {"role": "user", "content": "Explain core benefits of cloud-native architecture."}
+    ],
+    temperature=0.7,
+)
+
+print(response.choices[0].message.content)
+```
+
+```typescript TypeScript (OpenAI SDK)
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  baseURL: 'https://api.xroute.ai/v1',
+  apiKey: process.env.XROUTE_API_KEY,
+});
+
+const response = await client.chat.completions.create({
+  model: 'OpenAI/gpt-5.6-sol',
+  messages: [{ role: 'user', content: 'Explain core benefits of cloud-native architecture.' }],
+});
+
+console.log(response.choices[0].message.content);
+```
+</CodeGroup>
+
+---
+
+## 2. Anthropic Unified Invocation
+
+Standard Anthropic Messages protocol. The gateway translates payloads across underlying model providers.
+
+- **Endpoint**: `POST https://api.xroute.ai/v1/messages`
+- **Auth Header**: `x-api-key: <XROUTE_API_KEY>`
+- **Protocol Header**: `anthropic-version: 2023-06-01`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/v1/messages" \
+  -H "x-api-key: $XROUTE_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Anthropic/claude-fable-5",
+    "max_tokens": 1024,
+    "system": "You are a cryptography specialist.",
+    "messages": [
+      {"role": "user", "content": "Explain the fundamental principles of Zero-Knowledge Proofs (ZKP)."}
+    ]
+  }'
+```
+
+```python Python (Anthropic SDK)
+from anthropic import Anthropic
+
+client = Anthropic(
+    base_url="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+message = client.messages.create(
+    model="Anthropic/claude-fable-5",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Explain the fundamental principles of Zero-Knowledge Proofs (ZKP)."}],
+)
+
+print(message.content[0].text)
+```
+
+```typescript TypeScript (Anthropic SDK)
+import Anthropic from '@anthropic-ai/sdk';
+
+const client = new Anthropic({
+  baseURL: 'https://api.xroute.ai/v1',
+  apiKey: process.env.XROUTE_API_KEY,
+});
+
+const message = await client.messages.create({
+  model: 'Anthropic/claude-fable-5',
+  max_tokens: 1024,
+  messages: [{ role: 'user', content: 'Explain the fundamental principles of Zero-Knowledge Proofs (ZKP).' }],
+});
+
+console.log(message.content[0].text);
+```
+</CodeGroup>
+
+---
+
+## 3. Provider Native Invocation
+
+Directly interface with native vendor endpoints and protocols via the `{Provider}` routing prefix.
+
+### Google Gemini Native
+
+- **Endpoint**: `POST https://api.xroute.ai/Google/models/{model_id}:generateContent`
+- **Streaming**: `POST https://api.xroute.ai/Google/models/{model_id}:streamGenerateContent?alt=sse`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Google/models/gemini-3.1-pro-preview:generateContent" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {"text": "Briefly contrast classical vs quantum computing."}
+        ]
+      }
+    ]
+  }'
+```
+
+```python Python (google-genai SDK)
+from google import genai
+
+client = genai.Client(
+    api_key="your_xroute_api_key",
+    http_options={"base_url": "https://api.xroute.ai/Google"},
+)
+
+response = client.models.generate_content(
+    model="gemini-3.1-pro-preview",
+    contents="Briefly contrast classical vs quantum computing.",
+)
+print(response.text)
+```
+</CodeGroup>
+
+### Byteplus Native
+
+- **Endpoint**: `POST https://api.xroute.ai/Byteplus/chat/completions`
+
+```python Python (Byteplus Ark SDK)
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+completion = client.chat.completions.create(
+    model="Byteplus/seed-2-0-code-preview-260328",
+    messages=[{"role": "user", "content": "Write a binary search implementation in Python."}],
+)
+print(completion.choices[0].message.content)
+```
+
+### Deepseek & GLM Native (DashScope Protocol)
+
+- **Endpoint**: `POST https://api.xroute.ai/{Provider}/services/aigc/text-generation/generation`
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/Deepseek/services/aigc/text-generation/generation" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-v4-flash",
+    "input": {
+      "messages": [
+        {"role": "user", "content": "Hello! Introduce yourself."}
+      ]
+    },
+    "parameters": {
+      "result_format": "message"
+    }
+  }'
+```
+
+---
+
+## 4. Multimodal Image & Video Endpoints Reference
+
+Image and video models do not use the Chat Completions endpoint. Use dedicated native endpoints:
+
+| Modality | Provider & Example Model | Protocol Endpoint | Recommended SDK |
+| :--- | :--- | :--- | :--- |
+| **Image Generation** | `OpenAI/gpt-image-2.5-flare` | `POST https://api.xroute.ai/OpenAI/images/generations` | OpenAI SDK (`client.images.generate`) |
+| **Image Edits** | `OpenAI/gpt-image-2` | `POST https://api.xroute.ai/OpenAI/images/edits` | OpenAI SDK (`client.images.edit`) |
+| **Image Generation** | `Google/gemini-3.1-flash-image` | `POST https://api.xroute.ai/Google/image/models/{id}:generateContent` | Google GenAI SDK |
+| **Image Generation** | `Byteplus/seedream-5-0-260128` | `POST https://api.xroute.ai/Byteplus/images/generations` | Byteplus Ark SDK (`client.images.generate`) |
+| **Image Generation** | `Qwen/qwen-image-3.0-pro` | `POST https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation` | DashScope SDK |
+| **Video Generation** | `Byteplus/seedance-1-5-pro-251215` | Create: `POST https://api.xroute.ai/Byteplus/contents/generations/tasks`<br />Query: `GET https://api.xroute.ai/Byteplus/contents/generations/tasks/{id}` | Byteplus Ark SDK (`content_generation.tasks`) |
+| **Video Generation** | `WAN/wan3.0-video-prime` | Create: `POST https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis`<br />Query: `GET https://api.xroute.ai/WAN/tasks/{id}` | DashScope SDK (`VideoSynthesis`) |

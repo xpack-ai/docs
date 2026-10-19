@@ -1,0 +1,478 @@
+---
+title: Models & Multimodal Support
+description: Explore supported models across providers, invocation rules for different output types (Text, Image, Video), and practical code examples.
+---
+
+The XRoute gateway connects to world-leading AI models across providers. The platform supports three primary output modalities: **Text**, **Image**, and **Video**.
+
+Depending on the output modality, XRoute follows strict protocol rules:
+- **Text Models**: Support **OpenAI Unified Format**, **Anthropic Unified Format**, and **Provider Native Formats**.
+- **Image Models**: **Native Format Only** (e.g. OpenAI Images API, Google Image generateContent, Byteplus Images, Qwen Multimodal API).
+- **Video Models**: **Native Asynchronous Task Format Only** (submit task + poll for completion URL, such as Byteplus Content Generation tasks and WAN DashScope async tasks).
+
+<Tip>
+Click "Models" in the top navigation or visit [XRoute Model Hub (xroute.ai/model)](https://xroute.ai/en/model) to browse real-time model catalog and pricing.
+</Tip>
+
+### Quick Navigation by Modality (SEO & Direct Reference)
+
+<CardGroup cols={3}>
+  <Card title="Text Models" icon="message-lines" href="/resources/models/text">
+    OpenAI, Anthropic & Native protocols
+  </Card>
+  <Card title="Image Models" icon="image" href="/resources/models/image">
+    Native image generation endpoints
+  </Card>
+  <Card title="Video Models" icon="film" href="/resources/models/video">
+    Native async task submission & polling
+  </Card>
+</CardGroup>
+
+---
+
+## Featured Models Overview
+
+| Provider | Model Identifier | Output Modality | Invocation Protocol | Recommended Scenarios |
+| :--- | :--- | :--- | :--- | :--- |
+| **OpenAI** | `OpenAI/gpt-5.6-sol` | Text | OpenAI / Anthropic / Native | Flagship reasoning, complex code generation, system orchestration |
+| **OpenAI-Pro** | `OpenAI-Pro/gpt-6-astra` | Text | OpenAI / Anthropic / Native | Enterprise high-concurrency tasks with priority throughput |
+| **Anthropic** | `Anthropic/claude-fable-5` | Text | OpenAI / Anthropic / Native | Deep text authoring, long-context analysis, advanced intelligence |
+| **Google** | `Google/gemini-3.1-pro-preview` | Text | OpenAI / Anthropic / Native | Multimodal context comprehension and complex problem solving |
+| **Byteplus** | `Byteplus/seed-2-0-code-preview-260328` | Text | OpenAI / Anthropic / Native | Ultra-fast code completion and developer assistants |
+| **Deepseek** | `Deepseek/deepseek-v4-flash` | Text | OpenAI / Anthropic / Native | Ultra-low latency and highly cost-efficient Q&A |
+| **GLM** | `GLM/glm-5.1` | Text | OpenAI / Anthropic / Native | General text understanding and bilingual reasoning |
+| **MoonshootAI-Pro** | `MoonshootAI-Pro/kimi-k3` | Text | OpenAI / Anthropic / Native | Massive document ingestion and long-context research |
+| **OpenAI** | `OpenAI/gpt-image-2.5-flare` | Image | **Native Format Only** | High-precision prompt-to-image and creative illustration |
+| **Google** | `Google/gemini-3.1-flash-image` | Image | **Native Format Only** | Concept art rendering and rapid visual prototyping |
+| **Byteplus** | `Byteplus/seedream-5-0-260128` | Image | **Native Format Only** | Production-grade visual synthesis and photorealistic imagery |
+| **Qwen** | `Qwen/qwen-image-3.0-pro` | Image | **Native Format Only** | Multimodal artwork generation and stylistic rendering |
+| **Byteplus** | `Byteplus/seedance-1-5-pro-251215` | Video | **Native Async Task Only** | Cinematic camera movement and generative video creation |
+| **WAN** | `WAN/wan3.0-video-prime` | Video | **Native Async Task Only** | Ultra-realistic high-resolution video synthesis |
+
+---
+
+## Text Output Models Invocation
+
+Text models can be called using the unified OpenAI endpoint, the unified Anthropic endpoint, or provider-specific native endpoints.
+
+<Tabs>
+  <Tab title="1. OpenAI Unified Format">
+    Standard endpoint is `https://api.xroute.ai/v1/chat/completions`:
+
+    <CodeGroup>
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "OpenAI/gpt-5.6-sol",
+        "messages": [
+          {"role": "user", "content": "Which is larger, 9.9 or 9.11? Explain briefly."}
+        ],
+        "temperature": 0.7
+      }'
+    ```
+
+    ```python Python
+    from openai import OpenAI
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.chat.completions.create(
+        model="OpenAI/gpt-5.6-sol",
+        messages=[{"role": "user", "content": "Which is larger, 9.9 or 9.11?"}],
+    )
+    print(response.choices[0].message.content)
+    ```
+
+    ```typescript TypeScript
+    import OpenAI from 'openai';
+
+    const client = new OpenAI({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const completion = await client.chat.completions.create({
+      model: 'OpenAI/gpt-5.6-sol',
+      messages: [{ role: 'user', content: 'Which is larger, 9.9 or 9.11?' }],
+    });
+    console.log(completion.choices[0].message.content);
+    ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="2. Anthropic Unified Format">
+    Standard endpoint is `https://api.xroute.ai/v1/messages` with `x-api-key` and `anthropic-version: 2023-06-01`:
+
+    <CodeGroup>
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/v1/messages" \
+      -H "x-api-key: $XROUTE_API_KEY" \
+      -H "anthropic-version: 2023-06-01" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "Anthropic/claude-fable-5",
+        "max_tokens": 1024,
+        "messages": [
+          {"role": "user", "content": "Explain quantum computing in three sentences."}
+        ]
+      }'
+    ```
+
+    ```python Python
+    from anthropic import Anthropic
+
+    client = Anthropic(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    message = client.messages.create(
+        model="Anthropic/claude-fable-5",
+        max_tokens=1024,
+        messages=[{"role": "user", "content": "Explain quantum computing in three sentences."}],
+    )
+    print(message.content[0].text)
+    ```
+
+    ```typescript TypeScript
+    import Anthropic from '@anthropic-ai/sdk';
+
+    const client = new Anthropic({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const message = await client.messages.create({
+      model: 'Anthropic/claude-fable-5',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: 'Explain quantum computing in three sentences.' }],
+    });
+    console.log(message.content[0].text);
+    ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="3. Provider Native Formats">
+    Connect directly to provider-specific endpoints (Google Gemini `generateContent`, Byteplus Ark, Deepseek/GLM DashScope):
+
+    <CodeGroup>
+    ```bash Google Gemini Native
+    curl -X POST "https://api.xroute.ai/Google/models/gemini-3.1-pro-preview:generateContent" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -d '{
+        "contents": [
+          {
+            "parts": [
+              { "text": "Explain quantum entanglement" }
+            ]
+          }
+        ]
+      }'
+    ```
+
+    ```python Byteplus Ark Native
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    completion = client.chat.completions.create(
+        model="Byteplus/seed-2-0-code-preview-260328",
+        messages=[{"role": "user", "content": "Write a quicksort in Python."}],
+    )
+    print(completion.choices[0].message.content)
+    ```
+
+    ```bash Deepseek / GLM Native
+    curl -X POST "https://api.xroute.ai/Deepseek/services/aigc/text-generation/generation" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "deepseek-v4-flash",
+        "input": {
+          "messages": [
+            {"role": "user", "content": "Hello! Introduce yourself."}
+          ]
+        },
+        "parameters": {
+          "result_format": "message"
+        }
+      }'
+    ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+---
+
+## Image Output Models Invocation
+
+<Warning>
+**Image models only support provider native formats.** Do not call image models through OpenAI/Anthropic text chat completions endpoints.
+</Warning>
+
+### 1. OpenAI Image Generation & Edits
+
+Endpoints: `POST https://api.xroute.ai/OpenAI/images/generations` and `POST https://api.xroute.ai/OpenAI/images/edits`.
+
+<CodeGroup>
+```bash Text-to-Image cURL
+curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-image-2.5-flare",
+    "prompt": "Cyberpunk rainy Tokyo street at night, glowing neon reflections in puddles, 8k",
+    "n": 1,
+    "size": "1024x1024"
+  }'
+```
+
+```python Python (OpenAI SDK)
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.xroute.ai/OpenAI",
+    api_key="your_xroute_api_key",
+)
+
+response = client.images.generate(
+    model="OpenAI/gpt-image-2.5-flare",
+    prompt="Cyberpunk rainy Tokyo street at night, glowing neon reflections in puddles, 8k",
+    size="1024x1024",
+    quality="standard",
+    n=1,
+)
+print(response.data[0].url)
+```
+
+```typescript TypeScript (OpenAI SDK)
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  baseURL: 'https://api.xroute.ai/OpenAI',
+  apiKey: process.env.XROUTE_API_KEY,
+});
+
+const image = await client.images.generate({
+  model: 'OpenAI/gpt-image-2.5-flare',
+  prompt: 'Cyberpunk rainy Tokyo street at night, glowing neon reflections in puddles, 8k',
+  size: '1024x1024',
+  n: 1,
+});
+console.log(image.data[0].url);
+```
+</CodeGroup>
+
+### 2. Google Native Image Generation
+
+Endpoint: `POST https://api.xroute.ai/Google/image/models/{model_id}:generateContent` with `responseModalities: ["IMAGE"]`.
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Google/image/models/gemini-3.1-flash-image:generateContent" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {"text": "A futuristic architectural pavilion surrounded by serene mist and pine trees"}
+        ]
+      }
+    ],
+    "generationConfig": {
+      "responseModalities": ["IMAGE"]
+    }
+  }'
+```
+
+```python Python (google-genai SDK)
+from google import genai
+
+client = genai.Client(
+    api_key="your_xroute_api_key",
+    http_options={"base_url": "https://api.xroute.ai/Google"},
+)
+
+response = client.models.generate_content(
+    model="gemini-3.1-flash-image",
+    contents="A futuristic architectural pavilion surrounded by serene mist and pine trees",
+    config={"response_modalities": ["IMAGE"]},
+)
+for part in response.candidates[0].content.parts:
+    if part.inline_data:
+        print("Received base64 image data")
+```
+</CodeGroup>
+
+### 3. Byteplus Image Generation
+
+Endpoint: `POST https://api.xroute.ai/Byteplus/images/generations`:
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Byteplus/images/generations" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedream-5-0-260128",
+    "prompt": "Cozy wooden cabin in snow mountain, warm fireplace light glowing through window, cinematic",
+    "size": "1024x1024"
+  }'
+```
+
+```python Python (Ark SDK)
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+images_response = client.images.generate(
+    model="Byteplus/seedream-5-0-260128",
+    prompt="Cozy wooden cabin in snow mountain, warm fireplace light glowing through window, cinematic",
+    size="1024x1024",
+)
+print(images_response.data[0].url)
+```
+</CodeGroup>
+
+### 4. Qwen Multimodal Image Generation
+
+DashScope native protocol endpoint: `POST https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation`:
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/Qwen/services/aigc/multimodal-generation/generation" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen-image-3.0-pro",
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {"text": "Chinese ink wash landscape painting with misty mountains and small wooden boat"}
+          ]
+        }
+      ]
+    },
+    "parameters": {
+      "size": "1024*1024"
+    }
+  }'
+```
+
+---
+
+## Video Output Models Invocation
+
+<Info>
+**Video models utilize a native asynchronous two-phase model**: First submit the generation task to receive a `task_id`, then poll the task query endpoint until completed to get the video download URL.
+</Info>
+
+### 1. Byteplus Video Generation Tasks
+
+- Submit Task: `POST https://api.xroute.ai/Byteplus/contents/generations/tasks`
+- Query Task: `GET https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}`
+
+<CodeGroup>
+```bash 1. Submit Video Task
+curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance-1-5-pro-251215",
+    "content": [
+      {
+        "type": "text",
+        "text": "Slow cinematic drone flight toward clear blue sea, dolphins leaping above waves, 4k"
+      }
+    ]
+  }'
+# Response: {"id": "cgt-2026xxxx-xxxx"}
+```
+
+```bash 2. Query Task Status
+curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/cgt-2026xxxx-xxxx" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+```python Python (Ark SDK Async Video)
+import time
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+# 1. Submit task
+create_result = client.content_generation.tasks.create(
+    model="Byteplus/seedance-1-5-pro-251215",
+    content=[{
+        "type": "text",
+        "text": "Slow cinematic drone flight toward clear blue sea, dolphins leaping above waves, 4k"
+    }],
+)
+task_id = create_result.id
+print(f"Task created: {task_id}")
+
+# 2. Poll status
+while True:
+    task = client.content_generation.tasks.get(task_id=task_id)
+    if task.status == "succeeded":
+        print(f"Video URL: {task.content.video_url}")
+        break
+    elif task.status in ["failed", "cancelled"]:
+        print(f"Task failed: {task.status}")
+        break
+    print("Generating video, waiting 5 seconds...")
+    time.sleep(5)
+```
+</CodeGroup>
+
+### 2. WAN Video Generation Tasks
+
+- Submit Task: `POST https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis` (with Header `X-DashScope-Async: enable`)
+- Query Task: `GET https://api.xroute.ai/WAN/tasks/{task_id}`
+
+<CodeGroup>
+```bash 1. Submit Task
+curl -X POST "https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "X-DashScope-Async: enable" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "wan3.0-video-prime",
+    "input": {
+      "prompt": "A cute golden retriever puppy running on grass under autumn maple trees, cinematic lighting"
+    },
+    "parameters": {
+      "size": "1280*720"
+    }
+  }'
+# Response: {"output": {"task_id": "task-wan-xxxx", "task_status": "PENDING"}}
+```
+
+```bash 2. Query Task Status
+curl -X GET "https://api.xroute.ai/WAN/tasks/task-wan-xxxx" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+</CodeGroup>
+
+---
+
+## Intelligent Routing & Fallbacks
+
+XRoute provides automatic retry and fallback across equivalent tier models. When an upstream provider encounters rate limits (429) or transient degradation, requests seamlessly reroute to backup models without interrupting user workloads.

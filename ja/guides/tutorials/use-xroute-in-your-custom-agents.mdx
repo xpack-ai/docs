@@ -1,0 +1,34 @@
+---
+title: "カスタムエージェントで XRoute を使用する"
+sidebarTitle: "カスタムエージェント"
+description: "カスタムエージェントの LLM 呼び出し先を XRoute に設定し、MCP または HTTP 経由で XRoute ツールを接続します。"
+---
+
+OpenAI Agents SDK、LangGraph、CrewAI、または独自のループでエージェントを構築する場合でも、2 つのステップで XRoute を統合できます。
+
+## 1. エージェントの LLM 呼び出し先を XRoute に設定する
+
+ベース URL として `https://api.xroute.ai/v1` を使用することで、SDK を変更せずにエージェントから `deepseek/deepseek-r1`、`anthropic/claude-sonnet-4`、`openai/gpt-4.1` を切り替えて利用できます。
+
+```python
+import os
+from openai import OpenAI
+
+llm = OpenAI(
+    base_url="https://api.xroute.ai/v1",
+    api_key=os.environ["XROUTE_API_KEY"],
+)
+```
+
+## 2. MCP 経由でエージェントに XRoute ツールを提供する
+
+任意の MCP クライアントライブラリを使用して `https://mcp.xroute.ai/mcp` を接続するか、サーバー間の MCP 接続には Bearer 認証ヘッダー（`Authorization: Bearer $XROUTE_API_KEY`）を渡します。
+
+## クイックリファレンス
+
+| レイヤー | エンドポイント |
+| :--- | :--- |
+| LLM チャットおよびツール使用 | `https://api.xroute.ai/v1/chat/completions` |
+| Anthropic ネイティブ | `https://api.xroute.ai/v1/messages` |
+| データ API | `https://api.xroute.ai/apis/v1/*` |
+| リモート MCP サーバー | `https://mcp.xroute.ai/mcp` |

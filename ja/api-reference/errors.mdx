@@ -1,0 +1,49 @@
+---
+title: "エラーコード"
+sidebarTitle: "エラー"
+description: "統合 API のエラーフォーマット、6 つの診断カテゴリ、および安全なリトライのガイドライン。"
+---
+
+XRoute は、すべてのモデルおよびデータ API エンドポイントにわたって標準の HTTP ステータスコードと構造化された JSON エラーペイロードを返します。
+
+## エンドポイントに応じたレスポンス形式
+
+- **OpenAI 互換エンドポイント（`/v1/*`）:** 標準の `{ "error": { "message", "type", "code" } }` エンベロープを返します。
+- **データ API エンドポイント（`/apis/v1/*`）:** `{ "code", "message", "category", "request_id", "retryable" }` を返します。
+
+## 6 つの診断カテゴリ
+
+| HTTP ステータス | カテゴリ | リトライ可能か | 推奨される対応 |
+| :--- | :--- | :--- | :--- |
+| `400` | `invalid_parameters` | いいえ | `get_details` を使用してリクエストボディまたはパラメータの型を修正してください。 |
+| `401` | `authentication_error` | いいえ | `Authorization: Bearer $XROUTE_API_KEY` を確認するか、OAuth サインインを再実行してください。 |
+| `402` | `insufficient_credits` | いいえ | コンソールで Credits をチャージするか、キーの利用上限を引き上げるか、MPP 決済を完了してください。 |
+| `404` | `not_found` | いいえ | `GET /v1/models` でモデル ID を確認するか、`search` でエンドポイントパスを確認してください。 |
+| `429` | `rate_limit_exceeded` | はい | `Retry-After` ヘッダーに従って待機してからリトライしてください。 |
+| `500` / `503` | `upstream_unavailable` | はい | XRoute はクラスター間で自動的にフェイルオーバーしますが、すべてのアップストリームが飽和している場合は指数バックオフでリトライしてください。 |
+
+## ゲートウェイのエラーレスポンス例
+
+### 認証エラー: API キー
+
+```json
+{
+  "error": {
+    "message": "Invalid or revoked API key provided.",
+    "type": "authentication_error",
+    "code": "invalid_api_key"
+  }
+}
+```
+
+### パラメータエラー: ネイティブリクエスト
+
+```json
+{
+  "code": 400,
+  "category": "invalid_parameters",
+  "message": "Missing required field: 'query'",
+  "request_id": "req_9f82a10c4b",
+  "retryable": false
+}
+```

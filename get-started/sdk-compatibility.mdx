@@ -1,0 +1,275 @@
+---
+title: SDK Compatibility
+description: Learn how to integrate XRoute seamlessly with official OpenAI, Anthropic, Google GenAI, and Byteplus Ark SDKs, as well as open-source frameworks.
+---
+
+The XRoute gateway provides native compatibility with official client libraries from **OpenAI** and **Anthropic**, supports provider native SDKs (such as **Google GenAI**, **Byteplus Ark**, and **DashScope**), and works out-of-the-box with popular orchestration frameworks like **LangChain** and **LlamaIndex**.
+
+You only need to configure the `base_url` (or `baseURL`) and provide your `api_key` to transition existing applications to XRoute.
+
+<Tip>
+**Modality Calling Rules**:
+- **Text Models**: Support OpenAI SDK, Anthropic SDK, and provider native SDKs.
+- **Image Models**: **Native Format Only** (OpenAI Images API, Google GenAI Image module, Byteplus Ark Images).
+- **Video Models**: **Native Asynchronous Task SDKs Only**.
+</Tip>
+
+---
+
+## 1. Text Output Models SDK Invocation
+
+### OpenAI Official SDK
+
+Compatible with all text output models (e.g. `OpenAI/gpt-5.6-sol`, `OpenAI-Pro/gpt-6-astra`, `Google/gemini-3.1-pro-preview`, `Byteplus/seed-2-0-code-preview-260328`, etc.).
+
+<Tabs>
+  <Tab title="Python">
+    ```python
+    from openai import OpenAI
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.chat.completions.create(
+        model="OpenAI/gpt-5.6-sol",
+        messages=[
+            {"role": "system", "content": "You are an experienced system architect."},
+            {"role": "user", "content": "Briefly contrast microservices vs monolithic architecture."}
+        ],
+        temperature=0.7,
+    )
+
+    print(response.choices[0].message.content)
+    ```
+  </Tab>
+
+  <Tab title="Node.js / TypeScript">
+    ```typescript
+    import OpenAI from 'openai';
+
+    const openai = new OpenAI({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const completion = await openai.chat.completions.create({
+      model: 'OpenAI/gpt-5.6-sol',
+      messages: [{ role: 'user', content: 'Briefly contrast microservices vs monolithic architecture.' }],
+    });
+
+    console.log(completion.choices[0].message.content);
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+### Anthropic Official SDK
+
+Compatible with Anthropic standard message payloads (e.g. `Anthropic/claude-fable-5`, `Anthropic-Pro/claude-opus-4-6`, etc.).
+
+<Tabs>
+  <Tab title="Python">
+    ```python
+    from anthropic import Anthropic
+
+    client = Anthropic(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    message = client.messages.create(
+        model="Anthropic/claude-fable-5",
+        max_tokens=1024,
+        messages=[
+            {"role": "user", "content": "Summarize Rust memory safety principles in one paragraph."}
+        ],
+    )
+
+    print(message.content[0].text)
+    ```
+  </Tab>
+
+  <Tab title="TypeScript">
+    ```typescript
+    import Anthropic from '@anthropic-ai/sdk';
+
+    const client = new Anthropic({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const message = await client.messages.create({
+      model: 'Anthropic/claude-fable-5',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: 'Summarize Rust memory safety principles in one paragraph.' }],
+    });
+
+    console.log(message.content[0].text);
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+### Provider Native SDKs
+
+For providers with specialized client libraries, point the SDK's `base_url` to the vendor path on XRoute:
+
+<Tabs>
+  <Tab title="Byteplus Ark SDK">
+    ```python
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    completion = client.chat.completions.create(
+        model="Byteplus/seed-2-0-code-preview-260328",
+        messages=[{"role": "user", "content": "Implement an LRU Cache in Python."}],
+    )
+    print(completion.choices[0].message.content)
+    ```
+  </Tab>
+
+  <Tab title="Google GenAI SDK">
+    ```python
+    from google import genai
+
+    client = genai.Client(
+        api_key="your_xroute_api_key",
+        http_options={"base_url": "https://api.xroute.ai/Google"},
+    )
+
+    response = client.models.generate_content(
+        model="gemini-3.1-pro-preview",
+        contents="Explain practical applications of quantum annealing.",
+    )
+    print(response.text)
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## 2. Image Output Models SDK Invocation
+
+<Warning>
+**Image models only support native format.** Use provider native SDK image modules or native endpoints directly.
+</Warning>
+
+<Tabs>
+  <Tab title="OpenAI SDK (Image Generation)">
+    ```python
+    from openai import OpenAI
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/OpenAI",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.images.generate(
+        model="OpenAI/gpt-image-2.5-flare",
+        prompt="Futuristic aerial train over futuristic neon megalopolis, 8k concept art",
+        size="1024x1024",
+        n=1,
+    )
+    print("Image URL:", response.data[0].url)
+    ```
+  </Tab>
+
+  <Tab title="Byteplus Ark SDK (Image Generation)">
+    ```python
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.images.generate(
+        model="Byteplus/seedream-5-0-260128",
+        prompt="Golden sunset over a mountain lake, cinematic lighting, 8k photography",
+        size="1024x1024",
+    )
+    print("Image URL:", response.data[0].url)
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## 3. Video Output Models SDK Invocation
+
+Video models follow an **asynchronous task workflow** (create task -> poll status until completion):
+
+```python
+import time
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+# 1. Create task
+task = client.content_generation.tasks.create(
+    model="Byteplus/seedance-1-5-pro-251215",
+    content=[{
+        "type": "text",
+        "text": "Cinematic aerial drone flight gliding over snowy canyon peaks, 4k resolution"
+    }],
+)
+task_id = task.id
+print(f"Task created: {task_id}")
+
+# 2. Poll for video output
+while True:
+    status = client.content_generation.tasks.get(task_id=task_id)
+    if status.status == "succeeded":
+        print("Generated Video URL:", status.content.video_url)
+        break
+    elif status.status in ["failed", "cancelled"]:
+        print(f"Task stopped: {status.status}")
+        break
+    time.sleep(5)
+```
+
+---
+
+## 4. Popular Open-Source Frameworks
+
+### LangChain
+
+```python
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(
+    model="OpenAI/gpt-5.6-sol",
+    openai_api_base="https://api.xroute.ai/v1",
+    openai_api_key="your_xroute_api_key",
+    temperature=0.7,
+)
+
+response = llm.invoke("Write a single inspiring motto for early-stage startup founders.")
+print(response.content)
+```
+
+### LlamaIndex
+
+```python
+from llama_index.llms.openai import OpenAI
+
+llm = OpenAI(
+    model="OpenAI/gpt-5.6-sol",
+    api_base="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+response = llm.complete("Name 3 fundamental engineering trade-offs in distributed storage.")
+print(response.text)
+```

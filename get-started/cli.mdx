@@ -1,0 +1,49 @@
+---
+title: "Use the XRoute CLI"
+sidebarTitle: "Use the CLI"
+description: "Search, quote, and call models and data APIs from terminals, scripts, and CI environments."
+---
+
+Use the XRoute CLI when your agent or script runs in a terminal or CI environment where remote MCP connections are unavailable.
+
+## Install and sign in
+
+```bash
+npm install -g @xroute/cli
+xroute login
+```
+
+For headless CI/CD pipelines, set the `XROUTE_API_KEY` environment variable instead of running `xroute login`:
+
+```bash
+export XROUTE_API_KEY="xr_live_..."
+```
+
+## Commands
+
+| Command | Cost | Description |
+| :--- | :--- | :--- |
+| `xroute account` | Free | Display current Credits balance and key spend cap. |
+| `xroute search <query>` | Free | Search models and data endpoints by keyword. |
+| `xroute details <endpoint_id>` | Free | Show input schema, pricing, and example payload. |
+| `xroute quote <endpoint_id> --json` | Free | Calculate exact call cost before execution. |
+| `xroute call <endpoint_id> -d '{...}'` | Paid | Execute a model or data API call. |
+
+## Agent rules for the CLI
+
+1. **Discover for free:** Run `xroute search` and `xroute details` to confirm parameter names before calling.
+2. **Always quote first:** Run `xroute quote --json` and inspect `auto_execute_eligible`.
+3. **Never probe with paid calls:** Do not execute paid endpoints merely to test connectivity—use `xroute account` instead.
+
+## Direct HTTP fallback
+
+When neither MCP nor the CLI is installed, call XRoute directly over HTTPS using `curl`.
+
+### Paid API approval first
+
+Before sending a direct paid HTTP call from an autonomous agent, state the target endpoint, unit price, and estimated total spend to the user and wait for confirmation unless a pre-approved task budget is active.
+
+```bash
+curl https://api.xroute.ai/v1/models \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```

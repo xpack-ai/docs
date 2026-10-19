@@ -1,0 +1,218 @@
+---
+title: "文本大模型 (Text Models)"
+sidebarTitle: "文本模型"
+description: "通过 OpenAI 统一格式、Anthropic 统一格式或各供应商原生格式，调用 GPT-5.6、Claude Fable、Gemini Pro、DeepSeek 等顶尖语言模型。"
+---
+
+XRoute 汇集了全球主流大语言模型（LLM）与前沿推理模型，全面满足对话 Agent、代码编写、数据分析与逻辑推理等业务需求。
+
+所有文本模型均支持 **三种调用方式**：
+1. **OpenAI 统一格式**：`POST https://api.xroute.ai/v1/chat/completions`
+2. **Anthropic 统一格式**：`POST https://api.xroute.ai/v1/messages`
+3. **供应商原生直连格式**：`POST https://api.xroute.ai/{Provider}/...`
+
+---
+
+## 文本模型清单与规格
+
+| 供应商 | 模型标识 (Model ID) | 上下文长度 | 推荐调用格式 | 核心应用场景 |
+| :--- | :--- | :--- | :--- | :--- |
+| **OpenAI** | `OpenAI/gpt-5.6-sol` | 200K | OpenAI / Anthropic / 原生 | 复杂系统推理、深度代码实现、高精度函数调用 |
+| **Anthropic** | `Anthropic/claude-fable-5` | 200K | Anthropic / OpenAI / 原生 | 细腻自然语言生成、长文档分析、精确指令遵循 |
+| **Google** | `Google/gemini-3.1-pro-preview` | 1M | OpenAI / Anthropic / 原生 | 百万 Token 超长上下文、复杂多模态跨文档分析 |
+| **Byteplus** | `Byteplus/seed-2-0-code-preview-260328` | 128K | OpenAI / Anthropic / 原生 | 高性能代码生成与补全，适合高吞吐 Agent 场景 |
+| **Deepseek** | `Deepseek/deepseek-v4-flash` | 64K | OpenAI / Anthropic / 原生 | 超低延迟对话、极高性价比的大规模调用 |
+| **GLM** | `GLM/glm-5` | 128K | OpenAI / Anthropic / 原生 | 双语知识密集型推理、企业知识库问答 |
+
+---
+
+## 1. OpenAI 统一格式调用
+
+使用标准的 OpenAI 对话补全协议，兼容任意支持自定义 `base_url` 的客户端或框架。
+
+- **接口端点**：`POST https://api.xroute.ai/v1/chat/completions`
+- **认证头**：`Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "OpenAI/gpt-5.6-sol",
+    "messages": [
+      {"role": "system", "content": "你是一位资深分布式系统架构师。"},
+      {"role": "user", "content": "请用三点总结 AI 网关在企业架构中的核心价值。"}
+    ],
+    "temperature": 0.7,
+    "stream": false
+  }'
+```
+
+```python Python (OpenAI SDK)
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+response = client.chat.completions.create(
+    model="OpenAI/gpt-5.6-sol",
+    messages=[
+        {"role": "system", "content": "你是一位资深分布式系统架构师。"},
+        {"role": "user", "content": "请用三点总结 AI 网关在企业架构中的核心价值。"}
+    ],
+    temperature=0.7,
+)
+
+print(response.choices[0].message.content)
+```
+
+```typescript TypeScript (OpenAI SDK)
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  baseURL: 'https://api.xroute.ai/v1',
+  apiKey: process.env.XROUTE_API_KEY,
+});
+
+const response = await client.chat.completions.create({
+  model: 'OpenAI/gpt-5.6-sol',
+  messages: [
+    { role: 'user', content: '请用三点总结 AI 网关在企业架构中的核心价值。' }
+  ],
+});
+
+console.log(response.choices[0].message.content);
+```
+</CodeGroup>
+
+---
+
+## 2. Anthropic 统一格式调用
+
+使用 Anthropic 原生的 Messages 协议调用平台上的任意模型，非常适合集成在 Claude Code 及基于 `/v1/messages` 开发的工作流中。
+
+- **接口端点**：`POST https://api.xroute.ai/v1/messages`
+- **请求头**：
+  - `x-api-key: $XROUTE_API_KEY`
+  - `anthropic-version: 2023-06-01`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/v1/messages" \
+  -H "x-api-key: $XROUTE_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Anthropic/claude-fable-5",
+    "max_tokens": 1024,
+    "system": "你是一位软件性能专家。",
+    "messages": [
+      {"role": "user", "content": "对比 REST 与 gRPC 在微服务通信中的延迟表现。"}
+    ]
+  }'
+```
+
+```python Python (Anthropic SDK)
+from anthropic import Anthropic
+
+client = Anthropic(
+    base_url="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+message = client.messages.create(
+    model="Anthropic/claude-fable-5",
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": "对比 REST 与 gRPC 在微服务通信中的延迟表现。"}
+    ],
+)
+
+print(message.content[0].text)
+```
+</CodeGroup>
+
+---
+
+## 3. 供应商原生格式直连调用
+
+直接调用供应商的原生接口与官方 SDK，只需将请求地址前缀替换为 `https://api.xroute.ai/{Provider}`。
+
+<Tabs>
+  <Tab title="Google Gemini 原生">
+    **接口端点**：`POST https://api.xroute.ai/Google/models/{model_id}:generateContent`
+
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/Google/models/gemini-3.1-pro-preview:generateContent" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "contents": [
+          {
+            "parts": [
+              {"text": "简述大语言模型中推测解码（Speculative Decoding）的运作原理。"}
+            ]
+          }
+        ]
+      }'
+    ```
+
+    ```python Python (google-genai SDK)
+    from google import genai
+
+    client = genai.Client(
+        api_key="your_xroute_api_key",
+        http_options={"base_url": "https://api.xroute.ai/Google"},
+    )
+
+    response = client.models.generate_content(
+        model="gemini-3.1-pro-preview",
+        contents="简述大语言模型中推测解码（Speculative Decoding）的运作原理。",
+    )
+    print(response.text)
+    ```
+  </Tab>
+
+  <Tab title="Byteplus Ark 原生">
+    **接口端点**：`POST https://api.xroute.ai/Byteplus/chat/completions`
+
+    ```python Python (Byteplus Ark SDK)
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    completion = client.chat.completions.create(
+        model="Byteplus/seed-2-0-code-preview-260328",
+        messages=[{"role": "user", "content": "用 Go 语言实现一个快速排序。"}],
+    )
+    print(completion.choices[0].message.content)
+    ```
+  </Tab>
+
+  <Tab title="Deepseek / GLM 原生">
+    **接口端点**：`POST https://api.xroute.ai/Deepseek/services/aigc/text-generation/generation`
+
+    ```bash cURL
+    curl -X POST "https://api.xroute.ai/Deepseek/services/aigc/text-generation/generation" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "deepseek-v4-flash",
+        "input": {
+          "messages": [
+            {"role": "user", "content": "请介绍零拷贝（Zero-Copy）技术的优势。"}
+          ]
+        },
+        "parameters": {
+          "result_format": "message"
+        }
+      }'
+    ```
+  </Tab>
+</Tabs>

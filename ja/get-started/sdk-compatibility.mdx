@@ -1,0 +1,275 @@
+---
+title: SDK 互換性ガイド
+description: 公式 OpenAI、Anthropic、Google GenAI、Byteplus Ark SDK およびオープンソースフレームワークで XRoute を利用する方法。
+---
+
+XRoute ゲートウェイは、**OpenAI** および **Anthropic** 公式クライアントライブラリとのネイティブ互換性を提供し、各社ネイティブ SDK（**Google GenAI**、**Byteplus Ark**、**DashScope**）やオープンソースのオーケストレーションフレームワーク（**LangChain**、**LlamaIndex**）を標準でサポートしています。
+
+クライアントライブラリの `base_url`（または `baseURL`）と `api_key` を設定するだけで、既存のアプリケーションからスムーズに移行できます。
+
+<Tip>
+**出力タイプ別の呼び出し規則**：
+- **テキストモデル（Text）**：OpenAI SDK 形式、Anthropic SDK 形式、およびプロバイダーネイティブ SDK 形式をサポート。
+- **画像モデル（Image）**：**ネイティブ形式のみ**（OpenAI Images モジュール、Google GenAI 画像モジュール、Byteplus Ark 画像モジュール等）。
+- **動画モデル（Video）**：**非同期タスクネイティブ SDK のみ**。
+</Tip>
+
+---
+
+## 1. テキスト出力モデルの SDK 呼び出し
+
+### OpenAI 公式 SDK
+
+すべてのテキスト出力モデル（例：`OpenAI/gpt-5.6-sol`、`OpenAI-Pro/gpt-6-astra`、`Google/gemini-3.1-pro-preview`、`Byteplus/seed-2-0-code-preview-260328` 等）に対応します。
+
+<Tabs>
+  <Tab title="Python">
+    ```python
+    from openai import OpenAI
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.chat.completions.create(
+        model="OpenAI/gpt-5.6-sol",
+        messages=[
+            {"role": "system", "content": "あなたは優秀なシステムアーキテクトです。"},
+            {"role": "user", "content": "マイクロサービスとモノリスの選定基準を簡潔に説明してください。"}
+        ],
+        temperature=0.7,
+    )
+
+    print(response.choices[0].message.content)
+    ```
+  </Tab>
+
+  <Tab title="Node.js / TypeScript">
+    ```typescript
+    import OpenAI from 'openai';
+
+    const openai = new OpenAI({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const completion = await openai.chat.completions.create({
+      model: 'OpenAI/gpt-5.6-sol',
+      messages: [{ role: 'user', content: 'マイクロサービスとモノリスの選定基準を簡潔に説明してください。' }],
+    });
+
+    console.log(completion.choices[0].message.content);
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+### Anthropic 公式 SDK
+
+Anthropic 統一メッセージプロトコルでモデル（`Anthropic/claude-fable-5`、`Anthropic-Pro/claude-opus-4-6` 等）を呼び出します。
+
+<Tabs>
+  <Tab title="Python">
+    ```python
+    from anthropic import Anthropic
+
+    client = Anthropic(
+        base_url="https://api.xroute.ai/v1",
+        api_key="your_xroute_api_key",
+    )
+
+    message = client.messages.create(
+        model="Anthropic/claude-fable-5",
+        max_tokens=1024,
+        messages=[
+            {"role": "user", "content": "Rust 言語のメモリ安全性モデルを1段落で要約してください。"}
+        ],
+    )
+
+    print(message.content[0].text)
+    ```
+  </Tab>
+
+  <Tab title="TypeScript">
+    ```typescript
+    import Anthropic from '@anthropic-ai/sdk';
+
+    const client = new Anthropic({
+      baseURL: 'https://api.xroute.ai/v1',
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const message = await client.messages.create({
+      model: 'Anthropic/claude-fable-5',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: 'Rust 言語のメモリ安全性モデルを1段落で要約してください。' }],
+    });
+
+    console.log(message.content[0].text);
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+### プロバイダーネイティブ SDK
+
+Byteplus や Google の専用 SDK を使用する場合、各ベンダーのエンドポイントを指定します：
+
+<Tabs>
+  <Tab title="Byteplus Ark SDK">
+    ```python
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    completion = client.chat.completions.create(
+        model="Byteplus/seed-2-0-code-preview-260328",
+        messages=[{"role": "user", "content": "Python で LRU キャッシュを実装してください。"}],
+    )
+    print(completion.choices[0].message.content)
+    ```
+  </Tab>
+
+  <Tab title="Google GenAI SDK">
+    ```python
+    from google import genai
+
+    client = genai.Client(
+        api_key="your_xroute_api_key",
+        http_options={"base_url": "https://api.xroute.ai/Google"},
+    )
+
+    response = client.models.generate_content(
+        model="gemini-3.1-pro-preview",
+        contents="量子アニーリングの代表的な応用事例を説明してください。",
+    )
+    print(response.text)
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## 2. 画像出力モデルの SDK 呼び出し
+
+<Warning>
+**画像モデルはネイティブ形式のみをサポートします。** プロバイダーの公式 SDK 画像モジュールまたはネイティブエンドポイントを直接使用してください。
+</Warning>
+
+<Tabs>
+  <Tab title="OpenAI SDK (画像生成)">
+    ```python
+    from openai import OpenAI
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/OpenAI",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.images.generate(
+        model="OpenAI/gpt-image-2.5-flare",
+        prompt="未来のネオンサイバーパンク都市の上空を飛ぶリニアトレイン、8k コンセプトアート",
+        size="1024x1024",
+        n=1,
+    )
+    print("Image URL:", response.data[0].url)
+    ```
+  </Tab>
+
+  <Tab title="Byteplus Ark SDK (画像生成)">
+    ```python
+    from byteplus_sdk_ark_runtime import Ark
+
+    client = Ark(
+        base_url="https://api.xroute.ai/Byteplus",
+        api_key="your_xroute_api_key",
+    )
+
+    response = client.images.generate(
+        model="Byteplus/seedream-5-0-260128",
+        prompt="夕暮れ時の静かな山と湖、黄金の光、シネマティックな写実表現",
+        size="1024x1024",
+    )
+    print("Image URL:", response.data[0].url)
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## 3. 動画出力モデルの SDK 呼び出し
+
+動画生成は**非同期タスク方式**（タスク発行 -> 完了までポーリング）を採用しています：
+
+```python
+import time
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+# 1. 非同期タスク発行
+task = client.content_generation.tasks.create(
+    model="Byteplus/seedance-1-5-pro-251215",
+    content=[{
+        "type": "text",
+        "text": "雲海を抜けて雪山峡谷を滑空するドローン撮影、朝日の輝き、4k"
+    }],
+)
+task_id = task.id
+print(f"Task created: {task_id}")
+
+# 2. 結果ポーリング
+while True:
+    status = client.content_generation.tasks.get(task_id=task_id)
+    if status.status == "succeeded":
+        print("Generated Video URL:", status.content.video_url)
+        break
+    elif status.status in ["failed", "cancelled"]:
+        print(f"Task stopped: {status.status}")
+        break
+    time.sleep(5)
+```
+
+---
+
+## 4. オープンソースフレームワークでの利用
+
+### LangChain
+
+```python
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(
+    model="OpenAI/gpt-5.6-sol",
+    openai_api_base="https://api.xroute.ai/v1",
+    openai_api_key="your_xroute_api_key",
+    temperature=0.7,
+)
+
+response = llm.invoke("スタートアップに向けた力強いモットーを1文で作成してください。")
+print(response.content)
+```
+
+### LlamaIndex
+
+```python
+from llama_index.llms.openai import OpenAI
+
+llm = OpenAI(
+    model="OpenAI/gpt-5.6-sol",
+    api_base="https://api.xroute.ai/v1",
+    api_key="your_xroute_api_key",
+)
+
+response = llm.complete("分散ストレージにおける重要な設計トレードオフを3点挙げてください。")
+print(response.text)
+```

@@ -1,0 +1,23 @@
+---
+title: "Build a Social Intelligence Agent with XRoute"
+sidebarTitle: "Social Intelligence Agent"
+description: "Track product launches, developer sentiment, and creator discussions across X and YouTube."
+---
+
+## The problem
+
+Tracking real-time community reactions to a launch across X (Twitter) and YouTube requires fragile scrapers or expensive enterprise firehose contracts.
+
+## Prompt
+
+```text
+Analyze public developer discussion around "Seedance 2.5" over the last 14 days:
+1. Search recent X posts and top-engaged threads via XRoute Twitter APIs.
+2. Pull top YouTube review videos and engagement counts.
+3. Summarize top praised features and common questions.
+```
+
+## APIs and Models used
+
+- **Data APIs:** Twitter Search & User Info (`/apis/v1/twitter/user-info`), YouTube Search (`/apis/v1/youtube/serp`)
+- **Model:** `google/gemini-2.5-pro`

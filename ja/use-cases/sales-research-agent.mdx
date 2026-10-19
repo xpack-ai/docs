@@ -1,0 +1,23 @@
+---
+title: "XRoute でセールスリサーチエージェントを構築する"
+sidebarTitle: "セールスリサーチエージェント"
+description: "単一のエージェントワークフローで、ターゲット企業の Web トラフィック、SEO プレゼンス、経営陣の動向を補強します。"
+---
+
+## 課題
+
+アウトバウンド営業や GTM チームは、アプローチ文を作成する前に、見込み客のトラフィック成長率、技術スタック、最近の企業ニュースを手作業で調べるのに何時間も費やしています。
+
+## プロンプト
+
+```text
+Prepare an account intelligence card for acme.com:
+1. Pull SimilarWeb traffic estimates and top referral channels via XRoute.
+2. Fetch recent executive announcements and product launches from Web & X search.
+3. Draft a tailored 3-bullet value proposition.
+```
+
+## 使用する API とモデル
+
+- **データ API:** SimilarWeb Analytics (`/apis/v1/similarweb/similar-sites`)、Web Search、Twitter User Info
+- **モデル:** `openai/gpt-4.1`

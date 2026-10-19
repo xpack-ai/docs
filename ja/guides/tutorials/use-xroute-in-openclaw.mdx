@@ -1,0 +1,37 @@
+---
+title: "OpenClaw で XRoute を使用する"
+sidebarTitle: "OpenClaw"
+description: "OpenClaw で XRoute を MCP ツールサーバーおよび LLM プロバイダーとして設定します。"
+---
+
+OpenClaw エージェントは、XRoute を MCP ツールゲートウェイとしても、メインのマルチモデル LLM ルーターとしても利用できます。
+
+## 1. XRoute の機能を接続する
+
+### ステップ 1: サーバーを追加する
+
+OpenClaw の MCP 設定に `https://mcp.xroute.ai/mcp` を追加します。
+
+### ステップ 2: サインインする
+
+OpenClaw から求められたら、ブラウザでの OAuth フローを完了します。
+
+### ステップ 3: 確認してリロードする
+
+無料の `account` チェックを実行して、クレジット残高を確認します。
+
+## 2. オプション：XRoute を LLM プロバイダーとして使用する
+
+### ステップ 1: XRoute API キーを取得する
+
+[XRoute コンソール](https://xroute.ai)でキーを生成します。
+
+### ステップ 2: API キーを設定する
+
+```yaml
+provider:
+  name: openai-compatible
+  base_url: https://api.xroute.ai/v1
+  api_key: ${XROUTE_API_KEY}
+  default_model: anthropic/claude-sonnet-4
+```

@@ -1,0 +1,36 @@
+---
+title: "XRoute コンソール"
+sidebarTitle: "コンソール"
+description: "XRoute コンソールの概要: 残高、過去 30 日間の呼び出しトレンド、API キー、モデルプレイグラウンド、およびリクエストごとの利用ログ。"
+---
+
+XRoute コンソールでは、モデルの呼び出し状況、データ API の支出、ゲートウェイポリシーをリアルタイムで可視化できます。
+
+## ダッシュボード
+
+メインダッシュボードには以下の情報が表示されます。
+
+- **チャネル残高（Channel Balance）:** リアルタイムのプリペイド Credits 残高とチャージ履歴。
+- **呼び出し統計（Call Statistics）:** グローバルなモデルおよび API の呼び出し回数、トークン量、エラー率。
+- **モデル呼び出しトレンド（Model Invocation Trend）:** 過去 30 日間のモデルごとの日次リクエスト数と支出を追跡するインタラクティブなチャート。
+
+## プレイグラウンド
+
+コードを書く前に、60 以上のテキスト、推論、動画、音声モデルをブラウザ上で直接テストできます。
+
+- `deepseek/deepseek-r1`、`anthropic/claude-sonnet-4`、`Byteplus/dreamina-seedance-2-5` などのモデル間で、出力結果とレイテンシを並べて比較できます。
+- そのまま動作する `curl`、Python、または TypeScript のコードスニペットをワンクリックでエクスポートできます。
+
+## 利用状況とログ
+
+タイムスタンプ、モデル ID、プロンプト/補完トークン数、レイテンシ、決済された USD コストを含むリクエストごとのログを確認できます。
+
+### API キーで利用状況をクエリする
+
+プログラムから利用状況の集計を取得することも可能です。
+
+```bash
+# Positive Unix seconds in UTC; this example selects the last 24 hours.
+curl "https://api.xroute.ai/apis/v1/account/usage?start_time=1760745600&end_time=1760832000" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```

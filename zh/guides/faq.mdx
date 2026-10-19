@@ -1,0 +1,36 @@
+---
+title: "常见问题解答"
+sidebarTitle: "常见问题"
+description: "关于 XRoute 的常见问题：智能体连接、OpenAI 与 Anthropic 兼容性、计费、模型、技能与数据处理。"
+---
+
+<AccordionGroup>
+  <Accordion title="什么是 XRoute？">
+    XRoute 是专为开发者和 AI 智能体打造的一站式 AI 网关。只需一个 API 密钥或一次 OAuth MCP 连接，即可调用 60+ 款领先的文本、推理、视频与音频模型，以及 100+ 项实时数据 API。
+  </Accordion>
+
+  <Accordion title="XRoute 与基础的大语言模型代理有何不同？">
+    除了为 60+ 款大语言模型和多媒体模型（如 Seedance 2.5）提供多集群故障转移与区域边缘路由外，XRoute 还提供 MCP 服务器、CLI、智能体技能（Agent Skills）以及 100+ 项实时数据 API（搜索、金融、社交、SEO），并从同一个预付费余额中统一扣费。
+  </Accordion>
+
+  <Accordion title="我应该选择哪种连接方式？">
+    - **使用 AI 编程智能体（Claude Code、Cursor、Codex）？** 请通过浏览器 OAuth 使用 MCP（`https://mcp.xroute.ai/mcp`）进行连接。
+    - **使用 Python 或 TypeScript 构建应用程序？** 请使用指向 `https://api.xroute.ai/v1` 的官方 OpenAI、Anthropic 或 Gemini SDK。
+  </Accordion>
+
+  <Accordion title="我需要修改现有的 OpenAI 或 Anthropic 代码吗？">
+    不需要。保留您现有的 SDK 导入和消息格式，只需将 `base_url` 修改为 `https://api.xroute.ai/v1`（对于 Anthropic SDK 则修改为 `https://api.xroute.ai`），并传入您的 `XROUTE_API_KEY`。
+  </Accordion>
+
+  <Accordion title="MCP 服务器提供哪些工具？">
+    MCP 服务器提供五个免费的发现与询价工具（`account`、`list_categories`、`search`、`get_details`、`batch_quote`），以及用于执行付费模型或数据 API 调用的 `execute` 工具。
+  </Accordion>
+
+  <Accordion title="智能体技能（Agent Skills）何时上线？">
+    官方 [XRoute 智能体技能](/zh/agent-skills)目前正在开发中，敬请期待（Coming Soon）。
+  </Accordion>
+
+  <Accordion title="用量如何计费？">
+    每次调用均从您的预付费积分余额中扣费（`1 Credit = $1 USD`）。服务发现、`/v1/models` 以及费用询价（`batch_quote`）始终免费。
+  </Accordion>
+</AccordionGroup>

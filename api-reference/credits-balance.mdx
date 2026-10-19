@@ -1,0 +1,33 @@
+---
+title: "Credit Balance"
+sidebarTitle: "Credit Balance"
+description: "Check your account's remaining prepaid Credits and active key limits."
+---
+
+## Request
+
+`GET https://api.xroute.ai/apis/v1/account/balance`
+
+```bash
+curl https://api.xroute.ai/apis/v1/account/balance \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+## Response
+
+```json
+{
+  "available_credits_usd": 142.85,
+  "key_spend_limit_usd": 500.00,
+  "key_spent_usd": 57.15,
+  "currency": "USD"
+}
+```
+
+### Fields
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `available_credits_usd` | `number` | Current usable prepaid balance in USD. |
+| `key_spend_limit_usd` | `number \| null` | Configured spend cap for the calling API key. |
+| `key_spent_usd` | `number` | Cumulative spend recorded by the calling API key. |

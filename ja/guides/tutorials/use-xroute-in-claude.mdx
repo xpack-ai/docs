@@ -1,0 +1,48 @@
+---
+title: "Claude で XRoute を使用する"
+sidebarTitle: "Claude"
+description: "MCP サーバー URL とブラウザサインインを使用して、Claude に XRoute をカスタムコネクタとして追加します。Claude Code でも利用できます。"
+---
+
+公式の MCP サーバー URL を使用して、Claude Desktop または Claude Code を XRoute に接続します。
+
+## 前提条件
+
+- クレジット残高のある有効な [XRoute](https://xroute.ai) アカウント。
+- Claude Desktop または Claude Code CLI がインストールされていること。
+
+## 1. コネクタを追加する
+
+Claude Desktop で **Settings -> Integrations -> Add Custom Connector** を開き、以下を入力します。
+
+```text
+https://mcp.xroute.ai/mcp
+```
+
+## 2. ブラウザからサインインする
+
+**Connect** をクリックし、ブラウザで OAuth サインインフローを完了します。API キーを手動でコピーする必要はありません。
+
+## 3. ツール権限を設定する
+
+`account`、`list_categories`、`search`、`get_details`、`batch_quote` の自動実行を許可し（これら 5 つはすべて無料です）、`execute` は **Ask** に設定しておくか、希望する自動承認予算の範囲内に維持します。
+
+## 4. XRoute の機能を利用する
+
+XRoute を通じて、マルチソースの Web 検索、金融市場データの照会、または特化型モデルの呼び出しを Claude に依頼します。
+
+## Claude Code
+
+Claude Code CLI の場合は、以下のコマンドで MCP サーバーを登録します。
+
+```bash
+claude mcp add --transport http xroute https://mcp.xroute.ai/mcp
+```
+
+## クイックリファレンス
+
+| 設定項目 | 値 |
+| :--- | :--- |
+| MCP サーバー URL | `https://mcp.xroute.ai/mcp` |
+| 認証タイプ | ブラウザ OAuth 2.0 |
+| 無料の確認用ツール | `account` |

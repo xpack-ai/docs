@@ -1,0 +1,28 @@
+---
+title: "Build a Research Agent with XRoute"
+sidebarTitle: "Research Agent"
+description: "Give your agent live web, academic, and citation-backed search through XRoute, then synthesize a source-backed brief."
+---
+
+## The problem
+
+LLMs hallucinate when asked about recent releases, post-cutoff benchmarks, or primary academic sources. Connecting separate SERP, scholar, and extraction vendors requires multiple API keys and billing accounts.
+
+## Prompt
+
+```text
+Use XRoute to research whether Example Corp has shipped its v2 API as of today.
+1. Quote the planned search and scholar calls first.
+2. Cross-check official release notes and developer discussions.
+3. Produce a brief with inline citations and timestamps.
+```
+
+## APIs and Models used
+
+- **Data APIs:** Web Search (`/apis/v1/search/web`), Scholar Search (`/apis/v1/scholar/search`), Perplexity Sonar (`/apis/v1/perplexity/sonar`)
+- **Reasoning Model:** `deepseek/deepseek-r1` via `https://api.xroute.ai/v1/chat/completions`
+
+## Guardrails
+
+- Quote all search calls via `batch_quote` before execution.
+- Reject unverified single-source claims when primary documentation is available.

@@ -1,0 +1,50 @@
+---
+title: "モデル一覧"
+sidebarTitle: "モデル一覧"
+description: "GET https://api.xroute.ai/v1/models を介して、現在利用可能なすべてのモデルと料金メタデータを一覧表示します。"
+---
+
+## エンドポイント
+
+`GET https://api.xroute.ai/v1/models`
+
+このエンドポイントは**無料**で利用でき、60 以上のテキスト、推論、画像、動画、および音声モデルの最新カタログを返します。
+
+```bash
+curl https://api.xroute.ai/v1/models \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+## レスポンス例
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "deepseek/deepseek-r1",
+      "object": "model",
+      "owned_by": "deepseek",
+      "context_length": 128000
+    },
+    {
+      "id": "anthropic/claude-sonnet-4-20250514",
+      "object": "model",
+      "owned_by": "anthropic",
+      "context_length": 200000
+    },
+    {
+      "id": "google/gemini-2.5-pro",
+      "object": "model",
+      "owned_by": "google",
+      "context_length": 1000000
+    },
+    {
+      "id": "Byteplus/dreamina-seedance-2-5-260628",
+      "object": "model",
+      "owned_by": "byteplus",
+      "modality": "video"
+    }
+  ]
+}
+```

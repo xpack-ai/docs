@@ -1,0 +1,22 @@
+---
+title: "Use XRoute in ChatGPT"
+sidebarTitle: "ChatGPT"
+description: "Connect XRoute to ChatGPT via MCP or Custom GPT Actions."
+---
+
+Use XRoute inside ChatGPT to query real-time search, finance, and social data APIs or invoke specialized external models.
+
+## 1. Connect the MCP server
+
+In ChatGPT Desktop or Web (**Settings -> Connectors -> Add MCP Server**):
+
+- **Server URL:** `https://mcp.xroute.ai/mcp`
+- **Authentication:** OAuth 2.0 (Browser sign-in)
+
+## 2. Control approvals
+
+Allow free discovery tools (`account`, `list_categories`, `search`, `get_details`, `batch_quote`) to run without confirmation, and review cost quotes before approving `execute`.
+
+## 3. Custom GPT Actions (OpenAPI)
+
+If you are building a Custom GPT, import the XRoute OpenAPI specification (`https://api.xroute.ai/openapi.json`) and set Action Authentication to **Bearer** with your `XROUTE_API_KEY`.

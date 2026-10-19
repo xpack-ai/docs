@@ -1,0 +1,48 @@
+---
+title: "Use XRoute in Claude"
+sidebarTitle: "Claude"
+description: "Add XRoute as a custom connector in Claude with its MCP server URL and a browser sign-in. Also works in Claude Code."
+---
+
+Connect Claude Desktop or Claude Code to XRoute using the official MCP server URL.
+
+## Prerequisites
+
+- An active [XRoute](https://xroute.ai) account with Credits.
+- Claude Desktop or Claude Code CLI installed.
+
+## 1. Add the connector
+
+In Claude Desktop, open **Settings -> Integrations -> Add Custom Connector** and enter:
+
+```text
+https://mcp.xroute.ai/mcp
+```
+
+## 2. Sign in through the browser
+
+Click **Connect** and complete the OAuth sign-in flow in your browser. No API key needs to be copied manually.
+
+## 3. Set tool permissions
+
+Allow `account`, `list_categories`, `search`, `get_details`, and `batch_quote` to run automatically (all five are free), and keep `execute` set to **Ask** or within your preferred auto-approve budget.
+
+## 4. Use XRoute capabilities
+
+Ask Claude to run multi-source web searches, query financial markets, or invoke specialized models through XRoute.
+
+## Claude Code
+
+For the Claude Code CLI, register the MCP server:
+
+```bash
+claude mcp add --transport http xroute https://mcp.xroute.ai/mcp
+```
+
+## Quick reference
+
+| Setting | Value |
+| :--- | :--- |
+| MCP Server URL | `https://mcp.xroute.ai/mcp` |
+| Auth Type | Browser OAuth 2.0 |
+| Free Verification Tool | `account` |

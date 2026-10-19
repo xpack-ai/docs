@@ -1,0 +1,34 @@
+---
+title: "在您的自定义智能体中使用 XRoute"
+sidebarTitle: "您的自定义智能体"
+description: "将自定义智能体的 LLM 调用指向 XRoute，并通过 MCP 或 HTTP 挂载 XRoute 工具。"
+---
+
+无论您是使用 OpenAI Agents SDK、LangGraph、CrewAI 还是自定义循环构建智能体，都可以通过两个步骤集成 XRoute。
+
+## 1. 将智能体的 LLM 调用指向 XRoute
+
+使用 `https://api.xroute.ai/v1` 作为您的 Base URL，这样您的智能体无需更换 SDK 即可在 `deepseek/deepseek-r1`、`anthropic/claude-sonnet-4` 和 `openai/gpt-4.1` 之间自由切换：
+
+```python
+import os
+from openai import OpenAI
+
+llm = OpenAI(
+    base_url="https://api.xroute.ai/v1",
+    api_key=os.environ["XROUTE_API_KEY"],
+)
+```
+
+## 2. 通过 MCP 为智能体提供 XRoute 工具
+
+使用任意 MCP 客户端库挂载 `https://mcp.xroute.ai/mcp`，或在服务端到服务端的 MCP 连接中传入 Bearer 认证请求头（`Authorization: Bearer $XROUTE_API_KEY`）。
+
+## 快速参考
+
+| 层级 | 端点 |
+| :--- | :--- |
+| LLM 对话与工具调用 | `https://api.xroute.ai/v1/chat/completions` |
+| Anthropic 原生接口 | `https://api.xroute.ai/v1/messages` |
+| 数据 API | `https://api.xroute.ai/apis/v1/*` |
+| 远程 MCP 服务器 | `https://mcp.xroute.ai/mcp` |

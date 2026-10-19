@@ -1,0 +1,33 @@
+---
+title: "额度余额"
+sidebarTitle: "额度余额"
+description: "查询您账户的剩余预付 Credits 与当前密钥限额。"
+---
+
+## 请求
+
+`GET https://api.xroute.ai/apis/v1/account/balance`
+
+```bash
+curl https://api.xroute.ai/apis/v1/account/balance \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+## 响应
+
+```json
+{
+  "available_credits_usd": 142.85,
+  "key_spend_limit_usd": 500.00,
+  "key_spent_usd": 57.15,
+  "currency": "USD"
+}
+```
+
+### 字段说明
+
+| 字段 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| `available_credits_usd` | `number` | 当前可用的预付余额（美元）。 |
+| `key_spend_limit_usd` | `number \| null` | 为当前调用 API 密钥配置的消费上限。 |
+| `key_spent_usd` | `number` | 当前调用 API 密钥已记录的累计消费金额。 |

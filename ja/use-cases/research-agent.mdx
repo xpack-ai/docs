@@ -1,0 +1,28 @@
+---
+title: "XRoute でリサーチエージェントを構築する"
+sidebarTitle: "リサーチエージェント"
+description: "XRoute を介してリアルタイムの Web、学術論文、引用付きの検索をエージェントに提供し、情報源に基づいたレポートを作成します。"
+---
+
+## 課題
+
+LLM は、最近のリリース、学習データのカットオフ以降のベンチマーク、または一次学術ソースについて質問されるとハルシネーションを起こすことがあります。検索エンジン（SERP）、学術論文検索、コンテンツ抽出の各ベンダーを個別に接続するには、複数の API キーと請求アカウントが必要になります。
+
+## プロンプト
+
+```text
+Use XRoute to research whether Example Corp has shipped its v2 API as of today.
+1. Quote the planned search and scholar calls first.
+2. Cross-check official release notes and developer discussions.
+3. Produce a brief with inline citations and timestamps.
+```
+
+## 使用する API とモデル
+
+- **データ API:** Web Search (`/apis/v1/search/web`)、Scholar Search (`/apis/v1/scholar/search`)、Perplexity Sonar (`/apis/v1/perplexity/sonar`)
+- **推論モデル:** `https://api.xroute.ai/v1/chat/completions` 経由の `deepseek/deepseek-r1`
+
+## ガードレール
+
+- 実行前にすべての検索呼び出しを `batch_quote` で見積もります。
+- 一次ドキュメントが利用可能な場合は、未検証の単一ソースの主張を除外します。

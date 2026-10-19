@@ -1,0 +1,36 @@
+---
+title: "よくある質問（FAQ）"
+sidebarTitle: "FAQ"
+description: "XRoute に関するよくある質問: エージェントの接続、OpenAI および Anthropic との互換性、課金、モデル、Skills、データの取り扱いについて回答します。"
+---
+
+<AccordionGroup>
+  <Accordion title="XRoute とは何ですか？">
+    XRoute は、開発者と AI エージェント向けに構築されたオールインワンの AI ゲートウェイです。1 つの API キーまたは 1 つの OAuth MCP 接続で、60 以上の主要なテキスト、推論、動画、音声モデルと、100 以上のリアルタイムデータ API を呼び出すことができます。
+  </Accordion>
+
+  <Accordion title="XRoute は一般的な LLM プロキシとどう違いますか？">
+    60 以上の LLM やメディアモデル（Seedance 2.5 など）に対するマルチクラスターフェイルオーバーやリージョン別エッジルーティングに加えて、XRoute は MCP サーバー、CLI、Agent Skills、および 100 以上のリアルタイムデータ API（検索、金融、ソーシャル、SEO）を提供し、それらすべてを同じプリペイド残高から決済できます。
+  </Accordion>
+
+  <Accordion title="どの接続方法を選ぶべきですか？">
+    - **AI コーディングエージェント（Claude Code、Cursor、Codex）を使用する場合:** ブラウザ OAuth を使って MCP（`https://mcp.xroute.ai/mcp`）経由で接続してください。
+    - **Python や TypeScript でアプリケーションを構築する場合:** 公式の OpenAI、Anthropic、または Gemini SDK の接続先を `https://api.xroute.ai/v1` に向けて使用してください。
+  </Accordion>
+
+  <Accordion title="既存の OpenAI や Anthropic のコードを変更する必要はありますか？">
+    いいえ。既存の SDK インポートとメッセージ形式はそのまま維持できます。`base_url` を `https://api.xroute.ai/v1`（Anthropic SDK の場合は `https://api.xroute.ai`）に変更し、`XROUTE_API_KEY` を渡すだけです。
+  </Accordion>
+
+  <Accordion title="MCP サーバーはどのようなツールを公開していますか？">
+    MCP サーバーは、5 つの無料検索・見積もりツール（`account`、`list_categories`、`search`、`get_details`、`batch_quote`）と、有料のモデルまたはデータ API 呼び出しを実行する `execute` を公開しています。
+  </Accordion>
+
+  <Accordion title="Agent Skills はいつ利用可能になりますか？">
+    公式の [XRoute Agent Skills](/ja/agent-skills) は現在開発中であり、近日公開（Coming Soon）予定です。
+  </Accordion>
+
+  <Accordion title="利用料金はどのように課金されますか？">
+    すべての呼び出しはプリペイドの Credits 残高（`1 Credit = $1 USD`）から引き落とされます。検索、`/v1/models`、およびコスト見積もり（`batch_quote`）は常に無料です。
+  </Accordion>
+</AccordionGroup>

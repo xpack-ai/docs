@@ -1,0 +1,75 @@
+---
+title: "欢迎使用 XRoute"
+sidebarTitle: "欢迎"
+description: "一个 API Key 接入全球顶尖大模型、图片与视频多模态模型，按量计费。"
+---
+
+XRoute 为 AI Agent 和开发者提供统一的网关入口，用于发现、调用和支付各类文本、图片与视频模型。
+
+无需再为每个供应商单独注册账号和管理订阅，只需一个 API Key 即可访问：
+
+- **主流大模型与多模态模型：** 支持通过 OpenAI 格式、Anthropic 格式或原生格式调用 OpenAI、Anthropic、Gemini、Grok、DeepSeek、Byteplus Ark、Qwen、Kimi、GLM、MiniMax 等模型。
+- **图片与视频生成模型：** 原生调用 OpenAI DALL-E、火山方舟 Seedream、Google Imagen、Seedance 视频以及阿里 WAN 视频生成模型。
+- **按量计费（Pay-per-use）：** 所有调用共用一个预充值余额，支持单 Key 消费限额与透明精确的用量统计。
+
+## 面向 AI Agent
+
+将 XRoute 作为工具连接到你的 Agent。通过浏览器 OAuth 登录授权，无需手动复制粘贴 API Key。
+
+<CardGroup cols={2}>
+  <Card title="通过 MCP 接入" icon="plug" href="/zh/agent-quickstart">
+    推荐方式。将 `https://mcp.xroute.ai/mcp` 添加到 Claude Code、Codex、Cursor 或任意 MCP 客户端。
+  </Card>
+
+  <Card title="安装 Agent Skill（敬请期待）" icon="wand-magic-sparkles" href="/zh/get-started/agent-skill">
+    敬请期待。通过一条命令为你的编程 Agent 注入 XRoute 内置使用指南。
+  </Card>
+
+  <Card title="使用 CLI" icon="terminal" href="/zh/get-started/cli">
+    在终端、脚本和 CI 环境中搜索、报价并调用工具。
+  </Card>
+
+  <Card title="集成指南" icon="puzzle-piece" href="/zh/guides/tutorials/use-xroute-in-claude">
+    Claude Code、Codex、Cursor、OpenClaw、ChatGPT 等客户端的完整配置教程。
+  </Card>
+</CardGroup>
+
+## 面向开发者
+
+通过标准 SDK 或直接发送 HTTP 请求，将 XRoute 集成到你的业务代码中。
+
+<CardGroup cols={2}>
+  <Card title="获取 API Key 与首次调用" icon="key" href="/zh/guides/getting-started-with-xroute">
+    创建 API Key 并使用 curl 发起第一个请求。
+  </Card>
+
+  <Card title="OpenAI / Anthropic SDK" icon="arrows-rotate" href="/zh/get-started/sdk-compatibility">
+    保留现有 SDK 代码，只需修改 Base URL 和 API Key。
+  </Card>
+
+  <Card title="API 参考" icon="code" href="/zh/api-reference">
+    浏览所有模型与数据接口的参数说明与调用示例。
+  </Card>
+
+  <Card title="工作原理" icon="diagram-project" href="/zh/how-it-works">
+    了解身份认证、统一路由与按量计费如何协同工作。
+  </Card>
+</CardGroup>
+
+## 可用资源
+
+<CardGroup cols={3}>
+  <Card title="模型目录 (Models)" icon="microchip" href="https://xroute.ai/en/model">
+    通过单一端点接入 GPT、Claude、Gemini、Grok、DeepSeek、Seedance、Qwen、Kimi 等模型。
+  </Card>
+
+  <Card title="SDK 兼容性" icon="arrows-rotate" href="/zh/get-started/sdk-compatibility">
+    无缝兼容 OpenAI、Anthropic、Google GenAI 与 Byteplus 官方 SDK。
+  </Card>
+
+  <Card title="Agent Skills（敬请期待）" icon="wand-magic-sparkles" href="/zh/agent-skills">
+    敬请期待。面向编程 Agent 的开箱即用任务指令集。
+  </Card>
+</CardGroup>
+
+在线目录：访问 [xroute.ai/en/model](https://xroute.ai/en/model) 查看模型列表，访问 [xroute.ai](https://xroute.ai) 查看平台详情。

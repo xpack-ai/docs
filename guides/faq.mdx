@@ -1,0 +1,36 @@
+---
+title: "Frequently Asked Questions"
+sidebarTitle: "FAQ"
+description: "Common questions about XRoute: connecting agents, OpenAI and Anthropic compatibility, billing, models, Skills, and data handling."
+---
+
+<AccordionGroup>
+  <Accordion title="What is XRoute?">
+    XRoute is an all-in-one AI gateway built for developers and AI agents. With one API key or one OAuth MCP connection, you can call 60+ leading text, reasoning, video, and audio models alongside 100+ real-time data APIs.
+  </Accordion>
+
+  <Accordion title="How is XRoute different from a basic LLM proxy?">
+    Beyond multi-cluster failover and regional edge routing for 60+ LLMs and media models (like Seedance 2.5), XRoute exposes an MCP server, CLI, Agent Skills, and 100+ real-time data APIs (search, finance, social, SEO) billed from the same prepaid balance.
+  </Accordion>
+
+  <Accordion title="Which way should I connect?">
+    - **Using an AI coding agent (Claude Code, Cursor, Codex)?** Connect via MCP (`https://mcp.xroute.ai/mcp`) with browser OAuth.
+    - **Building an application in Python or TypeScript?** Use the official OpenAI, Anthropic, or Gemini SDK pointed at `https://api.xroute.ai/v1`.
+  </Accordion>
+
+  <Accordion title="Do I need to change my OpenAI or Anthropic code?">
+    No. Keep your existing SDK imports and message formatting. Only change `base_url` to `https://api.xroute.ai/v1` (or `https://api.xroute.ai` for the Anthropic SDK) and pass your `XROUTE_API_KEY`.
+  </Accordion>
+
+  <Accordion title="What tools does the MCP server expose?">
+    The MCP server exposes five free discovery/quoting tools (`account`, `list_categories`, `search`, `get_details`, `batch_quote`) and `execute` for running paid model or data API calls.
+  </Accordion>
+
+  <Accordion title="When will Agent Skills be available?">
+    Official [XRoute Agent Skills](/agent-skills) are currently under development and coming soon (敬请期待).
+  </Accordion>
+
+  <Accordion title="How is usage billed?">
+    Every call deducts from your prepaid Credits balance (`1 Credit = $1 USD`). Discovery, `/v1/models`, and cost quotes (`batch_quote`) are always free.
+  </Accordion>
+</AccordionGroup>

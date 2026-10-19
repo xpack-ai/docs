@@ -1,0 +1,158 @@
+---
+title: "動画生成モデル (ネイティブ非同期タスク)"
+sidebarTitle: "動画モデル"
+description: "非同期タスク作成とポーリングメカニズムを通じて、Byteplus Seedance および WAN の映画品質動画生成モデルを呼び出します。"
+---
+
+XRoute は、世界の最先端動画生成 AI を集約し、高解像度かつ複雑な物理運動シミュレーションを備えた動画作成をサポートします。
+
+<Warning>
+**ネイティブ非同期タスク形式のみ**: 動画生成は計算負荷が高く生成時間（通常 30 秒〜120 秒）を要するため、動画モデルは**プロバイダーネイティブの非同期ワークフローを必ず使用します**：
+1. **タスク作成**: POST リクエストを送信し、即時に `task_id`（ステータスは `QUEUED` または `RUNNING`）を取得します。
+2. **ステータスポーリング**: クライアントが定期的に GET リクエストを送信して進行状況を確認し、ステータスが `SUCCEEDED` になったら生成された動画 URL を取得します。
+</Warning>
+
+---
+
+## サポートされている動画モデル一覧
+
+| プロバイダー | モデル識別子 (Model ID) | 出力仕様 | タスク作成エンドポイント | タスク照会エンドポイント |
+| :--- | :--- | :--- | :--- | :--- |
+| **Byteplus** | `Byteplus/seedance-1-5-pro-251215` | 最大 1080p, 60fps 映画級クオリティ | `POST https://api.xroute.ai/Byteplus/contents/generations/tasks` | `GET https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}` |
+| **WAN** | `WAN/wan3.0-video-prime` | 滑らかな動的一貫性、720p/1080p | `POST https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis` | `GET https://api.xroute.ai/WAN/tasks/{task_id}` |
+
+---
+
+## 1. Byteplus Seedance 非同期ワークフロー
+
+Seedance は、カメラモーションとダイナミックな光影表現に優れた性能を発揮します。
+
+### ステップ 1: 動画生成タスクを送信
+
+- **エンドポイント**: `POST https://api.xroute.ai/Byteplus/contents/generations/tasks`
+- **リクエストヘッダー**: `Authorization: Bearer $XROUTE_API_KEY`
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance-1-5-pro-251215",
+    "content": [
+      {
+        "type": "text",
+        "text": "FPV drone speeding through a sunset canyon, cinematic lighting, ultra-smooth camera roll"
+      }
+    ]
+  }'
+```
+
+```json レスポンス例 (Response)
+{
+  "id": "cgt-20261019-897321",
+  "status": "QUEUED",
+  "created_at": 1792412800
+}
+```
+</CodeGroup>
+
+### ステップ 2: タスクステータスをポーリング
+
+- **エンドポイント**: `GET https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}`
+
+```bash cURL
+curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/cgt-20261019-897321" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+```json 完了時のレスポンス (SUCCEEDED)
+{
+  "id": "cgt-20261019-897321",
+  "status": "SUCCEEDED",
+  "content": {
+    "video_url": "https://storage.xroute.ai/artifacts/videos/cgt-20261019-897321.mp4",
+    "duration": 5.0,
+    "resolution": "1920x1080"
+  }
+}
+```
+
+### 完全な Python ポーリングスクリプト
+
+```python Python (Byteplus Ark SDK)
+import time
+from byteplus_sdk_ark_runtime import Ark
+
+client = Ark(
+    base_url="https://api.xroute.ai/Byteplus",
+    api_key="your_xroute_api_key",
+)
+
+# 1. タスク送信
+task = client.content_generation.tasks.create(
+    model="Byteplus/seedance-1-5-pro-251215",
+    content=[
+        {
+            "type": "text",
+            "text": "FPV drone speeding through a sunset canyon, cinematic lighting",
+        }
+    ],
+)
+task_id = task.id
+print(f"Task submitted: {task_id}")
+
+# 2. ポーリングループ
+while True:
+    status_response = client.content_generation.tasks.get(task_id=task_id)
+    current_status = status_response.status
+    print(f"Current status: {current_status}")
+
+    if current_status == "SUCCEEDED":
+        print(f"Video URL: {status_response.content.video_url}")
+        break
+    elif current_status in ["FAILED", "CANCELLED"]:
+        print("Task failed:", status_response.error)
+        break
+
+    time.sleep(5)
+```
+
+---
+
+## 2. WAN 動画合成ネイティブ (DashScope プロトコル)
+
+Alibaba DashScope の非同期タスク標準に準拠しています。
+
+### ステップ 1: 合成タスクを送信
+
+- **エンドポイント**: `POST https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis`
+- **リクエストヘッダー**:
+  - `Authorization: Bearer $XROUTE_API_KEY`
+  - `X-DashScope-Async: enable`
+
+```bash cURL
+curl -X POST "https://api.xroute.ai/WAN/services/aigc/video-generation/video-synthesis" \
+  -H "Authorization: Bearer $XROUTE_API_KEY" \
+  -H "X-DashScope-Async: enable" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "wan3.0-video-prime",
+    "input": {
+      "prompt": "Time-lapse of blooming cherry blossoms under starry nebula night sky"
+    },
+    "parameters": {
+      "size": "1280*720",
+      "duration": 5
+    }
+  }'
+```
+
+### ステップ 2: WAN タスクステータスを照会
+
+- **エンドポイント**: `GET https://api.xroute.ai/WAN/tasks/{task_id}`
+
+```bash cURL
+curl -X GET "https://api.xroute.ai/WAN/tasks/wan-task-789012" \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```

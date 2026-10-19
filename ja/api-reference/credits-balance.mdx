@@ -1,0 +1,33 @@
+---
+title: "クレジット残高"
+sidebarTitle: "クレジット残高"
+description: "アカウントのプリペイドクレジット残高と有効なキーの利用上限を確認します。"
+---
+
+## リクエスト
+
+`GET https://api.xroute.ai/apis/v1/account/balance`
+
+```bash
+curl https://api.xroute.ai/apis/v1/account/balance \
+  -H "Authorization: Bearer $XROUTE_API_KEY"
+```
+
+## レスポンス
+
+```json
+{
+  "available_credits_usd": 142.85,
+  "key_spend_limit_usd": 500.00,
+  "key_spent_usd": 57.15,
+  "currency": "USD"
+}
+```
+
+### フィールド
+
+| フィールド | 型 | 説明 |
+| :--- | :--- | :--- |
+| `available_credits_usd` | `number` | 現在利用可能なプリペイド残高（USD）。 |
+| `key_spend_limit_usd` | `number \| null` | 呼び出し元の API キーに設定された利用上限額。 |
+| `key_spent_usd` | `number` | 呼び出し元の API キーで記録された累積利用額。 |
