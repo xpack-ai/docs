@@ -1,0 +1,52 @@
+---
+title: "XRoute コンソールの概要"
+sidebarTitle: "コンソール概要"
+description: "XRoute 個人コンソールの全体像：残高モニタリング、API キー管理、フェイルオーバーポリシー設定、リアルタイム監査ログの確認。"
+---
+
+**XRoute コンソール**（`https://xroute.ai/personal/dashboard`）は、AI ゲートウェイアカウント、API 認証情報、モデルルーティングポリシー、請求アセット、トラフィック監視を一元管理するメインコントロールパネルです。
+
+<Frame caption="XRoute 個人コンソールのナビゲーションと機能構成">
+  <img src="/images/console/dashboard.png" alt="XRoute コンソールダッシュボード" />
+</Frame>
+
+## 機能構成とモジュール一覧
+
+コンソールは左側のサイドバーで大きく2つのセクションに分かれています：
+
+### 1. 個人アカウント管理（PERSONAL ACCOUNT）
+
+| 機能モジュール | ルート | 概要 |
+| :--- | :--- | :--- |
+| **[ダッシュボード](/ja/console/dashboard)** | `/personal/dashboard` | 残高、本日の利用額、クイック呼び出しコード、直近のリクエスト詳細をリアルタイム表示。 |
+| **[お知らせ・通知](/ja/console/notifications)** | `/personal/todo` | 販売代理店申請のフィードバックやシステムメンテナンス通知を受信するインサイト通知センター。 |
+| **[アクセス認証情報](/ja/console/credentials)** | `/personal/keys` | アプリケーション用 API キー（`sk-...`）の作成、コピー、アクセススコープ管理。 |
+| **[アカウント残高](/ja/console/balance)** | `/personal/balance` | オンライン即時チャージ、日次利用推移、消費額 TOP 20 リソースランキング。 |
+| **[バウチャー（クーポン）](/ja/console/voucher)** | `/personal/credit` | バウチャーコードの適用、現金残高に優先して相殺される有効クーポンの管理。 |
+| **[利用可能リソース](/ja/console/resources)** | `/personal/resources` | アカウントおよび参加中のリソースグループに認可されている全モデルとプロバイダーの一覧。 |
+| **[モデルマッピングポリシー](/ja/console/model-mapping)** | `/personal/model-mapping` | リクエストエイリアス、パラメータテンプレート、マルチプロバイダー自動フェイルオーバー設定。 |
+
+### 2. レポート（REPORTS）
+
+| 機能モジュール | ルート | 概要 |
+| :--- | :--- | :--- |
+| **[呼び出し統計](/ja/console/call-statistics)** | `/personal/call` | 多次元トラフィック分析：呼び出し回数、成功率、レイテンシ、トークン量、利用金額、詳細監査ログ。 |
+
+---
+
+## クイックナビゲーション
+
+<CardGroup cols={2}>
+  <Card title="ダッシュボード" icon="chart-line" href="/ja/console/dashboard">
+    リアルタイム指標の確認と、設定済み cURL コマンドのコピー。
+  </Card>
+  <Card title="アクセス認証情報" icon="key" href="/ja/console/credentials">
+    API キーの作成と、安全な権限スコープの分離。
+  </Card>
+  <Card title="モデルマッピング・DR" icon="shuffle" href="/ja/console/model-mapping">
+    リクエストエイリアスと自動フェイルオーバーによる高可用性実現。
+  </Card>
+  <Card title="呼び出し統計・監査" icon="chart-bar" href="/ja/console/call-statistics">
+    トークン推移、応答レイテンシ、リクエスト別監査ログの分析。
+  </Card>
+</CardGroup>

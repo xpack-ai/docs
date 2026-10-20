@@ -21,7 +21,7 @@
             },
             {
               "label": "Support",
-              "href": "mailto:support@xroute.ai"
+              "href": "mailto:hello@xroute.ai"
             }
           ],
           "primary": {
@@ -42,34 +42,24 @@
                 ]
               },
               {
-                "group": "Get Started · For AI Agents",
-                "pages": [
-                  "agent-quickstart",
-                  "get-started/agent-skill",
-                  "get-started/cli"
-                ]
-              },
-              {
                 "group": "Get Started · For Developers",
                 "pages": [
-                  "guides/getting-started-with-xroute",
+                  "quickstart",
                   "get-started/sdk-compatibility"
                 ]
               },
               {
-                "group": "Essentials",
+                "group": "XRoute Console",
                 "pages": [
-                  "guides/authentication",
-                  "guides/pricing",
-                  "api-reference/errors",
-                  "api-reference/rate-limits",
-                  "guides/security"
-                ]
-              },
-              {
-                "group": "Console",
-                "pages": [
-                  "guides/dashboard/overview"
+                  "console/overview",
+                  "console/dashboard",
+                  "console/credentials",
+                  "console/balance",
+                  "console/voucher",
+                  "console/resources",
+                  "console/model-mapping",
+                  "console/call-statistics",
+                  "console/notifications"
                 ]
               },
               {
@@ -96,40 +86,12 @@
             ]
           },
           {
-            "tab": "Agent Skills",
+            "tab": "Agent Skills (Coming Soon)",
             "groups": [
               {
                 "group": "Overview",
                 "pages": [
                   "agent-skills"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "Integrations",
-            "groups": [
-              {
-                "group": "Coding Agents",
-                "pages": [
-                  "guides/tutorials/use-xroute-in-claude",
-                  "guides/tutorials/use-xroute-in-codex",
-                  "guides/tutorials/use-xroute-in-cursor"
-                ]
-              },
-              {
-                "group": "Agent Platforms",
-                "pages": [
-                  "guides/tutorials/use-xroute-in-chatgpt",
-                  "guides/tutorials/use-xroute-in-openclaw"
-                ]
-              },
-              {
-                "group": "Build Your Own",
-                "pages": [
-                  "guides/tutorials/use-xroute-in-your-custom-agents",
-                  "guides/agent-discovery",
-                  "integrations/machine-payments"
                 ]
               }
             ]
@@ -181,7 +143,7 @@
             },
             {
               "label": "技术支持",
-              "href": "mailto:support@xroute.ai"
+              "href": "mailto:hello@xroute.ai"
             }
           ],
           "primary": {
@@ -202,34 +164,24 @@
                 ]
               },
               {
-                "group": "快速上手 · 面向 AI 智能体",
-                "pages": [
-                  "zh/agent-quickstart",
-                  "zh/get-started/agent-skill",
-                  "zh/get-started/cli"
-                ]
-              },
-              {
                 "group": "快速上手 · 面向开发者",
                 "pages": [
-                  "zh/guides/getting-started-with-xroute",
+                  "zh/quickstart",
                   "zh/get-started/sdk-compatibility"
                 ]
               },
               {
-                "group": "核心指南",
+                "group": "XRoute 控制台",
                 "pages": [
-                  "zh/guides/authentication",
-                  "zh/guides/pricing",
-                  "zh/api-reference/errors",
-                  "zh/api-reference/rate-limits",
-                  "zh/guides/security"
-                ]
-              },
-              {
-                "group": "控制台",
-                "pages": [
-                  "zh/guides/dashboard/overview"
+                  "zh/console/overview",
+                  "zh/console/dashboard",
+                  "zh/console/credentials",
+                  "zh/console/balance",
+                  "zh/console/voucher",
+                  "zh/console/resources",
+                  "zh/console/model-mapping",
+                  "zh/console/call-statistics",
+                  "zh/console/notifications"
                 ]
               },
               {
@@ -256,40 +208,12 @@
             ]
           },
           {
-            "tab": "Agent Skills",
+            "tab": "Agent Skills（敬请期待）",
             "groups": [
               {
                 "group": "概览",
                 "pages": [
                   "zh/agent-skills"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "集成教程",
-            "groups": [
-              {
-                "group": "编程智能体",
-                "pages": [
-                  "zh/guides/tutorials/use-xroute-in-claude",
-                  "zh/guides/tutorials/use-xroute-in-codex",
-                  "zh/guides/tutorials/use-xroute-in-cursor"
-                ]
-              },
-              {
-                "group": "智能体平台",
-                "pages": [
-                  "zh/guides/tutorials/use-xroute-in-chatgpt",
-                  "zh/guides/tutorials/use-xroute-in-openclaw"
-                ]
-              },
-              {
-                "group": "自定义构建",
-                "pages": [
-                  "zh/guides/tutorials/use-xroute-in-your-custom-agents",
-                  "zh/guides/agent-discovery",
-                  "zh/integrations/machine-payments"
                 ]
               }
             ]
@@ -341,7 +265,7 @@
             },
             {
               "label": "サポート",
-              "href": "mailto:support@xroute.ai"
+              "href": "mailto:hello@xroute.ai"
             }
           ],
           "primary": {
@@ -362,34 +286,24 @@
                 ]
               },
               {
-                "group": "クイックスタート · AIエージェント向け",
-                "pages": [
-                  "ja/agent-quickstart",
-                  "ja/get-started/agent-skill",
-                  "ja/get-started/cli"
-                ]
-              },
-              {
                 "group": "クイックスタート · 開発者向け",
                 "pages": [
-                  "ja/guides/getting-started-with-xroute",
+                  "ja/quickstart",
                   "ja/get-started/sdk-compatibility"
                 ]
               },
               {
-                "group": "基本ガイド",
+                "group": "XRoute コンソール",
                 "pages": [
-                  "ja/guides/authentication",
-                  "ja/guides/pricing",
-                  "ja/api-reference/errors",
-                  "ja/api-reference/rate-limits",
-                  "ja/guides/security"
-                ]
-              },
-              {
-                "group": "コンソール",
-                "pages": [
-                  "ja/guides/dashboard/overview"
+                  "ja/console/overview",
+                  "ja/console/dashboard",
+                  "ja/console/credentials",
+                  "ja/console/balance",
+                  "ja/console/voucher",
+                  "ja/console/resources",
+                  "ja/console/model-mapping",
+                  "ja/console/call-statistics",
+                  "ja/console/notifications"
                 ]
               },
               {
@@ -416,40 +330,12 @@
             ]
           },
           {
-            "tab": "Agent Skills",
+            "tab": "Agent Skills（近日公開）",
             "groups": [
               {
                 "group": "概要",
                 "pages": [
                   "ja/agent-skills"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "連携ガイド",
-            "groups": [
-              {
-                "group": "コーディングエージェント",
-                "pages": [
-                  "ja/guides/tutorials/use-xroute-in-claude",
-                  "ja/guides/tutorials/use-xroute-in-codex",
-                  "ja/guides/tutorials/use-xroute-in-cursor"
-                ]
-              },
-              {
-                "group": "エージェントプラットフォーム",
-                "pages": [
-                  "ja/guides/tutorials/use-xroute-in-chatgpt",
-                  "ja/guides/tutorials/use-xroute-in-openclaw"
-                ]
-              },
-              {
-                "group": "カスタム構築",
-                "pages": [
-                  "ja/guides/tutorials/use-xroute-in-your-custom-agents",
-                  "ja/guides/agent-discovery",
-                  "ja/integrations/machine-payments"
                 ]
               }
             ]
@@ -505,7 +391,7 @@
       },
       {
         "label": "Support",
-        "href": "mailto:support@xroute.ai"
+        "href": "mailto:hello@xroute.ai"
       }
     ],
     "primary": {
@@ -531,5 +417,19 @@
       "x": "https://x.com/xrouteai",
       "github": "https://github.com/xrouteai"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/guides/getting-started-with-xroute",
+      "destination": "/quickstart"
+    },
+    {
+      "source": "/zh/guides/getting-started-with-xroute",
+      "destination": "/zh/quickstart"
+    },
+    {
+      "source": "/ja/guides/getting-started-with-xroute",
+      "destination": "/ja/quickstart"
+    }
+  ]
 }

@@ -1,0 +1,33 @@
+---
+title: "モデルマッピングポリシーと自動ディザスタリカバリ"
+sidebarTitle: "モデルマッピング"
+description: "カスタムリクエストエイリアス、プロバイダーパラメータテンプレート、自動フェイルオーバー設定。"
+---
+
+**Model Mapping Policy（モデルマッピングポリシー）画面**（`https://xroute.ai/personal/model-mapping`）は、クライアントコードを変更することなく、モデルのエイリアス化や障害時の自動迂回ルーティングを実現するエンタープライズ機能です。
+
+<Frame caption="XRoute モデルマッピングポリシーと自動フェイルオーバー設定">
+  <img src="/images/console/model-mapping.png" alt="モデルマッピングポリシー" />
+</Frame>
+
+## 主なユースケース
+
+- **クライアントの疎結合化**：コード側では抽象的な名称（例：`prod-fast-llm`）や標準名（例：`gpt-4o`）を指定し、バックエンドで実際の対象モデル（例：`Anthropic/claude-fable-5`）へ動的にマッピング。
+- **ダウンタイムなしのモデル移行**：新しい基盤モデルへの切り替えやプロバイダーの変更を、アプリの再デプロイ不要でコンソールから即座に実施。
+- **自動ディザスタリカバリ（フェイルオーバー）**：上流プロバイダーのレート制限（429）、障害（502/503）、高レイテンシ発生時に、事前設定した待機系バックアップモデルへ自動で再試行。
+
+---
+
+## ポリシー設定パラメータ
+
+**Create Model Alias Mapping** をクリックしてルーティングルールを作成します：
+
+| 項目 | 説明 |
+| :--- | :--- |
+| **New Mapping Name** | アプリケーションが API リクエストで送信するモデル名（例：`company-llm-fast`）。 |
+| **Preferred Target Mapping Model** | 通常時に優先して処理を行うプライマリモデル。 |
+| **Provider Parameter Template** | 既定のパラメータ（`temperature`、`max_tokens`、システムプロンプトの注入など）。 |
+| **Model Type** | 対象モデルの生成モダリティ（`text`、`image`、`video`）。 |
+| **Disaster Recovery Rules** | 待機系バックアップモデルの優先度リスト（主モデル失敗時に自動でフォールバック）。 |
+| **Availability / Enable** | ルールの有効化・一時停止を即座に切り替え。 |
+| **Update Time** | ポリシー変更の監査タイムスタンプ。 |

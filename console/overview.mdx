@@ -1,0 +1,52 @@
+---
+title: "XRoute Console Overview"
+sidebarTitle: "Console Overview"
+description: "Explore the XRoute Personal Console: monitor balance, manage API credentials, configure failover policies, and inspect real-time call logs."
+---
+
+The **XRoute Console** (`https://xroute.ai/personal/dashboard`) is the central control plane for managing your AI gateway account, credentials, model mappings, billing, and traffic statistics.
+
+<Frame caption="XRoute Personal Console navigation and core module structure">
+  <img src="/images/console/dashboard.png" alt="XRoute Console Dashboard" />
+</Frame>
+
+## Functional Architecture
+
+The console is organized into two primary sections in the left sidebar:
+
+### 1. Personal Account Management
+
+| Feature | Route | Description |
+| :--- | :--- | :--- |
+| **[Dashboard](/console/dashboard)** | `/personal/dashboard` | Real-time overview of balance, daily spend, quick call snippets, and recent calls. |
+| **[Notifications & Announcements](/console/notifications)** | `/personal/todo` | In-site notification center for channel application reviews and system announcements. |
+| **[Access Credentials](/console/credentials)** | `/personal/keys` | Create, copy, and manage secret API keys (`sk-...`) for your applications. |
+| **[Account Balance](/console/balance)** | `/personal/balance` | Online prepaid balance recharges, daily consumption breakdown, and TOP 20 resource rankings. |
+| **[Voucher Assets](/console/voucher)** | `/personal/credit` | Redeem voucher promo codes and track active voucher credits deducted prior to cash balance. |
+| **[Accessible Resources](/console/resources)** | `/personal/resources` | Explore the catalog of AI models and providers authorized to your account or joined resource groups. |
+| **[Model Mapping Policy](/console/model-mapping)** | `/personal/model-mapping` | Configure custom request aliases, provider parameter templates, and automated disaster recovery routing. |
+
+### 2. Operational Reports
+
+| Feature | Route | Description |
+| :--- | :--- | :--- |
+| **[Call Statistics](/console/call-statistics)** | `/personal/call` | Multi-dimensional traffic analytics: call volume, success rates, latency, tokens, cost, and audit logs. |
+
+---
+
+## Quick Navigation
+
+<CardGroup cols={2}>
+  <Card title="Personal Dashboard" icon="chart-line" href="/console/dashboard">
+    View live account metrics and copy ready-to-run cURL snippets.
+  </Card>
+  <Card title="Access Credentials" icon="key" href="/console/credentials">
+    Manage your API keys and control resource access boundaries.
+  </Card>
+  <Card title="Model Mapping & Failover" icon="shuffle" href="/console/model-mapping">
+    Set up model request aliases and automatic multi-provider disaster recovery.
+  </Card>
+  <Card title="Call Statistics & Audit" icon="chart-bar" href="/console/call-statistics">
+    Inspect token breakdown, latency distributions, and comprehensive per-request audit logs.
+  </Card>
+</CardGroup>

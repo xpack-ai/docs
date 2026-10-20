@@ -6,15 +6,30 @@ description: "Create an XRoute API key and make your first text, image, or video
 
 Follow these steps to create your XRoute API key, call frontier LLMs and multimodal generation APIs, and verify your usage.
 
-## 1. Create an account and a key
+<Tip>
+This guide has been integrated into our unified [Quickstart: API Key & First Call](/quickstart) in the **Get Started · For Developers** section.
+</Tip>
 
-1. Sign in at [xroute.ai](https://xroute.ai) and top up universal Credits.
-2. Open **Personal -> Keys** and click **Create API Key**.
-3. (Optional) Configure a per-key USD spending limit and rate limit.
-4. Export the key in your shell environment:
+## 1. Create an account and retrieve your key
+
+1. Sign in at [xroute.ai/en](https://xroute.ai/en) and click **Get API Access** or your avatar to open the personal console.
+2. In the console menu, navigate to **Access Credentials** (`https://xroute.ai/personal/keys`).
+3. Under the `default` key or your custom key, click the **Copy** icon next to the API Key field to copy your secret key (`sk-...`).
+
+<Frame caption="XRoute Access Credentials console showing your default API Key and copy action">
+  <img src="/images/quickstart/api-keys-overview.png" alt="XRoute Access Credentials" />
+</Frame>
+
+4. (Optional) To create dedicated keys for different services, click **+ Create** in the top list and confirm your credentials configuration.
+
+<Frame caption="Creating a new access credential in XRoute console">
+  <img src="/images/quickstart/create-api-key-modal.png" alt="Create New Access Credential" />
+</Frame>
+
+5. Export the key in your shell environment:
 
 ```bash
-export XROUTE_API_KEY="xr_live_your_key_here"
+export XROUTE_API_KEY="sk_your_key_here"
 ```
 
 <Warning>
@@ -32,6 +47,10 @@ XRoute supports multiple generation modalities including text, images, and video
 - **Image Models**: **Provider Native format only** (e.g. OpenAI Images API or Byteplus Images API).
 - **Video Models**: **Provider Native asynchronous task format only** (submit generation task and poll status).
 </Note>
+
+<Tip>
+**Quickest way**: In your **Personal Dashboard** (`https://xroute.ai/personal/dashboard`), use the **Quick Call Guide** to select any model and credential, then click **Copy Code** to copy a pre-filled cURL command directly into your terminal.
+</Tip>
 
 ### A. Text Generation (OpenAI Unified Format)
 
@@ -106,14 +125,16 @@ curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
 
 ---
 
-## 3. Check what you spent
+## 3. Check what you spent and monitor traffic
 
-Check your remaining credit balance at any time (free call):
+You can track your usage, remaining balance, and model traffic directly in the web console:
 
-```bash
-curl https://api.xroute.ai/apis/v1/account/balance \
-  -H "Authorization: Bearer $XROUTE_API_KEY"
-```
+- **Dashboard**: Visit [Personal Dashboard](https://xroute.ai/personal/dashboard) to view your real-time **Account Balance (USD)**, **Today's Usage**, and total **Today's Calls**.
+- **Call Statistics**: Navigate to [Call Statistics](https://xroute.ai/personal/call) under **REPORTS** to inspect granular metrics including **Total Calls**, **Success Call Rate**, **Average Duration**, **Total Tokens Called**, **Total Consumption Amount**, and the real-time **Model Invocation Trend** breakdown chart.
+
+<Frame caption="Call Statistics console displaying model invocation trends, token metrics, and consumption">
+  <img src="/images/quickstart/call-statistics.png" alt="XRoute Call Statistics" />
+</Frame>
 
 ---
 

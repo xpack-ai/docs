@@ -1,0 +1,52 @@
+---
+title: "XRoute 控制台总览"
+sidebarTitle: "控制台概览"
+description: "全面了解 XRoute 个人控制台：实时监控账户余额、管理 API 密钥、配置容灾映射策略并审计调用日志。"
+---
+
+**XRoute 控制台**（`https://xroute.ai/personal/dashboard`）是统一管理 AI 网关账户、API 密钥凭证、模型路由策略、账单资产及流量监控的核心控制面板。
+
+<Frame caption="XRoute 个人控制台导航与功能架构">
+  <img src="/images/console/dashboard.png" alt="XRoute 控制台仪表盘" />
+</Frame>
+
+## 功能架构与模块分布
+
+控制台在左侧导航栏划分为两大核心板块：
+
+### 1. 个人账户管理（PERSONAL ACCOUNT）
+
+| 功能模块 | 对应路由 | 功能简介 |
+| :--- | :--- | :--- |
+| **[Dashboard 仪表盘](/zh/console/dashboard)** | `/personal/dashboard` | 实时查看账户余额、今日消耗、极速调用向导代码片段及最近调用明细。 |
+| **[消息通知与公告](/zh/console/notifications)** | `/personal/todo` | 站内消息中心，实时接收分销渠道申请反馈、系统维护及核心公告。 |
+| **[访问凭证管理](/zh/console/credentials)** | `/personal/keys` | 创建、复制并管理用于程序调用的 API 密钥（`sk-...`）与权限范围。 |
+| **[账户余额与充值](/zh/console/balance)** | `/personal/balance` | 线上实时充值、查看每日消耗流水及消耗 TOP 20 资源排行榜。 |
+| **[代金券资产](/zh/console/voucher)** | `/personal/credit` | 兑换代金券兑换码，管理优先于现金余额抵扣的有效代金券资产。 |
+| **[可用资源总览](/zh/console/resources)** | `/personal/resources` | 查看当前账户及所属资源组已授权可调用的所有模型与服务目录。 |
+| **[模型映射与容灾策略](/zh/console/model-mapping)** | `/personal/model-mapping` | 配置自定义模型请求别名、参数模板及跨厂商自动化灾备故障转移。 |
+
+### 2. 数据报表（REPORTS）
+
+| 功能模块 | 对应路由 | 功能简介 |
+| :--- | :--- | :--- |
+| **[调用统计与审计](/zh/console/call-statistics)** | `/personal/call` | 多维流量与成本分析：调用次数、成功率、耗时、Token量、消费金额与逐笔调用流水。 |
+
+---
+
+## 快捷导航
+
+<CardGroup cols={2}>
+  <Card title="仪表盘与极速调用" icon="chart-line" href="/zh/console/dashboard">
+    查看实时指标并一键复制预填好凭据的 cURL 命令。
+  </Card>
+  <Card title="访问凭证管理" icon="key" href="/zh/console/credentials">
+    创建独立 API 密钥，精准隔离不同项目与环境。
+  </Card>
+  <Card title="模型映射与容灾" icon="shuffle" href="/zh/console/model-mapping">
+    配置请求别名与自动 Fallback，实现业务零停机高可用。
+  </Card>
+  <Card title="调用统计报表" icon="chart-bar" href="/zh/console/call-statistics">
+    分析 Token 消耗趋势、响应延时分布与审计日志。
+  </Card>
+</CardGroup>

@@ -6,12 +6,27 @@ description: "XRoute API キーを作成し、curl で最初のテキスト、�
 
 以下のステップに従って XRoute API キーを作成し、最先端の LLM およびマルチモーダル生成 API を呼び出して、利用状況を確認します。
 
+<Tip>
+本ガイドは、**クイックスタート · 開発者向け** グループの統一ドキュメント [クイックスタート：APIキーの取得と初回呼び出し](/ja/quickstart) に統合されました。
+</Tip>
+
 ## 1. アカウントとキーを作成する
 
-1. [xroute.ai](https://xroute.ai) にサインインし、共通の Credits をチャージします。
-2. **Personal -> Keys** を開き、**Create API Key** をクリックします。
-3. （任意）キーごとの USD 利用上限とレート制限を設定します。
-4. シェル環境にキーをエクスポートします：
+1. [xroute.ai/en](https://xroute.ai/en) にサインインし、**Get API Access** またはユーザーアバターをクリックしてコンソールを開きます。
+2. 左側メニューで **Access Credentials (アクセス資格情報)**（`https://xroute.ai/personal/keys`）に移動します。
+3. `default` キーまたは作成したキーの API Key 入力欄の右側にある **コピー** アイコンをクリックして、シークレットキー（`sk-...`）をコピーします。
+
+<Frame caption="XRoute Access Credentials コンソール画面と API Key のコピー">
+  <img src="/images/quickstart/api-keys-overview.png" alt="XRoute Access Credentials" />
+</Frame>
+
+4. （任意）サービスごとに個別のキーを割り当てる場合は、リスト上部の **+ Create** をクリックして新しいキーを作成します。
+
+<Frame caption="新規アクセス資格情報作成ダイアログ">
+  <img src="/images/quickstart/create-api-key-modal.png" alt="新規アクセス資格情報作成" />
+</Frame>
+
+5. シェル環境にキーをエクスポートします：
 
 ```bash
 export XROUTE_API_KEY="xr_live_your_key_here"
@@ -32,6 +47,10 @@ XRoute はテキスト、画像、動画などの多様な生成タイプをサ�
 - **画像出力モデル（Image）**: **プロバイダーネイティブ形式のみ**をサポートします（例: OpenAI Images API または Byteplus Images API）。
 - **動画出力モデル（Video）**: **ネイティブ非同期タスク形式のみ**をサポートします（タスクを送信して生成し、ステータスをポーリング）。
 </Note>
+
+<Tip>
+**最速の実行方法**：個人コンソールの **Dashboard**（`https://xroute.ai/personal/dashboard`）にある **Quick Call Guide** を使用してモデルと認証情報を選択し、**Copy Code** をクリックすれば、API Key が埋め込まれた cURL コマンドをコピーしてすぐに実行できます。
+</Tip>
 
 ### A. テキスト生成（OpenAI 統合形式）
 
@@ -106,14 +125,16 @@ curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
 
 ---
 
-## 3. 利用金額を確認する
+## 3. 利用金額の確認とトラフィック監視
 
-残りのクレジット残高はいつでも確認できます（無料呼び出し）：
+利用状況、残り残高、モデルの呼び出しトラフィックは Web コンソール上で直接追跡できます：
 
-```bash
-curl https://api.xroute.ai/apis/v1/account/balance \
-  -H "Authorization: Bearer $XROUTE_API_KEY"
-```
+- **Dashboard**: [Personal Dashboard](https://xroute.ai/personal/dashboard) を開き、リアルタイムの **Account Balance (アカウント残高)** と **Today's Usage (当日の利用額)** を確認できます。
+- **Call Statistics**: 左側メニューの **REPORTS** 配下にある [Call Statistics](https://xroute.ai/personal/call) を開き、**Total Calls (総呼び出し数)**、**Success Call Rate (成功率)**、**Average Duration (平均所要時間)**、**Total Tokens Called (消費トークン数)**、**Total Consumption Amount (消費金額)**、およびモデル別の **Model Invocation Trend (呼び出し推移グラフ)** を詳細に把握できます。
+
+<Frame caption="Call Statistics コンソールでのモデル呼び出し推移、トークン指標、消費金額の表示">
+  <img src="/images/quickstart/call-statistics.png" alt="XRoute 呼び出し統計" />
+</Frame>
 
 ---
 

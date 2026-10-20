@@ -1,0 +1,217 @@
+---
+title: "クイックスタート：APIキーの取得と初回呼び出し"
+sidebarTitle: "APIキーの取得と初回呼び出し"
+description: "XRouteのAPIキーを取得し、テキスト・画像・動画モデルの初回呼び出しと利用状況モニタリングを数分で完了します。"
+---
+
+XRouteは、単一のAPIキーとOpenAI互換のエンドポイントを通じて、主要なAIモデル（LLM、画像、音声、動画）への統一ゲートウェイを提供します。
+
+以下の手順に従って、XRouteコンソールからアクセスキーを取得し、最初のリクエストを実行してください。
+
+## 前提条件
+
+開始する前に、以下が準備されていることを確認してください：
+- XRouteアカウント（[xroute.ai/en](https://xroute.ai/en) でサインイン）。
+- `curl` コマンドが使えるターミナル、または Python (3.9+) / Node.js (18+) の開発環境。
+
+---
+
+## はじめ方
+
+<Steps>
+  <Step title="サインインして管理コンソールに入る">
+    [xroute.ai/en](https://xroute.ai/en) にアクセスし、サインインします。
+    
+    ホームページのバナーにある **Get API Access** をクリックするか、トップナビゲーションバーの右上にあるユーザーアバターをクリックして、個人コンソールに移動します。
+
+    <Frame caption="XRoute ホームページ入口と Get API Access ボタン">
+      <img src="/images/quickstart/portal-entry.png" alt="XRoute ポータル入口" />
+    </Frame>
+  </Step>
+
+  <Step title="APIキー（アクセス資格情報）を取得する">
+    個人コンソールの左側メニューで **Access Credentials (アクセス資格情報)** をクリックします（URL: `https://xroute.ai/personal/keys`）。
+    
+    デフォルトで `default` という名前のキーが用意されています。API Key 入力欄の右側にある **コピー** アイコンをクリックして、シークレットキー（`sk-...`）をコピーします。
+
+    <Frame caption="Access Credentials コンソール画面と API Key のコピー">
+      <img src="/images/quickstart/api-keys-overview.png" alt="アクセス資格情報の概要" />
+    </Frame>
+  </Step>
+
+  <Step title="（任意）新しいAPIキーを作成する">
+    環境やプロジェクトごとに権限を分離したい場合は、新しいキーを作成できます：
+
+    1. 資格情報リストの上部にある **+ Create (+ 作成)** ボタンをクリックします。
+    2. キーの **Name (名前)**（例: `dev-agent` や `production`）を入力します。
+    3. 認証タイプ（**API Key**）、パラメータ位置（`Header: Authorization`）、有効期限（任意）を設定します。
+    4. **Confirm (確認)** をクリックして生成します。
+
+    <Frame caption="新規アクセス資格情報作成ダイアログ">
+      <img src="/images/quickstart/create-api-key-modal.png" alt="新規APIキー作成" />
+    </Frame>
+  </Step>
+
+  <Step title="最速実行：Dashboard から生成済み cURL を直接コピーして呼び出す">
+    エンドポイントURLや認証ヘッダー、モデル名を個別に組み立てる必要はありません。XRoute の **Personal Dashboard (ダッシュボード)** にある **Quick Call Guide (クイック呼び出しガイド)** では、選択したモデルとAPIキーが自動入力された実行コードが提供されます：
+
+    1. 左側メニューで **Dashboard**（URL: `https://xroute.ai/personal/dashboard`）をクリックします。
+    2. **Quick Call Guide** エリアで、呼び出したい **AI Model** と **Credential**（例: `default`）を選択します。
+    3. 呼び出し形式（**OpenAI Compatible Format**、**Claude Compatible Format**、または **Native Invocation Mode**）を選択します。
+    4. **CURL** タブの右上にある **Copy Code** をクリックし、ターミナルに貼り付けて即座に実行できます！
+
+    <Frame caption="XRoute Personal Dashboard の Quick Call Guide と一発コピー可能な cURL">
+      <img src="/images/quickstart/dashboard-quick-call.png" alt="Dashboard Quick Call Guide" />
+    </Frame>
+  </Step>
+
+  <Step title="環境変数にAPIキーを設定する">
+    キーを安全に管理するため、環境変数にエクスポートします：
+
+    ```bash
+    export XROUTE_API_KEY="sk-your-actual-api-key"
+    ```
+
+    <Warning>
+      APIキーは機密情報です。公開Gitリポジトリにコミットしたり、フロントエンドコードに露出させたりしないでください。
+    </Warning>
+  </Step>
+
+  <Step title="最初のリクエストを送信する">
+    XRoute は、テキスト、画像、動画など複数の生成モダリティに対応しています。アプリケーションに合わせて適切な呼び出し形式を選択してください：
+
+    <Note>
+      - **テキストモデル**：**OpenAI 統合形式**（`https://api.xroute.ai/v1/chat/completions`）、**Anthropic 統合形式**（`https://api.xroute.ai/v1/messages`）、およびプロバイダーネイティブ形式に対応しています。
+      - **画像モデル**：プロバイダーネイティブのエンドポイント（例：`https://api.xroute.ai/OpenAI/images/generations`）を直接呼び出します。
+      - **動画モデル**：非同期タスク形式（`/contents/generations/tasks` にタスク作成を送信し、その後ステータスをポーリング）。
+    </Note>
+
+    <CodeGroup>
+    ```bash cURL (OpenAI 形式)
+    curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "OpenAI/gpt-6-astra",
+        "messages": [
+          {"role": "user", "content": "こんにちは！XRouteの特徴を2文で説明してください。"}
+        ]
+      }'
+    ```
+
+    ```python Python (OpenAI SDK)
+    from openai import OpenAI
+    import os
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/v1",
+        api_key=os.environ.get("XROUTE_API_KEY"),
+    )
+
+    response = client.chat.completions.create(
+        model="OpenAI/gpt-6-astra",
+        messages=[
+            {"role": "user", "content": "こんにちは！XRouteの特徴を2文で説明してください。"}
+        ],
+    )
+
+    print(response.choices[0].message.content)
+    ```
+
+    ```javascript Node.js (OpenAI SDK)
+    import OpenAI from "openai";
+
+    const openai = new OpenAI({
+      baseURL: "https://api.xroute.ai/v1",
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const completion = await openai.chat.completions.create({
+      model: "OpenAI/gpt-6-astra",
+      messages: [
+        { role: "user", content: "こんにちは！XRouteの特徴を2文で説明してください。" },
+      ],
+    });
+
+    console.log(completion.choices[0].message.content);
+    ```
+
+    ```bash cURL (Anthropic Messages)
+    curl -X POST "https://api.xroute.ai/v1/messages" \
+      -H "x-api-key: $XROUTE_API_KEY" \
+      -H "anthropic-version: 2023-06-01" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "Anthropic/claude-fable-5",
+        "max_tokens": 1024,
+        "messages": [
+          {"role": "user", "content": "信頼性の高い API ゲートウェイを構築するためのポイントは何ですか？"}
+        ]
+      }'
+    ```
+
+    ```bash cURL (画像生成ネイティブ形式)
+    curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "gpt-image-2.5-flare",
+        "prompt": "サイバーパンクなネオンに輝く超近代的なデータセンター、8k 解像度",
+        "size": "1024x1024"
+      }'
+    ```
+
+    ```bash cURL (動画生成非同期タスク)
+    # 1. 動画生成タスクを投入
+    curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "seedance-1-5-pro-251215",
+        "content": [
+          {"type": "text", "text": "夕暮れの渓谷を飛行するドローンのシネマティック映像"}
+        ]
+      }'
+
+    # 2. 返却された task_id で生成状態を確認
+    # curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}" \
+    #   -H "Authorization: Bearer $XROUTE_API_KEY"
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="残高と呼び出し統計の確認">
+    リクエストの送信後、コンソール上で利用状況やAPIトラフィックをリアルタイムに確認できます：
+
+    1. **Dashboard で残高と当日の利用金額を確認**: 左側メニューの **Dashboard**（URL: `https://xroute.ai/personal/dashboard`）をクリックすると、リアルタイムの **Account Balance (アカウント残高)**、**Today's Usage (当日の利用額)**、および **Today's Calls (当日の呼び出し回数)** を確認できます。
+
+    <Frame caption="Personal Dashboard でのアカウント残高および当日の利用金額の確認">
+      <img src="/images/quickstart/dashboard-overview.png" alt="Dashboard 残高と利用状況" />
+    </Frame>
+
+    2. **Call Statistics でモデル呼び出しの詳細を確認**: 左側メニューの **REPORTS** 配下にある **Call Statistics**（URL: `https://xroute.ai/personal/call`）を開くと、**Total Calls (総呼び出し回数)**、**Success Call Rate (成功率)**、**Average Duration (平均所要時間)**、**Total Tokens Called (合計トークン数)**、**Total Consumption Amount (合計消費額)**、およびモデル別の **Model Invocation Trend (呼び出し推移グラフ)** を詳細に分析できます。
+
+    <Frame caption="Call Statistics でのモデル別呼び出し推移・トークン消費・成功率の分析">
+      <img src="/images/quickstart/call-statistics.png" alt="Call Statistics 分析画面" />
+    </Frame>
+  </Step>
+</Steps>
+
+---
+
+## 次のステップ
+
+<CardGroup cols={2}>
+  <Card title="SDK互換性ガイド" icon="cube" href="/ja/get-started/sdk-compatibility">
+    OpenAI、Anthropic、LangChain、LlamaIndexなどの各SDKの接続方法。
+  </Card>
+  <Card title="モデルカタログ" icon="microchip" href="/ja/resources/models/overview">
+    対応しているテキスト、画像、動画モデルの一覧と仕様。
+  </Card>
+  <Card title="XRoute コンソールガイド" icon="sliders" href="/ja/console/overview">
+    APIキー管理、残高モニタリング、モデルマッピング（フェイルオーバー）、呼び出し統計の確認。
+  </Card>
+  <Card title="レート制限とエラー" icon="shield-halved" href="/ja/api-reference/rate-limits">
+    ゲートウェイのデフォルトレート制限、リトライ方法、エラーコードの説明。
+  </Card>
+</CardGroup>

@@ -4,95 +4,125 @@ sidebarTitle: "Changelog"
 description: "Release history and product evolution of the XRoute platform: unified AI resource portal, trading & multi-tier distribution, policy management, dashboards, multimodal playground, coupons, and Agent invocation."
 ---
 
-<Update label="v1.7" description="Agent Invocation & Coupon System">
-  ### Agent reading & invocation, coupon system, and transparent billing formulas
+## v1.7
 
-  - **Agent reading & invocation support:** Optimized resource discovery, reading, and invocation workflows for AI Agents.
-  - **Featured resource configuration:** Added **Featured Resources** under **Platform Decoration** in both System and Channel Admin consoles, supporting custom ordering across **Model, API, and MCP** with the top 8 featured items pinned on storefront listing pages.
-  - **End-to-end coupon system:**
-    - **Coupon creation & management:** Added **Coupon Management** under **Finance Management**, supporting custom or auto-generated 6–18 character alphanumeric redemption codes, configurable face values (pre-deducted from channel balance), validity periods (up to 1 year), redemption limits, and scope (site-wide or specific parent/child models and API services).
-    - **User redemption & standalone `/redeem` page:** Added a **Coupons** menu under personal **Account Balance** and launched a standalone `/redeem` page (also linked in the footer) for marketing campaigns. Multiple eligible coupons are automatically applied in order of earliest expiration before deducting from account balance.
-  - **Transparent billing formula & deduction breakdown:** Added customizable visible columns in **Call Statistics**, introducing **Standard Price, Discounted Price, Unit (`M token` / `call` / `s`), Billing Formula (with substituted runtime variables), Spend Amount, Coupon Deduction, and Balance Deduction**.
-  - **Custom menu paths & top banner links:** Custom HTML menus in **Platform Decoration** now support custom URL paths (`/pages/{custom_path}`) with real-time uniqueness validation; the top promotional banner now supports a clickable target URL opening in a new tab.
-</Update>
+> **Agent Invocation & Coupon System**
 
-<Update label="v1.6" description="Parallel Trading & Subscription">
-  ### Parallel trading & subscription modes, platform decoration, and model alias mapping
+### Agent reading & invocation, coupon system, and transparent billing formulas
 
-  - **Parallel trading & subscription governance:** Added **Feature Configuration** under **System Settings**, replacing the mutually exclusive subscription vs. billing switch with independent toggles for **Unauthorized Resource Visibility, Subscription Request & Approval, Paid Trading, Distribution Channels**, and enabled resource types (**AI Models / API Services / MCP**).
-  - **Platform decoration & multilingual navigation:** Added **Platform Decoration** in System and Channel Admin consoles, allowing multilingual top navigation bar customization linking to official pages (**Home, Models, API, MCP**), external URLs, or uploaded HTML files.
-  - **Consumer model alias mapping & user-level failover:** Added **Model Alias Mapping** in the Personal Console and Resource Group details, enabling users to map custom model aliases to target provider models and configure prioritized fallback models of the same type (taking precedence over platform-level provider failover and billing at the actual invoked model's rate).
-  - **Flexible top-up methods:** Added **Auto Free Credit for New Users** and **Batch Top-Up** (by all users, resource group, or multi-select with full audit history) in Account Management.
-  - **Notifications & announcements upgrade:** Upgraded **To-Do Notifications** to **Notifications & Announcements**, adding personal system notifications (distribution review results and rejection reasons) and channel system notifications (upstream model onboarding/offboarding and pricing change alerts).
-</Update>
+- **Agent reading & invocation support:** Optimized resource discovery, reading, and invocation workflows for AI Agents.
+- **Featured resource configuration:** Added **Featured Resources** under **Platform Decoration** in both System and Channel Admin consoles, supporting custom ordering across **Model, API, and MCP** with the top 8 featured items pinned on storefront listing pages.
+- **End-to-end coupon system:**
+  - **Coupon creation & management:** Added **Coupon Management** under **Finance Management**, supporting custom or auto-generated 6–18 character alphanumeric redemption codes, configurable face values (pre-deducted from channel balance), validity periods (up to 1 year), redemption limits, and scope (site-wide or specific parent/child models and API services).
+  - **User redemption & standalone `/redeem` page:** Added a **Coupons** menu under personal **Account Balance** and launched a standalone `/redeem` page (also linked in the footer) for marketing campaigns. Multiple eligible coupons are automatically applied in order of earliest expiration before deducting from account balance.
+- **Transparent billing formula & deduction breakdown:** Added customizable visible columns in **Call Statistics**, introducing **Standard Price, Discounted Price, Unit (`M token` / `call` / `s`), Billing Formula (with substituted runtime variables), Spend Amount, Coupon Deduction, and Balance Deduction**.
+- **Custom menu paths & top banner links:** Custom HTML menus in **Platform Decoration** now support custom URL paths (`/pages/{custom_path}`) with real-time uniqueness validation; the top promotional banner now supports a clickable target URL opening in a new tab.
 
-<Update label="v1.5" description="Multimodal Online Playground & Channel Storefront">
-  ### Multimodal online debugging and secondary channel storefront branding
+---
 
-  - **Multimodal online debugging (Playground):**
-    - Added an **Online Playground** tab on Model detail pages supporting multiple request URL formats and two-way real-time synchronization between **Dynamic Form** and **JSON Editor** modes.
-    - Supports interactive debugging for **Text, Image, and Video** models (including async video task creation and task ID result polling), multi-image/video thumbnail galleries, and instant toggling between visual preview and raw JSON responses.
-  - **Dynamic secondary channel storefront branding:**
-    - Dynamically adapts channel logos, brand names, homepage hero copy, model lists (hiding empty categories), and model library slogans across all storefront pages.
-    - Added **Top Promotional Banner** settings (custom copy, text color, and gradient background picker), configurable **Contact Channels** (X, email, etc.), and automatic replacement of domain, company entity, and contact email in **Privacy Policy** and **Terms of Service** for downstream channels.
-  - **Channel Admin "Quick Start" guide:** Added a 4-step interactive onboarding checklist (**Define Brand Info → Enable Storefront Resources → Configure Distribution Pricing Strategy → Top Up Channel Balance**) with completion tracking and direct navigation.
-</Update>
+## v1.6
 
-<Update label="v1.4" description="Provider Failover, Top-Up & Spend Reports">
-  ### High-availability provider failover and billing analytics reports
+> **Parallel Trading & Subscription**
 
-  - **Provider disaster recovery & multi-key pool rotation:**
-    - Added **Provider Failover** under System Policy Management with versioning and instant toggle support. Supports **Direct Provider Parameter Replacement** and **Conditional Failover** (triggered on upstream connection/auth/5XX/quota errors or custom response timeout thresholds).
-    - Supports up to 10 prioritized backup providers, one-click connectivity testing, and configuring identical endpoints with different API keys for **key pool rotation**.
-  - **Billing reports (Spend Report & Top-Up Report):**
-    - Added **Billing Statistics** under **Finance Management** with **Spend Report** and **Top-Up Report** tabs across accounts, resource groups, and channels, including drill-down into each consumer's Top 20 sub-resources.
-  - **Personal spend breakdown & account balance drill-down:** Added a Top 20 sub-resource spend ranking under Personal **Account Balance**, and enabled clicking any user's balance in **Account Management** to inspect daily spend summaries and top-up order history.
-</Update>
+### Parallel trading & subscription modes, platform decoration, and model alias mapping
 
-<Update label="v1.3" description="Dashboards, Unified Claude Format & License">
-  ### Role-based dashboards, unified Claude format, and enterprise license management
+- **Parallel trading & subscription governance:** Added **Feature Configuration** under **System Settings**, replacing the mutually exclusive subscription vs. billing switch with independent toggles for **Unauthorized Resource Visibility, Subscription Request & Approval, Paid Trading, Distribution Channels**, and enabled resource types (**AI Models / API Services / MCP**).
+- **Platform decoration & multilingual navigation:** Added **Platform Decoration** in System and Channel Admin consoles, allowing multilingual top navigation bar customization linking to official pages (**Home, Models, API, MCP**), external URLs, or uploaded HTML files.
+- **Consumer model alias mapping & user-level failover:** Added **Model Alias Mapping** in the Personal Console and Resource Group details, enabling users to map custom model aliases to target provider models and configure prioritized fallback models of the same type (taking precedence over platform-level provider failover and billing at the actual invoked model's rate).
+- **Flexible top-up methods:** Added **Auto Free Credit for New Users** and **Batch Top-Up** (by all users, resource group, or multi-select with full audit history) in Account Management.
+- **Notifications & announcements upgrade:** Upgraded **To-Do Notifications** to **Notifications & Announcements**, adding personal system notifications (distribution review results and rejection reasons) and channel system notifications (upstream model onboarding/offboarding and pricing change alerts).
 
-  - **Role-based Dashboards:**
-    - **Personal Dashboard:** Displays account balance with a 30-day daily spend chart, today's call volume vs. yesterday with a 7-day stacked Model/API bar chart, accessible resource counts, quick invocation snippets, and the latest 10 call logs.
-    - **Channel & System Admin Dashboards:** Highlights channel brand & domain, monthly sales & profit MoM growth, 7-day active users, downstream distribution network metrics, resource & organization inventories (Today's Top 3 APIs & Top 3 Models by tokens), and monthly Top 5 Top-Up & Spend leaderboards.
-  - **Unified Claude format support:** Standardized Anthropic Claude (`/v1/messages`) invocation format alongside OpenAI-compatible and native upstream formats.
-  - **Enterprise license management:** Added **License Certificate** under **System Settings**, displaying licensed organization, node limit, allowed distribution tiers (0–5), and expiration date, with real-time warning banners for license expiration, node overage, and distribution tier overage.
-</Update>
+---
 
-<Update label="v1.2" description="Analytics Reports & Policy Management">
-  ### Rate/quota limit policies, multi-dimensional token analytics, and sales reports
+## v1.5
 
-  - **Rate limit & quota limit policies:**
-    - **Rate Limit Policies:** Restrict call frequency by minute, hour, day, month, year, or total cap across personal accounts, resource group keys, resource group members, or channels, with quota consumption progress views.
-    - **Quota Limit Policies:** Restrict usage by **Million Tokens** or **USD Amount** across daily, monthly, yearly, or total cycles with automatic periodic reset.
-  - **Call statistics overview:** Added an **Overview** tab displaying total calls (with daily average), average response latency (ms), average success rate, peak RPM, and Top 5 Models, API Services, Resource Groups, and Accounts.
-  - **Multi-dimensional Token Statistics:** Added **Token Statistics** across **Overview, Account, Resource Group, Downstream Channel, and Model** tabs, tracking total tokens (Input / Output breakdown), peak TPM, average tokens per call, and average tokens per consumer with two-way drill-down.
-  - **Sales reports & downstream performance drill-down:** Added **Sales Reports** tracking total sales, net profit, direct sales, and downstream distribution sales, plus Top 20 resource sales and daily sales tables with full Excel export and one-click downstream channel report inspection.
-</Update>
+> **Multimodal Online Playground & Channel Storefront**
 
-<Update label="v1.1" description="Trading System & Multi-Tier Distribution">
-  ### Billing & trading engine, multi-tier channel distribution, and dynamic pricing
+### Multimodal online debugging and secondary channel storefront branding
 
-  - **Channel & Resource Group architecture:** Upgraded "Tenants" to **Channels** and "Teams" to **Resource Groups**, powering multi-tier distribution and reseller workflows.
-  - **Multi-tier distribution management:** Added **Distribution Application** in the Personal Console and approval workflows in Admin To-Do Notifications; added **Downstream Channels** management with performance tracking, channel ban/unban controls, and custom brand/logo/subdomain/custom domain settings.
-  - **Granular model & API pricing engine:**
-    - **Model pricing:** Supports per-token (Input/Output), per-call, per-second, and **Advanced Billing** scripts (cached tokens, multimodal inputs, resolution-based video pricing). Provides **Official Price (strikethrough), Cost Price, and Selling Price** views, percentage-based **Dynamic Pricing Strategies** with fallback rules, and automatic anti-loss protection (clamping selling/discounted prices to cost price).
-    - **API service pricing:** Supports per-call default pricing and endpoint-specific pricing rules with storefront Pricing tabs.
-  - **Resource group discount policies:** Added versioned **Discount Policies** to configure percentage discounts for specific resource groups across selected providers/models or API services/endpoints.
-  - **Account top-up, channel allocation & profit settlement:**
-    - Added USD balance management (6 decimal places) with Stripe online top-ups, channel-to-user offline balance allocation, and system admin credit/debit controls.
-    - Added **Distribution Profit Sharing** with configurable withdrawal thresholds (default \$100) and fee rates (default 2%), bank account binding, settlement cycle withdrawal requests, and upstream approval/payout workflows.
-  - **Model & API call statistics:** Added dedicated Model and API Service call analytics, trend charts, and detailed call logs with input/output tokens, extended billing parameters, client IP, and request/response payloads.
-</Update>
+- **Multimodal online debugging (Playground):**
+  - Added an **Online Playground** tab on Model detail pages supporting multiple request URL formats and two-way real-time synchronization between **Dynamic Form** and **JSON Editor** modes.
+  - Supports interactive debugging for **Text, Image, and Video** models (including async video task creation and task ID result polling), multi-image/video thumbnail galleries, and instant toggling between visual preview and raw JSON responses.
+- **Dynamic secondary channel storefront branding:**
+  - Dynamically adapts channel logos, brand names, homepage hero copy, model lists (hiding empty categories), and model library slogans across all storefront pages.
+  - Added **Top Promotional Banner** settings (custom copy, text color, and gradient background picker), configurable **Contact Channels** (X, email, etc.), and automatic replacement of domain, company entity, and contact email in **Privacy Policy** and **Terms of Service** for downstream channels.
+- **Channel Admin "Quick Start" guide:** Added a 4-step interactive onboarding checklist (**Define Brand Info → Enable Storefront Resources → Configure Distribution Pricing Strategy → Top Up Channel Balance**) with completion tracking and direct navigation.
 
-<Update label="v1.0" description="UI Framework & Core Logic Refactoring">
-  ### Unified AI resource open platform for Models, APIs, and MCP
+---
 
-  - **Unified storefront for Model, API, and MCP:** Redesigned the storefront homepage and navigation to unify search, categorization, and quick invocation guides across **AI Models, API Services, and MCP Servers**, with customizable site branding in System Settings.
-  - **Unified & Native dual invocation modes:**
-    - **Model Detail Page:** Introduced **Unified Invocation Mode** (OpenAI-compatible endpoint) and **Native Invocation Mode** (upstream native paths and secondary task routes such as `text_to_video` and `image_to_video`), with automatic team/API key injection into code samples.
-    - **API / MCP Detail Page:** Combined Overview, API endpoints, and MCP Tools tabs with an interactive API debugging panel and multi-language code snippet generation (cURL, Python, Java, PHP, etc.).
-  - **Simplified two-tier permission model:** Streamlined the legacy "Team → Consumer → Auth Key" hierarchy into **"Team (Resource Group) → Auth Key"**, supporting **Dynamic Team/Account Permission Inheritance** or per-key custom resource scoping across APIs and LLMs.
-  - **Versioned publishing & instant call switches:** Added release version management and pre-publish checklists for API services and model providers, plus instant **Call Status Switches** at both provider and model levels that take effect immediately without republishing.
-  - **Centralized To-Do approvals & team collaboration:** Added a unified **To-Do Notifications** center for subscription approvals, invitation links for one-click team joining, and default resource group assignment rules for new accounts.
-</Update>
+## v1.4
+
+> **Provider Failover, Top-Up & Spend Reports**
+
+### High-availability provider failover and billing analytics reports
+
+- **Provider disaster recovery & multi-key pool rotation:**
+  - Added **Provider Failover** under System Policy Management with versioning and instant toggle support. Supports **Direct Provider Parameter Replacement** and **Conditional Failover** (triggered on upstream connection/auth/5XX/quota errors or custom response timeout thresholds).
+  - Supports up to 10 prioritized backup providers, one-click connectivity testing, and configuring identical endpoints with different API keys for **key pool rotation**.
+- **Billing reports (Spend Report & Top-Up Report):**
+  - Added **Billing Statistics** under **Finance Management** with **Spend Report** and **Top-Up Report** tabs across accounts, resource groups, and channels, including drill-down into each consumer's Top 20 sub-resources.
+- **Personal spend breakdown & account balance drill-down:** Added a Top 20 sub-resource spend ranking under Personal **Account Balance**, and enabled clicking any user's balance in **Account Management** to inspect daily spend summaries and top-up order history.
+
+---
+
+## v1.3
+
+> **Dashboards, Unified Claude Format & License**
+
+### Role-based dashboards, unified Claude format, and enterprise license management
+
+- **Role-based Dashboards:**
+  - **Personal Dashboard:** Displays account balance with a 30-day daily spend chart, today's call volume vs. yesterday with a 7-day stacked Model/API bar chart, accessible resource counts, quick invocation snippets, and the latest 10 call logs.
+  - **Channel & System Admin Dashboards:** Highlights channel brand & domain, monthly sales & profit MoM growth, 7-day active users, downstream distribution network metrics, resource & organization inventories (Today's Top 3 APIs & Top 3 Models by tokens), and monthly Top 5 Top-Up & Spend leaderboards.
+- **Unified Claude format support:** Standardized Anthropic Claude (`/v1/messages`) invocation format alongside OpenAI-compatible and native upstream formats.
+- **Enterprise license management:** Added **License Certificate** under **System Settings**, displaying licensed organization, node limit, allowed distribution tiers (0–5), and expiration date, with real-time warning banners for license expiration, node overage, and distribution tier overage.
+
+---
+
+## v1.2
+
+> **Analytics Reports & Policy Management**
+
+### Rate/quota limit policies, multi-dimensional token analytics, and sales reports
+
+- **Rate limit & quota limit policies:**
+  - **Rate Limit Policies:** Restrict call frequency by minute, hour, day, month, year, or total cap across personal accounts, resource group keys, resource group members, or channels, with quota consumption progress views.
+  - **Quota Limit Policies:** Restrict usage by **Million Tokens** or **USD Amount** across daily, monthly, yearly, or total cycles with automatic periodic reset.
+- **Call statistics overview:** Added an **Overview** tab displaying total calls (with daily average), average response latency (ms), average success rate, peak RPM, and Top 5 Models, API Services, Resource Groups, and Accounts.
+- **Multi-dimensional Token Statistics:** Added **Token Statistics** across **Overview, Account, Resource Group, Downstream Channel, and Model** tabs, tracking total tokens (Input / Output breakdown), peak TPM, average tokens per call, and average tokens per consumer with two-way drill-down.
+- **Sales reports & downstream performance drill-down:** Added **Sales Reports** tracking total sales, net profit, direct sales, and downstream distribution sales, plus Top 20 resource sales and daily sales tables with full Excel export and one-click downstream channel report inspection.
+
+---
+
+## v1.1
+
+> **Trading System & Multi-Tier Distribution**
+
+### Billing & trading engine, multi-tier channel distribution, and dynamic pricing
+
+- **Channel & Resource Group architecture:** Upgraded "Tenants" to **Channels** and "Teams" to **Resource Groups**, powering multi-tier distribution and reseller workflows.
+- **Multi-tier distribution management:** Added **Distribution Application** in the Personal Console and approval workflows in Admin To-Do Notifications; added **Downstream Channels** management with performance tracking, channel ban/unban controls, and custom brand/logo/subdomain/custom domain settings.
+- **Granular model & API pricing engine:**
+  - **Model pricing:** Supports per-token (Input/Output), per-call, per-second, and **Advanced Billing** scripts (cached tokens, multimodal inputs, resolution-based video pricing). Provides **Official Price (strikethrough), Cost Price, and Selling Price** views, percentage-based **Dynamic Pricing Strategies** with fallback rules, and automatic anti-loss protection (clamping selling/discounted prices to cost price).
+  - **API service pricing:** Supports per-call default pricing and endpoint-specific pricing rules with storefront Pricing tabs.
+- **Resource group discount policies:** Added versioned **Discount Policies** to configure percentage discounts for specific resource groups across selected providers/models or API services/endpoints.
+- **Account top-up, channel allocation & profit settlement:**
+  - Added USD balance management (6 decimal places) with Stripe online top-ups, channel-to-user offline balance allocation, and system admin credit/debit controls.
+  - Added **Distribution Profit Sharing** with configurable withdrawal thresholds (default $100) and fee rates (default 2%), bank account binding, settlement cycle withdrawal requests, and upstream approval/payout workflows.
+- **Model & API call statistics:** Added dedicated Model and API Service call analytics, trend charts, and detailed call logs with input/output tokens, extended billing parameters, client IP, and request/response payloads.
+
+---
+
+## v1.0
+
+> **UI Framework & Core Logic Refactoring**
+
+### Unified AI resource open platform for Models, APIs, and MCP
+
+- **Unified storefront for Model, API, and MCP:** Redesigned the storefront homepage and navigation to unify search, categorization, and quick invocation guides across **AI Models, API Services, and MCP Servers**, with customizable site branding in System Settings.
+- **Unified & Native dual invocation modes:**
+  - **Model Detail Page:** Introduced **Unified Invocation Mode** (OpenAI-compatible endpoint) and **Native Invocation Mode** (upstream native paths and secondary task routes such as `text_to_video` and `image_to_video`), with automatic team/API key injection into code samples.
+  - **API / MCP Detail Page:** Combined Overview, API endpoints, and MCP Tools tabs with an interactive API debugging panel and multi-language code snippet generation (cURL, Python, Java, PHP, etc.).
+- **Simplified two-tier permission model:** Streamlined the legacy "Team → Consumer → Auth Key" hierarchy into **"Team (Resource Group) → Auth Key"**, supporting **Dynamic Team/Account Permission Inheritance** or per-key custom resource scoping across APIs and LLMs.
+- **Versioned publishing & instant call switches:** Added release version management and pre-publish checklists for API services and model providers, plus instant **Call Status Switches** at both provider and model levels that take effect immediately without republishing.
+- **Centralized To-Do approvals & team collaboration:** Added a unified **To-Do Notifications** center for subscription approvals, invitation links for one-click team joining, and default resource group assignment rules for new accounts.

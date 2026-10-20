@@ -1,0 +1,55 @@
+---
+title: "Call Statistics & Audit Logs"
+sidebarTitle: "Call Statistics"
+description: "Monitor global model invocation traffic, latency distributions, success rates, token usage, and per-request audit logs."
+---
+
+The **Call Statistics** page (`https://xroute.ai/personal/call`) provides real-time operational analytics and end-to-end audit observability across all API traffic routed through XRoute.
+
+<Frame caption="XRoute Call Statistics analytics, invocation trends, and per-request audit logs">
+  <img src="/images/console/call-statistics.png" alt="Call Statistics" />
+</Frame>
+
+## Date & Filter Controls
+
+At the top of the analytics dashboard, adjust the scope of your inspection:
+
+- **Quick Presets**: **Today**, **Yesterday**, **Last 7 Days**, or **Custom Period** (custom date and time boundaries).
+- **Personal Rate Limits and Quotas**: Review your current concurrency caps and queries-per-minute (QPM) thresholds.
+- **Advanced Filter**: Drill down by specific **Provider**, **Model**, **Status Code** (e.g. 200, 429, 500), or **Credential Key**.
+
+---
+
+## High-Level Metric Tiles
+
+Five high-level summary cards provide instant performance feedback:
+
+- **Total Calls**: Aggregated count of API requests during the selected period.
+- **Success Call Rate**: Percentage of requests successfully fulfilled with HTTP 200.
+- **Average Duration**: End-to-end response latency (in milliseconds or seconds).
+- **Total Tokens Called**: Combined sum of input prompt tokens and output completion tokens.
+- **Total Consumption Amount**: Net settled financial cost (in USD) incurred by calls during the period.
+
+---
+
+## Model Invocation Trend
+
+The interactive line and area charts plot your traffic volume over time:
+- Compare multi-day invocation trajectories.
+- Inspect the proportional traffic distribution across different models (e.g., Anthropic vs. OpenAI vs. DeepSeek).
+
+---
+
+## Per-Request Audit Logs
+
+The detailed table at the bottom records every single API transaction for debugging and governance:
+
+| Field | Description |
+| :--- | :--- |
+| **Request Time** | Precise timestamp of gateway ingestion. |
+| **Provider & Model** | Concrete model and provider that executed the request. |
+| **Duration** | Upstream execution time plus gateway routing latency. |
+| **Status** | HTTP return status code. |
+| **Consumer & Key** | Authentication credential utilized. |
+| **Token Breakdown** | Individual counts for **INPUT**, **OUTPUT**, and **TOTAL** tokens. |
+| **Billing Formula & Amount** | Applicable pricing tier, discounted unit rate, Voucher deduction, and net Balance deduction. |

@@ -1,14 +1,31 @@
 ---
 title: "Cursor で XRoute を使用する"
 sidebarTitle: "Cursor"
-description: "Cursor で XRoute MCP サーバーを使用し、モデルの補完リクエストを XRoute 経由でルーティングするよう設定します。"
+description: "カスタム Base URL の上書き設定を通じて、Cursor で XRoute のモデルをルーティング・利用します。"
 ---
 
-Cursor を XRoute に接続することで、IDE エージェントから 100 以上のリアルタイムデータ API と 60 以上の最先端モデルを呼び出せるようになります。
+Cursor を設定して XRoute をモデルゲートウェイとして活用し、各プロバイダーの最先端モデルを呼び出します。
 
-## 1. XRoute MCP サーバーを追加する
+## 1. Cursor で XRoute モデルを設定する（推奨）
 
-プロジェクト内の `.cursor/mcp.json`（またはグローバル設定の `~/.cursor/mcp.json`）を作成または更新します。
+**Cursor Settings -> Models** を開きます：
+
+1. **Override OpenAI Base URL** を有効化し、次のように設定します：
+   ```text
+   https://api.xroute.ai/v1
+   ```
+2. OpenAI API Key 欄に `XROUTE_API_KEY` を貼り付けます。
+3. 利用したいモデル ID を追加します（例）：
+   - `OpenAI/gpt-5.6-sol`
+   - `Deepseek/deepseek-v4-flash`
+   - `Anthropic/claude-fable-5`
+   - `Google/gemini-3.1-pro-preview`
+
+## 2. リモート MCP サーバー（近日公開）
+
+<Info>
+XRoute リモート MCP サーバーは現在開発中です。公開後は `.cursor/mcp.json` から簡単に接続可能になります：
+</Info>
 
 ```json
 {
@@ -19,15 +36,3 @@ Cursor を XRoute に接続することで、IDE エージェントから 100 �
   }
 }
 ```
-
-## 2. サインインする
-
-**Cursor Settings -> MCP** を開き、`xroute` の横にある **Connect** をクリックして、ブラウザでの OAuth サインインを完了します。
-
-## オプション：Cursor で XRoute のモデルを使用する
-
-**Cursor Settings -> Models** で以下を設定します。
-
-1. **Override OpenAI Base URL** に `https://api.xroute.ai/v1` を設定します。
-2. `XROUTE_API_KEY` を貼り付けます。
-3. `deepseek/deepseek-r1` や `anthropic/claude-sonnet-4` などのモデル ID を追加します。

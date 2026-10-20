@@ -1,0 +1,33 @@
+---
+title: "可用资源总览"
+sidebarTitle: "可用资源"
+description: "浏览当前账户与所属资源组已授权可调用的所有前沿大模型与供应商列表。"
+---
+
+**可用资源页面**（`https://xroute.ai/personal/resources`）汇总展示当前账户被授权调用的全部大模型与 API 服务目录。
+
+<Frame caption="XRoute 可用资源总览：已授权模型、供应商与类型">
+  <img src="/images/console/resources.png" alt="可用资源总览" />
+</Frame>
+
+## 权限继承与动态跟随
+
+可用资源代表了个人账户与其加入的资源组所具备的全部能力交集/并集：
+
+- **动态权限同步**：如果您加入的资源组新增或调整了模型访问权限，您的账户将自动实时同步，无需重新申请或重新生成 API Key。
+- **多元供应商覆盖**：支持主流头部厂商如 Anthropic、OpenAI、DeepSeek、ByteDance/Byteplus、Google，以及高并发优化渠道（如 `Anthropic-SM`、`Anthropic-Pro`）。
+
+---
+
+## 资源列表字段详解
+
+资源列表中逐行罗列了所有可用大模型：
+
+| 字段 | 含义 | 示例 |
+| :--- | :--- | :--- |
+| **厂商（Provider）** | 模型供应商或路由集群标识 | `Anthropic`、`Anthropic-SM`、`Byteplus` |
+| **模型名称** | 人类可读的模型官方名称 | `Claude Fable 5`、`Claude Haiku 4.5` |
+| **模型编号（Model ID）** | 调用 API 时填入 `"model"` 字段的准确字符串 | `Anthropic/claude-fable-5`、`OpenAI/gpt-6-astra` |
+| **资源类型** | 模型生成的模态 | `text`（文本）、`image`（图像）、`video`（视频） |
+| **授权来源** | 赋予该权限的实体 | `默认资源组`、`账户直接授权` |
+| **创建时间** | 资源授权或上架生效时间 | `2026-09-23 11:57:43` |

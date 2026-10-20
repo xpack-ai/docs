@@ -6,15 +6,31 @@ description: "创建 XRoute API 密钥并使用 curl 发起您的首次文本、
 
 按照以下步骤创建您的 XRoute API 密钥，调用前沿大语言模型与多模态生成 API，并核对您的用量。
 
-## 1. 创建账户与密钥
+<Tip>
+本指南已整合并移入**快速上手 · 面向开发者**目录下的统一教程：[快速上手：获取 API Key 与首次调用](/zh/quickstart)。
+</Tip>
 
-1. 登录 [xroute.ai](https://xroute.ai) 并充值通用积分（Credits）。
-2. 打开 **Personal -> Keys**，然后点击 **Create API Key**。
-3. （可选）为每个密钥配置美元消费限额与速率限制。
-4. 在您的终端环境中导出该密钥：
+## 1. 登录控制台并获取 API 密钥
+
+1. 登录 [xroute.ai/en](https://xroute.ai/en) 并充值通用积分（Credits）。
+2. 点击首页横幅的 **Get API Access** 或导航栏右上角的个人头像进入控制台。
+3. 在左侧菜单中进入 **Access Credentials（访问凭证）**（`https://xroute.ai/personal/keys`）。
+4. 在凭证列表中选择 `default` 密钥，点击 API Key 输入框右侧的 **复制** 图标直接复制密钥（`sk-...`）。
+
+<Frame caption="XRoute Access Credentials 控制台界面与 API Key 复制">
+  <img src="/images/quickstart/api-keys-overview.png" alt="XRoute 访问凭证控制台" />
+</Frame>
+
+5. （可选）如果需要为不同业务系统分配独立凭证，点击凭证列表顶部的 **+ Create（新建）** 按钮创建并保存新密钥。
+
+<Frame caption="新建访问凭证弹窗配置">
+  <img src="/images/quickstart/create-api-key-modal.png" alt="新建访问凭证弹窗" />
+</Frame>
+
+6. 在您的终端环境中导出该密钥：
 
 ```bash
-export XROUTE_API_KEY="xr_live_your_key_here"
+export XROUTE_API_KEY="sk_your_key_here"
 ```
 
 <Warning>
@@ -32,6 +48,10 @@ XRoute 支持文本、图片与视频等多种生成类型。请根据输出类�
 - **图片模型（Image）**：**仅支持供应商原生格式**（如 OpenAI Images API 或 Byteplus Images API）。
 - **视频模型（Video）**：**仅支持供应商原生异步任务格式**（提交任务生成并轮询查询状态）。
 </Note>
+
+<Tip>
+**极速调用方式**：您还可以在个人控制台的 **Dashboard**（`https://xroute.ai/personal/dashboard`）中使用 **Quick Call Guide（快速调用指引）**，选择任意模型和凭证后直接点击 **Copy Code** 复制包含完整 API Key 的 cURL 命令，粘贴到终端即可立即测试。
+</Tip>
 
 ### A. 文本生成（OpenAI 统一格式）
 
@@ -106,14 +126,16 @@ curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
 
 ---
 
-## 3. 查看消费情况
+## 3. 查看消费情况与监控调用统计
 
-随时查询您的剩余积分余额（免费调用）：
+您可以在 Web 控制台直观追踪用量、剩余余额与模型调用明细：
 
-```bash
-curl https://api.xroute.ai/apis/v1/account/balance \
-  -H "Authorization: Bearer $XROUTE_API_KEY"
-```
+- **Dashboard**：访问 [Personal Dashboard](https://xroute.ai/personal/dashboard)，实时查看 **Account Balance（账户余额）** 与 **Today's Usage（当天使用金额）**。
+- **Call Statistics**：在左侧 **REPORTS** 分组中访问 [Call Statistics](https://xroute.ai/personal/call)，查看 **Total Calls（总调用数）**、**Success Call Rate（成功率）**、**Average Duration（平均耗时）**、**Total Tokens Called（消耗 Token 总量）**、**Total Consumption Amount（总消费金额）** 以及各模型的 **Model Invocation Trend（调用趋势折线图）**。
+
+<Frame caption="在 Call Statistics 中查看各模型调用趋势、成功率、Token 消耗与消费明细">
+  <img src="/images/quickstart/call-statistics.png" alt="XRoute 调用统计" />
+</Frame>
 
 ---
 

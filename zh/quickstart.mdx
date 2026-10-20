@@ -1,0 +1,217 @@
+---
+title: "快速上手：获取 API Key 与首次调用"
+sidebarTitle: "获取 API Key 与首次调用"
+description: "在 5 分钟内获取 XRoute API 访问凭证，完成首次文本、图像与视频模型调用，并在控制台查看余额与统计。"
+---
+
+XRoute 提供面向全球前沿主流 AI 模型（大语言模型、图片生成、音频合成与视频生成）的统一网关，支持标准 OpenAI 兼容接口与一次配置多模型自由切换。
+
+按照以下步骤，从 XRoute 控制台获取您的访问凭证并完成第一次 API 请求。
+
+## 准备工作
+
+在开始之前，请确保具备以下条件：
+- 拥有 XRoute 账号（可直接在 [xroute.ai/en](https://xroute.ai/en) 登录）。
+- 具备终端环境（支持 `curl` 命令）或 Python (3.9+) / Node.js (18+) 开发环境。
+
+---
+
+## 操作步骤
+
+<Steps>
+  <Step title="登录并进入管理控制台">
+    访问 [xroute.ai/en](https://xroute.ai/en) 并确保已处于登录状态。
+    
+    点击首页横幅上的 **Get API Access**，或点击顶部导航栏右上角的个人头像，即可跳转进入个人账号控制台。
+
+    <Frame caption="XRoute 首页入口及 Get API Access 按钮">
+      <img src="/images/quickstart/portal-entry.png" alt="XRoute 首页入口" />
+    </Frame>
+  </Step>
+
+  <Step title="获取系统访问凭证（API Key）">
+    在控制台左侧导航菜单中，点击 **Access Credentials（访问凭证）**（页面地址：`https://xroute.ai/personal/keys`）。
+    
+    系统默认已为您准备好名为 `default` 的访问密钥。在右侧 API Key 区域，点击输入框右侧的 **复制** 图标，即可复制该凭证（格式为 `sk-...`）。
+
+    <Frame caption="Access Credentials 控制台界面与 API Key 复制区域">
+      <img src="/images/quickstart/api-keys-overview.png" alt="Access Credentials 界面" />
+    </Frame>
+  </Step>
+
+  <Step title="（可选）新建独立访问凭证">
+    如果您需要在不同业务或项目之间隔离权限，可以新建独立的 API Key：
+
+    1. 点击左侧凭证列表右上方的 **+ Create（新建）** 按钮。
+    2. 在弹窗中输入自定义 **Name**（如 `test-agent` 或 `production-service`）。
+    3. 选择鉴权类型（默认为 **API Key**）、参数位置（`Header: Authorization`），并按需设置过期时间。
+    4. 点击 **Confirm（确认）** 完成创建。
+
+    <Frame caption="Create Access Credential 弹窗界面">
+      <img src="/images/quickstart/create-api-key-modal.png" alt="Create Access Credential 弹窗" />
+    </Frame>
+  </Step>
+
+  <Step title="极速调用：在 Dashboard 直接复制预填 cURL 命令">
+    无需手动拼接请求地址、模型标识与鉴权请求头，XRoute 个人控制台的 **Dashboard（仪表盘）** 提供了 **Quick Call Guide（快速调用指引）**，已自动为您将访问密钥与模型参数预填到代码中：
+
+    1. 在控制台左侧菜单中，点击 **Dashboard**（页面地址：`https://xroute.ai/personal/dashboard`）。
+    2. 在 **Quick Call Guide** 区域，选择目标 **AI Model** 与鉴权凭证 **Credential**（如 `default`）。
+    3. 支持切换协议格式（**OpenAI Compatible Format**、**Claude Compatible Format** 或 **Native Invocation Mode**）。
+    4. 点击 **CURL** 代码块右上角的 **Copy Code（复制代码）**，直接粘贴至终端即可秒级发起调用！
+
+    <Frame caption="XRoute 个人 Dashboard 中的 Quick Call Guide 快速调用指引与一键复制 cURL">
+      <img src="/images/quickstart/dashboard-quick-call.png" alt="Dashboard Quick Call Guide 快速调用" />
+    </Frame>
+  </Step>
+
+  <Step title="配置环境变量">
+    建议将 API Key 保存在系统环境变量中，避免将密钥硬编码到代码中：
+
+    ```bash
+    export XROUTE_API_KEY="sk-your-actual-api-key"
+    ```
+
+    <Warning>
+      请妥善保管您的 API Key，切勿提交至公开代码仓库或在前端代码中明文暴露。
+    </Warning>
+  </Step>
+
+  <Step title="发起首次模型调用">
+    XRoute 支持多种生成模态与协议格式。您可以根据应用场景选择最适合的调用方式：
+
+    <Note>
+      - **文本模型**：支持 **OpenAI 统一格式**（`https://api.xroute.ai/v1/chat/completions`）、**Anthropic 统一格式**（`https://api.xroute.ai/v1/messages`）以及厂商原生格式。
+      - **图像模型**：直接调用厂商原生图像生成接口（如 `https://api.xroute.ai/OpenAI/images/generations`）。
+      - **视频模型**：异步任务模式（先提交生成任务至 `/contents/generations/tasks`，再轮询任务状态）。
+    </Note>
+
+    <CodeGroup>
+    ```bash cURL (OpenAI 格式)
+    curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "OpenAI/gpt-6-astra",
+        "messages": [
+          {"role": "user", "content": "你好！请用一句话介绍 XRoute 的优势。"}
+        ]
+      }'
+    ```
+
+    ```python Python (OpenAI SDK)
+    from openai import OpenAI
+    import os
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/v1",
+        api_key=os.environ.get("XROUTE_API_KEY"),
+    )
+
+    response = client.chat.completions.create(
+        model="OpenAI/gpt-6-astra",
+        messages=[
+            {"role": "user", "content": "你好！请用一句话介绍 XRoute 的优势。"}
+        ],
+    )
+
+    print(response.choices[0].message.content)
+    ```
+
+    ```javascript Node.js (OpenAI SDK)
+    import OpenAI from "openai";
+
+    const openai = new OpenAI({
+      baseURL: "https://api.xroute.ai/v1",
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const completion = await openai.chat.completions.create({
+      model: "OpenAI/gpt-6-astra",
+      messages: [
+        { role: "user", content: "你好！请用一句话介绍 XRoute 的优势。" },
+      ],
+    });
+
+    console.log(completion.choices[0].message.content);
+    ```
+
+    ```bash cURL (Anthropic Messages)
+    curl -X POST "https://api.xroute.ai/v1/messages" \
+      -H "x-api-key: $XROUTE_API_KEY" \
+      -H "anthropic-version: 2023-06-01" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "Anthropic/claude-fable-5",
+        "max_tokens": 1024,
+        "messages": [
+          {"role": "user", "content": "构建一个高可靠的 API 网关需要注意哪些关键点？"}
+        ]
+      }'
+    ```
+
+    ```bash cURL (图像生成原生接口)
+    curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "gpt-image-2.5-flare",
+        "prompt": "赛博朋克霓虹光影交织的超现代数据中心，8k 分辨率",
+        "size": "1024x1024"
+      }'
+    ```
+
+    ```bash cURL (视频生成异步任务)
+    # 1. 提交视频生成任务
+    curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "seedance-1-5-pro-251215",
+        "content": [
+          {"type": "text", "text": "穿行在日落峡谷中的无人机镜头，电影级光影"}
+        ]
+      }'
+
+    # 2. 根据返回的 task_id 查询生成状态
+    # curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}" \
+    #   -H "Authorization: Bearer $XROUTE_API_KEY"
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="查看余额与调用统计">
+    完成调用后，您可以在控制台直观地追踪账户消费与模型调用情况：
+
+    1. **在 Dashboard 查看余额与当天使用金额**：点击左侧 **Dashboard（仪表盘）**（页面地址：`https://xroute.ai/personal/dashboard`），即可实时查看当前的 **Account Balance（账户余额）**、**Today's Usage（当天使用金额）** 与 **Today's Calls（当天调用次数）**。
+
+    <Frame caption="在 Personal Dashboard 仪表盘中实时查看账户余额与当天使用金额">
+      <img src="/images/quickstart/dashboard-overview.png" alt="Dashboard 余额与当天使用金额" />
+    </Frame>
+
+    2. **在 Call Statistics 查看模型调用明细**：在左侧 **REPORTS** 分组中点击 **Call Statistics（调用统计）**（页面地址：`https://xroute.ai/personal/call`），可以查看全方位的统计指标：包含 **Total Calls（总调用次数）**、**Success Call Rate（调用成功率）**、**Average Duration（平均耗时）**、**Total Tokens Called（消耗 Token 总量）**、**Total Consumption Amount（总消费金额）**，以及细分到具体模型的 **Model Invocation Trend（模型调用趋势折线图）**。
+
+    <Frame caption="在 Call Statistics 中查看各模型调用趋势、成功率、Token 消耗与平均耗时">
+      <img src="/images/quickstart/call-statistics.png" alt="Call Statistics 模型调用统计" />
+    </Frame>
+  </Step>
+</Steps>
+
+---
+
+## 接下来
+
+<CardGroup cols={2}>
+  <Card title="SDK 兼容性与多模型调用" icon="cube" href="/zh/get-started/sdk-compatibility">
+    了解 OpenAI、Anthropic、LangChain、LlamaIndex 等框架的完整适配说明。
+  </Card>
+  <Card title="模型资源目录" icon="microchip" href="/zh/resources/models/overview">
+    浏览所支持的大语言模型、文生图、文生视频全量模型列表与调用规范。
+  </Card>
+  <Card title="XRoute 控制台指南" icon="sliders" href="/zh/console/overview">
+    管理 API 凭证、实时监控账户余额与充值、配置模型映射灾备并分析调用统计。
+  </Card>
+  <Card title="速率限制与错误码" icon="shield-halved" href="/zh/api-reference/rate-limits">
+    了解网关层速率限制、重试机制以及常见 HTTP 状态码说明。
+  </Card>
+</CardGroup>

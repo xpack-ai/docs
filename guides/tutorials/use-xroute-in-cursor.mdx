@@ -1,14 +1,31 @@
 ---
 title: "Use XRoute in Cursor"
 sidebarTitle: "Cursor"
-description: "Configure Cursor to use the XRoute MCP server and route model completions through XRoute."
+description: "Route models in Cursor through XRoute using custom Base URL overrides."
 ---
 
-Connect Cursor to XRoute so your IDE agent can call 100+ live data APIs and 60+ frontier models.
+Configure Cursor to use XRoute as your LLM gateway to access frontier models across providers.
 
-## 1. Add the XRoute MCP server
+## 1. Configure XRoute models in Cursor (Recommended)
 
-Create or update `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` globally):
+In **Cursor Settings -> Models**:
+
+1. Enable **Override OpenAI Base URL** and set it to:
+   ```text
+   https://api.xroute.ai/v1
+   ```
+2. Paste your `XROUTE_API_KEY` into the OpenAI API Key field.
+3. Add the model identifiers you wish to use, for example:
+   - `OpenAI/gpt-5.6-sol`
+   - `Deepseek/deepseek-v4-flash`
+   - `Anthropic/claude-fable-5`
+   - `Google/gemini-3.1-pro-preview`
+
+## 2. Remote MCP Server (Coming Soon)
+
+<Info>
+The XRoute remote MCP server is currently in development. Once available, you can add it to `.cursor/mcp.json`:
+</Info>
 
 ```json
 {
@@ -19,15 +36,3 @@ Create or update `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` glo
   }
 }
 ```
-
-## 2. Sign in
-
-Open **Cursor Settings -> MCP**, click **Connect** next to `xroute`, and finish browser OAuth sign-in.
-
-## Optional: use XRoute models in Cursor
-
-In **Cursor Settings -> Models**:
-
-1. Set **Override OpenAI Base URL** to `https://api.xroute.ai/v1`.
-2. Paste your `XROUTE_API_KEY`.
-3. Add model IDs such as `deepseek/deepseek-r1` or `anthropic/claude-sonnet-4`.

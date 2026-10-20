@@ -1,0 +1,72 @@
+---
+title: "Personal Dashboard（ダッシュボード）"
+sidebarTitle: "ダッシュボード"
+description: "リソース利用状況の監視、事前設定済み呼び出しコマンドの取得、直近の呼び出し履歴の確認。"
+---
+
+**Personal Dashboard（ダッシュボード）**（`https://xroute.ai/personal/dashboard`）は、XRoute コンソールのポータル画面であり、AI ゲートウェイの運用ステータスを即座に把握できます。
+
+<Frame caption="XRoute 個人ダッシュボード：資産指標、クイック呼び出しガイド、直近の呼び出し履歴">
+  <img src="/images/console/dashboard.png" alt="個人ダッシュボード" />
+</Frame>
+
+## 主要指標カード
+
+ダッシュボード上部に4つの重要カードが表示されます：
+
+- **Account Balance (USD)（アカウント残高）**：現在利用可能な現金残高を表示します。**Details** をクリックすると詳細明細やチャージ画面に遷移します。
+- **Today's Usage（本日の利用額）**：当日精算された純利用額（USD）を表示します。
+- **Today's Calls（本日の呼び出し回数）**：当日の総リクエスト数と、前日同時期との比較を表示します。**Trend** をクリックすると履歴グラフが開きます。
+- **Accessible Resources（利用可能リソース）**：アカウントで利用可能なモデル・プロバイダーの総数（例：`16 / 80`）。**View All Resources** で一覧を確認できます。
+
+---
+
+## クイック呼び出しガイド（Quick Call Guide）
+
+**Quick Call Guide** を使用すると、エンドポイント URL や複雑なヘッダーを手動で組み立てることなく、即座に実行可能なコードを生成できます：
+
+<Steps>
+  <Step title="タイプとリソースの選択">
+    Type で **AI Model** を選択し、ドロップダウンから対象モデル（例：`Anthropic / Claude Fable 5`、`OpenAI / gpt-6-astra` など）を選択します。
+  </Step>
+
+  <Step title="アイデンティティと認証情報の選択">
+    **Personal Account** を選択し、呼び出しに使用する認証情報（例：`default`）を選択します。
+  </Step>
+
+  <Step title="プロトコル形式の選択">
+    3つの標準化プロトコルから切り替えます：
+    - **OpenAI 互換形式**：標準の OpenAI SDK と互換性のあるエンドポイント `https://api.xroute.ai/v1/chat/completions`。
+    - **Claude 互換形式**：Anthropic Messages SDK と互換性のあるエンドポイント `https://api.xroute.ai/v1/messages`。
+    - **ネイティブ呼び出しモード**：プロバイダー固有のネイティブ形式（画像生成や非同期動画生成タスクなど）。
+  </Step>
+
+  <Step title="コピーして実行">
+    プログラミング言語（**CURL**、**Python**、**TypeScript**）を選択し、**Copy Code** をクリックしてターミナルに貼り付け実行します。
+  </Step>
+</Steps>
+
+```bash クイック呼び出しガイドで生成される実行可能 cURL
+curl -X POST 'https://api.xroute.ai/v1/chat/completions' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: sk-*****************************3582' \
+  -d '{"model": "Anthropic/claude-fable-5", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+---
+
+## 直近の呼び出し履歴（Recent Calls）
+
+ダッシュボード下部には、直近 10 件のリソース呼び出しの詳細データが表示されます：
+
+| 項目 | 説明 |
+| :--- | :--- |
+| **Request Time** | 秒単位で記録された正確なリクエストタイムスタンプ。 |
+| **Provider & Model** | 実際に処理を担当した上流プロバイダー名とモデル ID。 |
+| **Duration** | ゲートウェイの応答時間（レイテンシ）。 |
+| **Status** | HTTP ステータスコード（例：`200 成功`、エラーコード）。 |
+| **Consumer & Key** | 呼び出しを認証したキー（例：`default`）。 |
+| **Token 内訳** | **INPUT**、**OUTPUT**、**TOTAL** トークンの正確な内訳。 |
+| **課金明細** | 標準価格、割引価格、計算式、消費額、バウチャー控除額、残高控除額。 |
+
+テーブル右上の **View All Call Statistics** をクリックすると、完全な[呼び出し統計レポート](/ja/console/call-statistics)が開きます。

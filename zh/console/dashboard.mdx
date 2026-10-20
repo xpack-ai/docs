@@ -1,0 +1,72 @@
+---
+title: "Dashboard 仪表盘"
+sidebarTitle: "仪表盘"
+description: "监控资源使用状态、一键复制预填调用命令，并查看最近调用详细记录。"
+---
+
+**Personal Dashboard 仪表盘**（`https://xroute.ai/personal/dashboard`）是 XRoute 控制台的首页门户，帮助您快速掌控网关的运行状况。
+
+<Frame caption="XRoute 个人仪表盘：账户资产、快捷调用向导与最近调用列表">
+  <img src="/images/console/dashboard.png" alt="个人仪表盘" />
+</Frame>
+
+## 核心资产指标卡片
+
+仪表盘顶部展示四个关键指标卡片：
+
+- **账户余额（USD）**：展示当前可用现金余额。点击**详情**可直达完整账单明细或进行充值。
+- **今日消耗**：实时统计当天已结算的净消费金额。
+- **今日调用**：统计今日请求总次数，并对比昨日同期的调用波动。点击**趋势**可查看历史图表。
+- **可用资源**：展示当前账户可调用的模型与服务总数（例如 `16 / 80` 个供应商/模型）。点击**查看全部资源**可浏览目录。
+
+---
+
+## 快捷调用向导（Quick Call Guide）
+
+**快捷调用向导**无需您手动拼装 API 请求地址、复杂的鉴权请求头或查找模型字符串，直接在页面生成即时可运行的代码：
+
+<Steps>
+  <Step title="选择类型与资源">
+    在类型中选择 **AI Model**，然后在下拉列表中选择目标大模型（如 `Anthropic / Claude Fable 5`、`OpenAI / gpt-6-astra` 等）。
+  </Step>
+
+  <Step title="选择身份与凭证">
+    选择 **Personal Account**，并指定调用的凭证密钥（如 `default`）。
+  </Step>
+
+  <Step title="切换协议格式">
+    支持在三种标准化协议之间自由切换：
+    - **OpenAI 兼容格式**：兼容标准 OpenAI SDK 的统一接口 `https://api.xroute.ai/v1/chat/completions`。
+    - **Claude 兼容格式**：兼容 Anthropic Messages SDK 的统一接口 `https://api.xroute.ai/v1/messages`。
+    - **原生调用模式**：直接调用厂商原生特定接口（如原生图片生成、原生异步视频任务）。
+  </Step>
+
+  <Step title="复制并运行">
+    选择代码语言（**CURL**、**Python**、**TypeScript**），点击**复制代码**，直接粘贴至终端执行。
+  </Step>
+</Steps>
+
+```bash 快捷向导生成的即用 cURL 命令
+curl -X POST 'https://api.xroute.ai/v1/chat/completions' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: sk-*****************************3582' \
+  -d '{"model": "Anthropic/claude-fable-5", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+---
+
+## 最近调用明细（Recent Calls）
+
+仪表盘底部以毫秒级精度展示**最近 10 次资源调用**的详尽流水：
+
+| 字段 | 说明 |
+| :--- | :--- |
+| **请求时间** | 准确记录到秒级的网关接入时间戳。 |
+| **厂商与模型** | 上游实际供应商名称与具体模型编号。 |
+| **耗时** | 网关端到端处理响应时长。 |
+| **状态** | HTTP 状态码（如 `200 成功` 或错误代码）。 |
+| **调用方与凭证** | 执行鉴权的凭证名称（如 `default`）。 |
+| **Token 消耗** | 清晰拆解 **INPUT**、**OUTPUT** 与 **TOTAL** Token 数量。 |
+| **计费明细** | 标准单价、折扣单价、计费公式、消费总额、代金券抵扣额与余额抵扣额。 |
+
+点击表格右上角的**查看全部调用统计**即可打开完整的[调用统计与审计](/zh/console/call-statistics)页面。

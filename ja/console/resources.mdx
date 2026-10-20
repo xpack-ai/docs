@@ -1,0 +1,33 @@
+---
+title: "利用可能リソース一覧"
+sidebarTitle: "利用可能リソース"
+description: "現在のアカウントおよび所属リソースグループに認可されている全モデルとプロバイダーの確認。"
+---
+
+**Accessible Resources（利用可能リソース）画面**（`https://xroute.ai/personal/resources`）では、呼び出し権限を持つすべての AI モデルおよび API サービスを一覧表示します。
+
+<Frame caption="XRoute 利用可能リソース一覧：認可済みモデル・プロバイダー・モダリティ">
+  <img src="/images/console/resources.png" alt="利用可能リソース" />
+</Frame>
+
+## 権限の継承と動的更新
+
+利用可能リソースは、個人アカウントおよび参加中のリソースグループの合算権限です：
+
+- **動的な権限同期**：参加しているリソースグループに新しいモデル権限が追加された場合、API キーの再発行をすることなく即座に利用可能になります。
+- **多様なプロバイダー**：Anthropic、OpenAI、DeepSeek、ByteDance/Byteplus、Google などの主要ベンダーに加え、高スループット最適化ルート（`Anthropic-SM`、`Anthropic-Pro`）も網羅しています。
+
+---
+
+## リソース一覧のカラム詳細
+
+テーブルには利用可能な各モデルが詳細に定義されています：
+
+| カラム | 意味 | 例 |
+| :--- | :--- | :--- |
+| **Provider** | アップストリームプロバイダーまたはルーティング識別子 | `Anthropic`、`Anthropic-SM`、`Byteplus` |
+| **Model Name** | モデルの正式名称 | `Claude Fable 5`、`Claude Haiku 4.5` |
+| **Model ID** | API の `"model"` パラメータに指定する識別文字列 | `Anthropic/claude-fable-5`、`OpenAI/gpt-6-astra` |
+| **Type** | 生成モダリティ | `text`（テキスト）、`image`（画像）、`video`（動画） |
+| **Authorization Source** | 権限の付与元 | `デフォルトリソースグループ`、`直接付与` |
+| **Create Time** | 権限が認可・登録された日時 | `2026-09-23 11:57:43` |

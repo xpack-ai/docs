@@ -1,0 +1,33 @@
+---
+title: "Model Mapping Policy & Disaster Recovery"
+sidebarTitle: "Model Mapping Policy"
+description: "Configure custom request aliases, provider parameter templates, and automated disaster recovery failover rules."
+---
+
+The **Model Mapping Policy** page (`https://xroute.ai/personal/model-mapping`) is one of XRoute's most powerful enterprise features, allowing developers to define request aliases, enforce consistent parameters, and configure automated failover without changing application client code.
+
+<Frame caption="XRoute Model Mapping Policy configuration and automated failover routing">
+  <img src="/images/console/model-mapping.png" alt="Model Mapping Policy" />
+</Frame>
+
+## Core Use Cases
+
+- **Client Model Decoupling**: Direct your code to request an abstract name like `my-production-model` or standard `gpt-4o`, while mapping it behind the scenes to any target model (e.g. `Anthropic/claude-fable-5` or `OpenAI/gpt-6-astra`).
+- **Zero-Downtime Migration**: Switch underlying foundation models or providers seamlessly in the console without redeploying backend applications.
+- **Automated Disaster Recovery (Failover)**: If an upstream provider experiences rate limits (HTTP 429), regional outages (HTTP 502/503), or degraded response times, XRoute immediately retries the request against configured standby backup models.
+
+---
+
+## Policy Parameters
+
+Click **Create Model Alias Mapping** to configure a routing rule:
+
+| Setting | Description |
+| :--- | :--- |
+| **New Mapping Name** | The actual model string your applications will submit in the API request (e.g. `company-llm-fast`). |
+| **Preferred Target Model** | Primary model and provider to handle normal traffic. |
+| **Provider Parameter Template** | Preset parameters (e.g. default `temperature`, `max_tokens`, system prompt overrides). |
+| **Model Type** | Modality of the target models (`text`, `image`, `video`). |
+| **Disaster Recovery Rules** | Standby model priority list (e.g., fallback from `Anthropic/claude-fable-5` to `Anthropic-SM/claude-fable-5` or `OpenAI/gpt-6-astra` upon error). |
+| **Availability & Enable** | Toggle rules active or paused in real time. |
+| **Update Time** | Audit timestamp tracking policy revisions. |

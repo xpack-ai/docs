@@ -1,0 +1,49 @@
+---
+title: "Voucher Assets"
+sidebarTitle: "Voucher"
+description: "Redeem promotional voucher codes and manage voucher credits deducted prior to cash balance."
+---
+
+The **Voucher** page (`https://xroute.ai/personal/credit`) lets you redeem promotional credit coupons and track your active voucher assets.
+
+<Frame caption="XRoute Voucher asset management and redemption interface">
+  <img src="/images/console/voucher.png" alt="Voucher Management" />
+</Frame>
+
+## Deduction Priority
+
+When making API calls and utilizing models on XRoute:
+
+<Tip>
+**Vouchers are always deducted before your cash Account Balance.** 
+
+If you possess active, valid vouchers matching the requested resource scope, the gateway automatically offsets usage against your voucher balance until exhausted, preventing unexpected cash charges.
+</Tip>
+
+---
+
+## Redeeming Vouchers
+
+If you received an official promotion code, event gift card, or partnership coupon:
+
+1. Click the **Redeem** button under **Voucher Redemption**.
+2. Enter your **Voucher Code** in the redemption input.
+3. Confirm to immediately deposit the voucher face value into your account.
+
+---
+
+## Voucher Asset Details
+
+The asset table provides complete visibility over your redeemed vouchers:
+
+| Column | Description |
+| :--- | :--- |
+| **Voucher ID** | Unique internal reference number of the coupon. |
+| **Voucher Name** | Campaign or promotion name (e.g. Developer Welcome Credit, Hackathon Grant). |
+| **Face Value** | Original dollar amount granted upon redemption. |
+| **Balance** | Remaining dollar amount eligible for future API call deductions. |
+| **Usage Scope** | Applicable models or services (e.g. All Models, Text Models Only, Specific Provider). |
+| **Redemption Time** | Exact date and time the voucher was credited. |
+| **Validity Period** | Expiration timestamp; credits expire automatically after this date. |
+| **Status** | Current operational state (`Valid`, `Fully Depleted`, `Expired`). |
+| **Actions** | View deduction history or coupon terms. |

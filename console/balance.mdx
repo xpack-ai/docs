@@ -1,0 +1,57 @@
+---
+title: "Account Balance & Top-Up"
+sidebarTitle: "Account Balance"
+description: "View available credit balance, top up online, analyze daily consumption records, and view top-spending models."
+---
+
+The **Account Balance** page (`https://xroute.ai/personal/balance`) provides full financial transparency into your prepaid balance, online recharge records, and resource expenditure breakdown.
+
+<Frame caption="XRoute Account Balance, online recharge, and resource consumption analytics">
+  <img src="/images/console/balance.png" alt="Account Balance" />
+</Frame>
+
+## Current Account Balance
+
+The top card highlights your **Current Account Balance (USD)**:
+
+- Shows your live usable funds for model and API calls.
+- **Recharge Now**: Click this button to open the secure payment modal and top up your account balance via supported payment gateways.
+- **Check Legacy System Balance**: Check and migrate balances from legacy XRoute platforms if applicable.
+
+---
+
+## Consumption Records & Recharges
+
+Switch between two core ledger tabs below the balance summary:
+
+### 1. Daily Consumption Records
+Aggregates settled consumption day-by-day:
+- **Billing Date**
+- **Invocations Count**
+- **Token Usage**
+- **Voucher Offset Amount**
+- **Cash Balance Deduction**
+
+### 2. Recharge Records
+Maintains an immutable financial audit trail:
+- **Order ID**
+- **Recharge Amount (USD)**
+- **Payment Method & Channel**
+- **Order Creation & Payment Time**
+- **Status** (`Paid`, `Pending`, `Refunded`)
+
+---
+
+## Child Resource Consumption Details (TOP 20)
+
+To help developers quickly identify cost drivers, the console automatically analyzes and ranks the **Top 20 child resources by consumption amount** within your selected date range:
+
+| Column | Explanation |
+| :--- | :--- |
+| **Ranking** | Ranked 1 to 20 by descending spend amount. |
+| **Child Resource Name** | Specific model identifier (e.g. `Anthropic/claude-fable-5`, `OpenAI/gpt-6-astra`). |
+| **Parent Resource Name** | Provider name or root service grouping. |
+| **Resource Type** | Generation modality (`text`, `image`, `video`). |
+| **Invocations** | Total number of API requests dispatched to this model. |
+| **Last Call Time** | Timestamp of the most recent invocation. |
+| **Consumption Amount (USD)** | Total dollar volume consumed by this specific resource. |

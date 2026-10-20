@@ -1,0 +1,33 @@
+---
+title: "Accessible Resources"
+sidebarTitle: "Accessible Resources"
+description: "Browse all LLMs, multimodal models, and providers authorized to your account and resource groups."
+---
+
+The **Accessible Resources** page (`https://xroute.ai/personal/resources`) displays the full list of AI models and API services that your current account is authorized to invoke.
+
+<Frame caption="XRoute Accessible Resources overview showing authorized models and providers">
+  <img src="/images/console/resources.png" alt="Accessible Resources" />
+</Frame>
+
+## Permission Inheritance
+
+Accessible resources represent the combined capabilities available to your personal account and any joined resource groups:
+
+- **Dynamic Updates**: If a resource group you belong to grants or updates model access, your account immediately inherits the new permissions without requiring API key regeneration.
+- **Provider Variety**: Access tier-1 providers such as Anthropic, OpenAI, DeepSeek, ByteDance/Byteplus, Google, and specialized high-throughput channel variants (`Anthropic-SM`, `Anthropic-Pro`).
+
+---
+
+## Resource Catalog Fields
+
+The resources table enumerates all authorized models:
+
+| Column | Explanation | Example |
+| :--- | :--- | :--- |
+| **Provider** | Upstream supplier or route cluster | `Anthropic`, `Anthropic-SM`, `Byteplus` |
+| **Model Name** | Human-readable model title | `Claude Fable 5`, `Claude Haiku 4.5` |
+| **Model ID** | Exact string to specify in the API `"model"` parameter | `Anthropic/claude-fable-5`, `OpenAI/gpt-6-astra` |
+| **Type** | Modality of generation | `text`, `image`, `video` |
+| **Authorization Source** | Permission source granting access | `Default Resource Group`, `Direct Assignment` |
+| **Create Time** | Timestamp when the model was registered or authorized | `2026-09-23 11:57:43` |

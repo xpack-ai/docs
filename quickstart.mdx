@@ -1,47 +1,195 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Quickstart: API Key & First Call"
+sidebarTitle: "API Key & First Call"
+description: "Get your XRoute API key, make your first model call (text, image, video), and monitor usage in minutes."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
-
-## Prerequisites
-
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+Welcome to XRoute. Follow this quickstart guide to obtain your unified API key, send your first model request across unified OpenAI, Anthropic, or native multimodal endpoints, and monitor your usage in real time.
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
+  <Step title="Obtain your API Key">
+    In the left sidebar of the personal console, click **Access Credentials** (`https://xroute.ai/personal/keys`).
+    
+    XRoute provides a `default` credential key out-of-the-box. Click the **Copy** icon next to the API Key input field to copy your secret key (`sk-...`).
 
-    ```bash
-    npm install your-package
-    ```
+    <Frame caption="Access credentials overview showing the default API Key and copy button">
+      <img src="/images/quickstart/api-keys-overview.png" alt="Access Credentials Overview" />
+    </Frame>
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
 
-    ```bash
-    your-cli init
-    ```
+  <Step title="(Optional) Create a new API key">
+    To isolate environments or control access permissions across different applications, you can create additional keys:
+
+    1. Click the **+ Create** button at the top of the credentials list.
+    2. Enter a descriptive **Name** for your key (e.g. `dev-agent` or `production`).
+    3. Choose the authentication type (**API Key**), parameter location (`Header: Authorization`), and optional expiration date.
+    4. Click **Confirm** to generate the key.
+
+    <Frame caption="Dialog for creating a new access credential">
+      <img src="/images/quickstart/create-api-key-modal.png" alt="Create New Access Key" />
+    </Frame>
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
+
+  <Step title="Quickest call: Copy pre-configured cURL from Dashboard">
+    You do not need to manually assemble endpoint URLs, model identifiers, or headers. The XRoute **Personal Dashboard** provides a **Quick Call Guide** that automatically generates ready-to-run code with your secret key and chosen model pre-filled:
+
+    1. In the left navigation menu, click **Dashboard** (`https://xroute.ai/personal/dashboard`).
+    2. Under **Quick Call Guide**, choose your target **AI Model** and **Credential** (e.g. `default`).
+    3. Select your protocol format (**OpenAI Compatible Format**, **Claude Compatible Format**, or **Native Invocation Mode**).
+    4. Click **Copy Code** on the **CURL** tab, paste it into your terminal, and run it immediately!
+
+    <Frame caption="XRoute Personal Dashboard Quick Call Guide with ready-to-copy cURL command">
+      <img src="/images/quickstart/dashboard-quick-call.png" alt="Dashboard Quick Call Guide" />
+    </Frame>
+  </Step>
+
+  <Step title="Export your API key in your environment">
+    For programmatic usage with SDKs or command-line scripts, export the API key in your terminal session:
 
     ```bash
-    your-cli start
+    export XROUTE_API_KEY="sk_your_key_here"
     ```
+
+    <Warning>
+      Never commit your API keys to public repositories or expose them in client-side frontend code.
+    </Warning>
+  </Step>
+
+  <Step title="Send your first request">
+    XRoute supports multiple generation modalities and protocols. Choose the format that fits your application:
+
+    <Note>
+      - **Text Models**: Support **OpenAI Unified** (`https://api.xroute.ai/v1/chat/completions`), **Anthropic Unified** (`https://api.xroute.ai/v1/messages`), and **Provider Native** formats.
+      - **Image Models**: Call provider native endpoints directly (e.g. `https://api.xroute.ai/OpenAI/images/generations`).
+      - **Video Models**: Asynchronous workflow (submit task to `/contents/generations/tasks`, then poll status).
+    </Note>
+
+    <CodeGroup>
+    ```bash cURL (OpenAI Format)
+    curl -X POST "https://api.xroute.ai/v1/chat/completions" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "OpenAI/gpt-6-astra",
+        "messages": [
+          {"role": "user", "content": "Hello! Explain why XRoute is useful in 2 sentences."}
+        ]
+      }'
+    ```
+
+    ```python Python (OpenAI SDK)
+    from openai import OpenAI
+    import os
+
+    client = OpenAI(
+        base_url="https://api.xroute.ai/v1",
+        api_key=os.environ.get("XROUTE_API_KEY"),
+    )
+
+    response = client.chat.completions.create(
+        model="OpenAI/gpt-6-astra",
+        messages=[
+            {"role": "user", "content": "Hello! Explain why XRoute is useful in 2 sentences."}
+        ],
+    )
+
+    print(response.choices[0].message.content)
+    ```
+
+    ```javascript Node.js (OpenAI SDK)
+    import OpenAI from "openai";
+
+    const openai = new OpenAI({
+      baseURL: "https://api.xroute.ai/v1",
+      apiKey: process.env.XROUTE_API_KEY,
+    });
+
+    const completion = await openai.chat.completions.create({
+      model: "OpenAI/gpt-6-astra",
+      messages: [
+        { role: "user", content: "Hello! Explain why XRoute is useful in 2 sentences." },
+      ],
+    });
+
+    console.log(completion.choices[0].message.content);
+    ```
+
+    ```bash cURL (Anthropic Messages)
+    curl -X POST "https://api.xroute.ai/v1/messages" \
+      -H "x-api-key: $XROUTE_API_KEY" \
+      -H "anthropic-version: 2023-06-01" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "Anthropic/claude-fable-5",
+        "max_tokens": 1024,
+        "messages": [
+          {"role": "user", "content": "What makes a reliable API gateway?"}
+        ]
+      }'
+    ```
+
+    ```bash cURL (Image Generation)
+    curl -X POST "https://api.xroute.ai/OpenAI/images/generations" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "gpt-image-2.5-flare",
+        "prompt": "An ultra-modern data center glowing in cyberpunk neon lights, 8k resolution",
+        "size": "1024x1024"
+      }'
+    ```
+
+    ```bash cURL (Video Generation Async)
+    # 1. Submit video generation task
+    curl -X POST "https://api.xroute.ai/Byteplus/contents/generations/tasks" \
+      -H "Authorization: Bearer $XROUTE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "seedance-1-5-pro-251215",
+        "content": [
+          {"type": "text", "text": "A drone flying through a sunset canyon, cinematic lighting"}
+        ]
+      }'
+
+    # 2. Query task status with returned task_id
+    # curl -X GET "https://api.xroute.ai/Byteplus/contents/generations/tasks/{task_id}" \
+    #   -H "Authorization: Bearer $XROUTE_API_KEY"
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Check balance and call statistics">
+    After making requests, you can monitor your account usage and API traffic directly in the console:
+
+    1. **View balance and today's usage on the Dashboard**: Go to **Dashboard** (`https://xroute.ai/personal/dashboard`) to view your real-time **Account Balance (USD)**, **Today's Usage**, and total **Today's Calls**.
+
+    <Frame caption="Check your account balance and today's usage in the Personal Dashboard">
+      <img src="/images/quickstart/dashboard-overview.png" alt="Personal Dashboard Overview" />
+    </Frame>
+
+    2. **Inspect detailed invocation metrics in Call Statistics**: Under **REPORTS** in the left sidebar, click **Call Statistics** (`https://xroute.ai/personal/call`) to analyze your model calls. You can view **Total Calls**, **Success Call Rate**, **Average Duration**, **Total Tokens Called**, **Total Consumption Amount**, and the real-time **Model Invocation Trend** breakdown chart.
+
+    <Frame caption="Monitor model traffic, token consumption, and duration in Call Statistics">
+      <img src="/images/quickstart/call-statistics.png" alt="Call Statistics Analysis" />
+    </Frame>
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+---
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="SDK Compatibility" icon="cube" href="/get-started/sdk-compatibility">
+    Use XRoute with OpenAI, Anthropic, LangChain, LlamaIndex, or Byteplus SDKs.
+  </Card>
+  <Card title="Model Catalog" icon="microchip" href="/resources/models/overview">
+    Explore all supported LLMs, image generation, and video generation models.
+  </Card>
+  <Card title="XRoute Console" icon="sliders" href="/console/overview">
+    Manage access credentials, monitor real-time balance, configure model mapping failovers, and track call statistics.
+  </Card>
+  <Card title="Rate Limits & Errors" icon="shield-halved" href="/api-reference/rate-limits">
+    Understand default rate limits, retry mechanisms, and error codes.
+  </Card>
+</CardGroup>
