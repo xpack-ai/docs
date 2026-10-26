@@ -37,6 +37,7 @@
               {
                 "group": "Overview",
                 "pages": [
+                  "index",
                   "guides",
                   "how-it-works"
                 ]
@@ -159,6 +160,7 @@
               {
                 "group": "概览",
                 "pages": [
+                  "zh/index",
                   "zh/guides",
                   "zh/how-it-works"
                 ]
@@ -281,6 +283,7 @@
               {
                 "group": "概要",
                 "pages": [
+                  "ja/index",
                   "ja/guides",
                   "ja/how-it-works"
                 ]
@@ -381,7 +384,8 @@
   },
   "logo": {
     "light": "/logo/light.png",
-    "dark": "/logo/dark.png"
+    "dark": "/logo/dark.png",
+    "href": "https://xroute.ai"
   },
   "navbar": {
     "links": [
